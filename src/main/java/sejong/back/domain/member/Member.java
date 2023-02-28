@@ -38,7 +38,7 @@ public class Member {
     private MemberType type;
     private List<String> tag;//태그들도 우리가 만들어서 고르는 식으로 해야할거 같음.
     private MemberGrade grade;
-
+    private Integer exp; //경험치? - 일단 정민 수정 예시
 
 
     /**
