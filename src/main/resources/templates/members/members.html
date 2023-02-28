@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container" style="max-width: 600px">
+    <div class="py-5 text-center">
+        <h2 th:text="#{page.members}">멤버 목록</h2>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary float-end"
+                    onclick="location.href='addForm.html'"
+                    th:onclick="|location.href='@{/members/{memberKey}/edit(memberKey=${member.key})}'|"
+                    type="button" th:text="#{page.editMember}">아무 기능 없음.</button>
+        </div>
+    </div>
+
+    <hr class="my-4">
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th th:text="#{label.member.key}">Key</th>
+                <th th:text="#{label.member.name}">이름</th>
+                <th th:text="#{label.member.department}">과</th>
+                <th th:text="#{label.member.studentId}">학번</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="member : ${members}">
+                <td><a href="member.html" th:href="@{/members/{memberKey}(memberKey=${member.key})}" th:text="${member.key}">멤버 key</a></td>
+                <td><a href="member.html" th:href="@{|/members/${member.key}|}" th:text="${member.name}">학생 이름</a></td>
+                <td th:text="${member.department}">10000</td>
+                <td th:text="${member.studentId}">10</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div> <!-- /container -->
+
+</body>
+</html>

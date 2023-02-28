@@ -1,0 +1,69 @@
+
+
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2 th:text="#{page.member}">멤버 상세</h2>
+    </div>
+
+    <div>
+        <label for="key" th:text="#{label.member.key}">멤버 Key</label>
+        <input type="text" id="key" name="key" class="form-control" value="1" th:value="${member.key}" readonly>
+    </div>
+    <div>
+        <label for="name" th:text="#{label.member.name}">멤버 이름</label>
+        <input type="text" id="name" name="name" class="form-control" value="상품A" th:value="${member.name}" readonly>
+    </div>
+    <div>
+        <label for="department" th:text="#{label.member.department}">멤버 학과</label>
+        <input type="text" id="department" name="department" class="form-control" value="10000" th:value="${member.department}" readonly>
+    </div>
+    <div>
+        <label for="studentId" th:text="#{label.member.studentId}">멤버 학번</label>
+        <input type="text" id="studentId" name="studentId" class="form-control" value="10" th:value="${member.studentId}" readonly>
+    </div>
+
+    <div>
+        <label for="currentGrade" th:text="#{label.member.currentGrade}">멤버 학년</label>
+        <input type="text" id="currentGrade" name="currentGrade" class="form-control" value="10" th:value="${member.currentGrade}" readonly>
+    </div>
+
+    <div>
+        <label for="status" th:text="#{label.member.status}">멤버 재학/휴학/졸업 여부</label>
+        <input type="text" id="status" name="status" class="form-control" value="10" th:value="${member.status}" readonly>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    onclick="location.href='editForm.html'"
+                    th:onclick="|location.href='@{/members/{memberKey}/edit(memberKey=${member.key})}'|"
+                    type="button" th:text="#{button.send}">쪽지 보내기</button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg"
+                    onclick="location.href='members.html'"
+                    th:onclick="|location.href='@{/members}'|"
+                    type="button" th:text="#{button.cancel}">목록으로</button>
+        </div>
+    </div>
+
+</div> <!-- /container -->
+</body>
+</html>
