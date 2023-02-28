@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 
+// 내가 바꾼 부분임
 @Data
 public class AddMemberForm {
 
