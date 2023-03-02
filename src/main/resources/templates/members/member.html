@@ -47,6 +47,14 @@
         <input type="text" id="status" name="status" class="form-control" value="10" th:value="${member.status}" readonly>
     </div>
 
+
+    <div>
+        <label for="memberType" th:text="#{label.member.memberType}">멤버 재학/휴학/졸업 여부</label>
+        <input type="text" id="memberType" name="memberType" class="form-control" value="10" th:value="${member.memberType}" readonly>
+    </div>
+
+
+
     <hr class="my-4">
 
     <div class="row">

@@ -41,6 +41,19 @@
                    th:errorclass="field-error">
             <div class="field-error" th:errors="*{name}" />
         </div>
+
+        <div>
+            <div>신입/휴학/복학 여부</div>
+            <div th:each="type : ${memberTypes}" class="form-check form-check-inline">
+                <input type="radio" th:field="*{memberType}" th:value="${type.name()}"
+                       class="form-check-input">
+                <label th:for="${#ids.prev('memberType')}" th:text="${type.description}"
+                       class="form-check-label">
+                    BOOK
+                </label>
+            </div>
+        </div>
+
         <hr class="my-4">
         <div class="row">
             <div class="col">

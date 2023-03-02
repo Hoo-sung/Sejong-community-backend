@@ -17,5 +17,7 @@ public interface MemberRepository {
 
     public Member findByKey(Long key);
 
+    public void update(Long key, Member updateMember);
+
 
 }

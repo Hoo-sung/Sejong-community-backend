@@ -7,13 +7,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import sejong.back.domain.login.AddMemberForm;
+import sejong.back.domain.member.AddMemberForm;
 import sejong.back.domain.login.LoginService;
 import sejong.back.domain.member.Member;
+import sejong.back.domain.member.MemberType;
+import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.repository.MemberRepository;
 import sejong.back.web.SessionConst;
-import sejong.back.web.login.LoginController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -29,6 +29,13 @@ public class MemberController {
     private final MemberRepository memberRepository;
 
     private final LoginService loginService;
+
+
+    @ModelAttribute("memberTypes")//모델에 통쨰로보여줘야 라디오 버튼이든 뭐든 내용물을 통쨰로 출력할 수 있다.
+    public MemberType[] memberTypes(){
+        return MemberType.values();//전체 다 가져오기.
+    }
+
 
     @GetMapping
     public String members(HttpServletRequest request,Model model) {//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
@@ -49,7 +56,7 @@ public class MemberController {
         return "members/member"; //그 멤버의 페이지를 보여줘야 한다.
     }
 
-    @GetMapping("/add")//회원 가입.
+    @GetMapping("/add")//회원 가입. radio 버튼은 하나를 반드시 가지고 있어야 하므로 여기서 type을 만들어 줘야 한다.
     public String addForm(@ModelAttribute("addMemberForm") AddMemberForm addMemberForm) {
         return "members/addMemberForm";
     }
@@ -71,6 +78,13 @@ public class MemberController {
         Member searchmember=memberRepository.findByLoginId(validatemember.getStudentId());//db에 회원 조회.
 
         if(searchmember==null){//db에 없으면, 회원 가입 절차 정상적으로 진행해야 한다.
+
+            /**
+             * radio 값 하나는 반드시 선택해야 해서 주어야 한다.
+             * 태그들 같은 경우는 이런 방식 안해도 될듯?
+             */
+            validatemember.setMemberType(addMemberForm.getMemberType());//post 폼에서 가져온 값 바탕으로 저장.
+
             memberRepository.save(validatemember);//db에 저장.
             log.info("savedMember={}",memberRepository.findAll());
             return "redirect:/login";
@@ -89,29 +103,27 @@ public class MemberController {
         return "members/editForm";
     }
 
-//    @PostMapping("/{itemId}/edit")
-//    public String edit(@PathVariable Long itemId, @Validated @ModelAttribute("item") ItemUpdateForm form, BindingResult bindingResult) {
-//
-//        //특정 필드 예외가 아닌 전체 예외
-//        if (form.getPrice() != null && form.getQuantity() != null) {
-//            int resultPrice = form.getPrice() * form.getQuantity();
-//            if (resultPrice < 10000) {
-//                bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
-//            }
-//        }
-//
-//        if (bindingResult.hasErrors()) {
-//            log.info("errors={}", bindingResult);
-//            return "items/editForm";
-//        }
-//
-//        Item itemParam = new Item();
-//        itemParam.setItemName(form.getItemName());
-//        itemParam.setPrice(form.getPrice());
-//        itemParam.setQuantity(form.getQuantity());
-//
-//        itemRepository.update(itemId, itemParam);
-//        return "redirect:/items/{itemId}";
-//    }
+    @PostMapping("/{memberKey}/edit")
+    public String edit(@PathVariable Long memberKey, @Validated @ModelAttribute("updateMemberForm") UpdateMemberForm form, BindingResult bindingResult) {
+
+
+        if (bindingResult.hasErrors()) {
+            log.info("errors={}", bindingResult);
+            return "members/editForm";
+        }
+
+        Member updateMemberParam = memberRepository.findByKey(memberKey);
+        updateMemberParam.setMemberType(form.getType());
+        /**
+         * Todo 객체를 찾아서 똒같은걸 하나 new해서 updatemember을 만들어서 memory.update시키냐, 아님 간단하게 하냐 고민.
+         */
+
+
+//        member.setTag(form.getTag());
+
+        memberRepository.update(memberKey, updateMemberParam);
+
+        return "redirect:/members/{memberKey}";
+    }
 
 }

@@ -1,4 +1,4 @@
-package sejong.back.domain.login;
+package sejong.back.domain.member;
 
 import lombok.Data;
 
@@ -16,6 +16,8 @@ public class AddMemberForm {
 
     @NotEmpty
     private String password;//비밀번호
+
+    private MemberType memberType;//멤버 타입도 넣어야 한다.
 
 }
 

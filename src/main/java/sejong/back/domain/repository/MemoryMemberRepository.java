@@ -52,4 +52,11 @@ public class MemoryMemberRepository implements MemberRepository {
 
         return new ArrayList<>(store.values());
     }
+
+    @Override
+    public void update(Long key, Member updateMember) {
+        Member findMember = findByKey(key);
+        findMember.setMemberType(updateMember.getMemberType());
+        findMember.setTag(updateMember.getTag());
+    }
 }
