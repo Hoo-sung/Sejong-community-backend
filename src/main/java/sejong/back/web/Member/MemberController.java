@@ -18,6 +18,7 @@ import sejong.back.web.SessionConst;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -36,6 +37,15 @@ public class MemberController {
         return MemberType.values();//전체 다 가져오기.
     }
 
+    @ModelAttribute("tagGroups")
+    public List<String> tags(){
+        List<String> tags = new ArrayList<>();
+        tags.add("#스터디");
+        tags.add("#팀플");
+        tags.add("#친목");
+
+        return tags;
+    }
 
     @GetMapping
     public String members(HttpServletRequest request,Model model) {//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
@@ -43,7 +53,8 @@ public class MemberController {
         log.info("members={}", members);
 
         HttpSession session = request.getSession(false);//세션을 가져와서 자기 member key를 뽑아야한다.
-        Member member = (Member) session.getAttribute(SessionConst.LOGIN_MEMBER);//다운 캐스팅.
+        long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);//다운 캐스팅.
+        Member member = memberRepository.findByKey(myKey);
         model.addAttribute("members", members);
         model.addAttribute("member",member);
         return "members/members";
@@ -62,6 +73,14 @@ public class MemberController {
     }
 
     @PostMapping("/add")//여기서 회원가입절차에 따라 회원을 db에 save한다.
+    /**
+     * 학사시스템을 바탕으로 이름, 학번 등 가져올 수 있는 정보는 가져와서 validatemember에 저장되어있다.
+     * 그리므로 여기에 회원가입 폼에서 사용자가 추가해야할 요소들인
+     * 1.신입 재학, 휴학 여부를 선택하고
+     * 2.태그들을 가지고 싶은거 선택하게 해야한다.
+     *
+     * 이것을 받아서 학사 시스템으로 로그인 잘 되서 검증된 멤버인 validatemember에 담고 내용을 추가해서 저장한다. db에
+     */
     public String save(@Validated @ModelAttribute AddMemberForm addMemberForm, BindingResult result) throws IOException {
         if (result.hasErrors()) {
             return "members/addMemberForm";
@@ -84,6 +103,7 @@ public class MemberController {
              * 태그들 같은 경우는 이런 방식 안해도 될듯?
              */
             validatemember.setMemberType(addMemberForm.getMemberType());//post 폼에서 가져온 값 바탕으로 저장.
+            validatemember.setTags(addMemberForm.getTags());//태그도 없데이트 해야함.
 
             memberRepository.save(validatemember);//db에 저장.
             log.info("savedMember={}",memberRepository.findAll());
@@ -97,10 +117,23 @@ public class MemberController {
     }
 
     @GetMapping("/{memberKey}/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
-    public String editForm(@PathVariable Long memberKey, Model model) {
-        Member member = memberRepository.findByKey(memberKey);
-        model.addAttribute("member", member);
-        return "members/editForm";
+    public String editForm(@PathVariable Long memberKey, Model model,HttpServletRequest request) {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
+
+        HttpSession session=request.getSession(false);//있는 세션을 가져온다.
+        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);
+
+        if(myKey==memberKey){//자기가 자신의 edit url을 요청한 경우.
+            Member member = memberRepository.findByKey(memberKey);
+            model.addAttribute("member", member);
+            return "members/editForm";
+        }
+
+        else{//남의 페이지 시도한 경우. 자기 멤버 상세를 보여주도록 하자.
+            Member member = memberRepository.findByKey(myKey);//
+            model.addAttribute("member", member);
+            return "redirect:/";
+        }
+
     }
 
     @PostMapping("/{memberKey}/edit")
@@ -113,14 +146,12 @@ public class MemberController {
         }
 
         Member updateMemberParam = memberRepository.findByKey(memberKey);
-        updateMemberParam.setMemberType(form.getType());
+        updateMemberParam.setMemberType(form.getMemberType());
+        updateMemberParam.setTags(form.getTags());
+
         /**
          * Todo 객체를 찾아서 똒같은걸 하나 new해서 updatemember을 만들어서 memory.update시키냐, 아님 간단하게 하냐 고민.
          */
-
-
-//        member.setTag(form.getTag());
-
         memberRepository.update(memberKey, updateMemberParam);
 
         return "redirect:/members/{memberKey}";

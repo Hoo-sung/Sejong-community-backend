@@ -66,7 +66,7 @@ public class LoginController {//세종대 포탈 api를 이용해야 한다.
         else {
             //정상 처리 로직, 세션이 있으면 세션 반환, 없으면 새로 생성한다.
             HttpSession session = request.getSession(true);
-            session.setAttribute(SessionConst.LOGIN_MEMBER, member);
+            session.setAttribute(SessionConst.DB_KEY, member.getKey());//자기 키만 세션에 넣자.
             return "redirect:"+redirectURI;//처음 사용자가 접속하려는 url로 리다이렉트 해준다.
         }
     }

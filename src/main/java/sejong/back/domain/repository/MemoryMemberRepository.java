@@ -3,6 +3,7 @@ package sejong.back.domain.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import sejong.back.domain.member.Member;
+import sejong.back.domain.member.UpdateMemberForm;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,8 +56,9 @@ public class MemoryMemberRepository implements MemberRepository {
 
     @Override
     public void update(Long key, Member updateMember) {
+
         Member findMember = findByKey(key);
         findMember.setMemberType(updateMember.getMemberType());
-        findMember.setTag(updateMember.getTag());
+        findMember.setTags(updateMember.getTags());
     }
 }

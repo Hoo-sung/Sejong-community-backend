@@ -8,8 +8,12 @@ import java.util.List;
 public class UpdateMemberForm {
 
 
-    private MemberType type;
+    private  MemberType memberType;
 
-//    private List<String> tag;//태그들도 우리가 만들어서 고르는 식으로 해야할거 같음.
+    private List<String> tags;
+
+
+
+    //    private List<String> tag;//태그들도 우리가 만들어서 고르는 식으로 해야할거 같음.
 
 }

@@ -38,7 +38,7 @@ public class Member {
 
     //사용자가 바꿀 수 있는 필드.
     private MemberType memberType;//신/재학/휴학 여부.
-    private List<String> tag;//태그들도 우리가 만들어서 고르는 식으로 해야할거 같음.
+    private List<String> tags;//태그들도 우리가 만들어서 고르는 식으로 해야할거 같음.
 
 
 
