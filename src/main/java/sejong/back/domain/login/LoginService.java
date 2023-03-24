@@ -24,7 +24,7 @@ public class LoginService {
 
     private final MemberRepository memberRepository;
 
-    public Member login(String studentId, String password) {
+/*    public Member login(String studentId, String password) {
         Member findMember = memberRepository.findByLoginId(studentId);
 
         if (findMember == null) { //db에 studentId에 맞는 회원이 없을 때
@@ -36,7 +36,7 @@ public class LoginService {
         } else { //studentId는 맞지만 password를 잘못 입력했을 때
             return null;
         }
-    }
+    }*/
 
 
     /**
@@ -89,7 +89,7 @@ public class LoginService {
          * 파싱한 것으로 Member 객체를 생성하고, 메모리에 저장하고, 모델에 담에서 login/form에 뿌려야 한다.
          */
 
-        Member member = makeMemberFromParsedData(studentId, password, info);
+        Member member = makeMemberFromParsedData(studentId, info);
         log.info("member={}", member);
         return member;
     }
@@ -106,7 +106,7 @@ public class LoginService {
         return info;
     }
 
-    private Member makeMemberFromParsedData(String studentId, String password, String[] info) {
+    private Member makeMemberFromParsedData(String studentId, String[] info) {
         String department = info[0];
         String studentIdk = info[1];
         String name = info[2];
@@ -120,7 +120,7 @@ public class LoginService {
             return null;
         }
 
-        Member member = new Member(name, department, studentId, password, grade, status, passFlag);
+        Member member = new Member(name, department, studentId, grade, status, passFlag);
         member.setGrade(MemberGrade.BRONZE);
         return member;
     }

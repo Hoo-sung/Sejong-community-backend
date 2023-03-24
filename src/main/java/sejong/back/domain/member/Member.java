@@ -25,13 +25,6 @@ public class Member {
     private String department;//과
     private String studentId;//학번
 
-    /**
-     * @JsonIgnore: 데이더의 이동에서 패스워드를 숨기기 위해
-     * 컨트롤러에서 json 데이터로 리턴해줄때 이 부분은 뺌
-     */
-    @JsonIgnore
-    private String password;//비밀번호
-
     private String currentGrade;//현재 학년
     private String status;//재학 휴학 여부.
     private String flag;//고전독서 인증 여부.
@@ -43,11 +36,10 @@ public class Member {
     private List<String> tag;//태그들도 우리가 만들어서 고르는 식으로 해야할거 같음.
     private MemberGrade grade;
 
-    public Member(String name, String department, String studentId, String password, String currentGrade, String status, String flag) {
+    public Member(String name, String department, String studentId, String currentGrade, String status, String flag) {
         this.name = name;
         this.department = department;
         this.studentId = studentId;
-        this.password = password;
         this.currentGrade = currentGrade;
         this.status = status;
         this.flag = flag;
