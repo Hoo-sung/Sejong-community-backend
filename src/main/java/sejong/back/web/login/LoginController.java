@@ -33,8 +33,9 @@ import java.util.Map;
 public class LoginController {//세종대 포탈 api를 이용해야 한다.
 
     private final MemberRepository memberRepository;
-
     private final LoginService loginService;
+
+
     @GetMapping("/login")//이 url로 Getmapping이 오면 폼을 반환해준다.
     public String loginForm(@ModelAttribute("loginForm")LoginForm form){
 

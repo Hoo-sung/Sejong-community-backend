@@ -40,6 +40,7 @@ public class LoginService {
         data.put("password", password);
 
         // 로그인 페이지 접속
+
         //userAgent 는 생략가능하다.
 //        String userAgent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36";
 
@@ -58,7 +59,7 @@ public class LoginService {
                     .execute();
 
 
-// 로그인 페이지에서 얻은 쿠키  만약 쿠키가 없으면 login/loginForm으로 이동.
+// 로그인 페이지에서 얻은 쿠키 만약 쿠키가 없으면 login/loginForm으로 이동.
 
 
         //http://classic.sejong.ac.kr/userCertStatus.do?menuInfoId=MAIN_02_05 내 상세 화면이 나와있는 페이지이다.
