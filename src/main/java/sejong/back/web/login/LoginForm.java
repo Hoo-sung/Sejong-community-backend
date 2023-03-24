@@ -1,15 +1,16 @@
-package sejong.back.domain.login;
+package sejong.back.web.login;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
 
 
+/**
+ * 로그인 시 클라이언트에서 넘어오는 데이터 폼
+ * @TODO API를 통해 확인해야 하는 정보??
+ */
 @Data
-public class LoginForm {//api를 통해 확인해야 하는 정보.
-
+public class LoginForm {
 
     @NotEmpty
     private String studentId;//학번
