@@ -4,22 +4,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import sejong.back.domain.member.Member;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
 public class MemoryMemberRepository implements MemberRepository {
 
-    private static final Map<Long,Member> store =new ConcurrentHashMap<>();//long은 Key 이다.
+    private static final Map<Long, Member> store = new ConcurrentHashMap<>();//long은 Key 이다.
 
-    private static Long sequence=0l;
+    private static Long sequence = 0l;
 
     @Override
     public Member save(Member member) {
 
         member.setKey(++sequence);
-        store.put(member.getKey(),member);
+        store.put(member.getKey(), member);
         return member;
     }
 
@@ -43,7 +45,7 @@ public class MemoryMemberRepository implements MemberRepository {
     }
 
 
-    public void clearStore(){//memory 삭제.
+    public void clearStore() {//memory 삭제.
         store.clear();
     }
 
