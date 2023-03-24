@@ -37,6 +37,7 @@ public class Member {
     private String flag;//고전독서 인증 여부.
 
     private Long key;//서버에서 관리하는 키.
+    private String nickname;
 
     private MemberType type;
     private List<String> tag;//태그들도 우리가 만들어서 고르는 식으로 해야할거 같음.
