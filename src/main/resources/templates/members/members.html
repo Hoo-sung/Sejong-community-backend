@@ -16,8 +16,13 @@
         <div class="col">
             <button class="btn btn-primary float-end"
                     onclick="location.href='addForm.html'"
-                    th:onclick="|location.href='@{/members/{memberKey}/edit(memberKey=${member.key})}'|"
-                    type="button" th:text="#{page.editMember}">아무 기능 없음.</button>
+                    th:onclick="|location.href='@{/forest/{memberKey}(memberKey=${member.key})}'|"
+                    type="button" th:text="#{page.editMember}">내 정보 수정</button>
+
+            <button class="btn btn-primary float-end"
+                    onclick="location.href='addForm.html'"
+                    th:onclick="|location.href='@{/forest/mytree/add}'|"
+                    type="button" th:text="#{page.makeTree}">글 쓰기</button>
         </div>
     </div>
 
@@ -34,8 +39,8 @@
             </thead>
             <tbody>
             <tr th:each="member : ${members}">
-                <td><a href="member.html" th:href="@{/members/{memberKey}(memberKey=${member.key})}" th:text="${member.key}">멤버 key</a></td>
-                <td><a href="member.html" th:href="@{|/members/${member.key}|}" th:text="${member.name}">학생 이름</a></td>
+                <td><a href="member.html" th:href="@{/forest/{memberKey}(memberKey=${member.key})}" th:text="${member.key}">멤버 key</a></td>
+                <td><a href="member.html" th:href="@{|/forest/${member.key}|}" th:text="${member.name}">학생 이름</a></td>
                 <td th:text="${member.department}">10000</td>
                 <td th:text="${member.studentId}">10</td>
             </tr>

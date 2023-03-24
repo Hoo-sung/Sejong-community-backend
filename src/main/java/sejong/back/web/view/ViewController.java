@@ -127,12 +127,9 @@ public class ViewController {
         return "Edit!";
     }
 
-
-    //의존관계 주입 후 테스트용 회원가입 멤버
     @PostConstruct
     public void setting() throws IOException {
-//        각자 학번 비번으로 반영하시길
-//        Member validateMember = loginService.validateSejong("학번", "비번");
-//        memberRepository.save(validateMember);//db에 저장.
+        Member validateMember = loginService.validateSejong("18011881", "19991201");
+        memberRepository.save(validateMember);//db에 저장.
     }
 }
