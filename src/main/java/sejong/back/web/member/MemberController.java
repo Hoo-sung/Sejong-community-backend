@@ -3,17 +3,15 @@ package sejong.back.web.member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 import sejong.back.domain.login.LoginService;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.repository.MemberRepository;
 import sejong.back.exception.DoubleSignUpException;
 import sejong.back.exception.WrongSignUpException;
-import sejong.back.web.Response;
+import sejong.back.web.ResponseResult;
 
 import java.io.IOException;
 
@@ -37,7 +35,7 @@ public class MemberController {
      * @TODO Gradle을 통해서 실행하면 이상하게 AddMemberForm을 인식하지 못함
      */
     @PostMapping("/add")
-    public Response<?> save(@Validated @RequestBody AddMemberForm addMemberForm, BindingResult bindingResult) throws IOException {
+    public ResponseResult<?> save(@Validated @RequestBody AddMemberForm addMemberForm, BindingResult bindingResult) throws IOException {
 
         if (bindingResult.hasErrors()) { //닉네임, 학번, 비번 중 빈 값이 있을 경우
             throw new WrongSignUpException("비어있는 값이 있음");
@@ -56,7 +54,7 @@ public class MemberController {
             validateMember.setNickname(addMemberForm.getNickname());
             memberRepository.save(validateMember);//db에 저장.
             log.info("savedMember={}", memberRepository.findAll());
-            return new Response<>("success", "회원가입 성공", null);
+            return new ResponseResult<>(HttpStatus.OK, "회원가입 성공");
         } else {
             log.info("회원 가입된 사용자입니다={} {}", searchMember.getStudentId(), searchMember.getName());
             throw new DoubleSignUpException("이미 회원가입된 사용자");

@@ -1,4 +1,4 @@
-package sejong.back.exhandler;
+package sejong.back.web.exhandler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import sejong.back.exception.DoubleSignUpException;
 import sejong.back.exception.WrongSignUpException;
+import sejong.back.web.ResponseResult;
 import sejong.back.web.member.MemberController;
 
 @RestControllerAdvice(assignableTypes = {MemberController.class})
@@ -16,15 +17,15 @@ public class MemberControllerExceptionAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(WrongSignUpException.class)
-    public ErrorResult wrongSignUpExceptionAdvice(WrongSignUpException e) {
+    public ResponseResult<?> wrongSignUp(WrongSignUpException e) {
         log.error("[exceptionHandle] Wrong Sign Up", e);
-        return new ErrorResult("Wrong Sign Up", e.getMessage());
+        return new ResponseResult<>(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(DoubleSignUpException.class)
-    public ErrorResult doubleSignUpException(DoubleSignUpException e) {
+    public ResponseResult<?> doubleSignUp(DoubleSignUpException e) {
         log.error("[exceptionHandle] Double Sign Up", e);
-        return new ErrorResult("Double Sign Up", e.getMessage());
+        return new ResponseResult<>(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 }
