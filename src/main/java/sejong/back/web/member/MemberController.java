@@ -2,6 +2,8 @@ package sejong.back.web.member;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.back.domain.login.LoginService;
 import sejong.back.domain.member.Member;
@@ -26,8 +28,12 @@ public class MemberController {
      * @TODO 우리 서비스에서 회원가입할 때 입력한 이름과 세종대 계정에 등록된 이름이 다른 경우엔 어떻게 처리?
      */
     @PostMapping("/add")
-    public Response<?> save(@ModelAttribute AddMemberForm addMemberForm) throws IOException {
+    public Response<?> save(@Validated @ModelAttribute AddMemberForm addMemberForm, BindingResult bindingResult) throws IOException {
         //TODO 회원가입 시 빈 값이 넘어올 경우 그걸 서버에서 처리하나 아님 클라이언트에서 처리하나?
+        if (bindingResult.hasErrors()) {
+            log.info("bindingResult error");
+            return new Response<>("error", "에러 발생", bindingResult.getAllErrors().toArray());
+        }
 
         //학사시스템 확인후 정보 안 맞으면 다시 폼 반환.
         Member validateMember = loginService.validateSejong(addMemberForm.getStudentId(), addMemberForm.getPassword());

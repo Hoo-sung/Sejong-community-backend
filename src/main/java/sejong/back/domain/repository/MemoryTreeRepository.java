@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 @Repository
 public class MemoryTreeRepository implements TreeRepository {
@@ -21,6 +22,21 @@ public class MemoryTreeRepository implements TreeRepository {
         tree.setSticker(new ArrayList<>());
         store.put(tree.getId(), tree);
         return tree;
+    }
+
+    @Override
+    public void update(Tree tree, Long key) {
+        Optional<Tree> findTree = findById(key);
+        findTree.get().setStudentKey(tree.getStudentKey());
+        findTree.get().setTitle(tree.getTitle());
+        findTree.get().setTags(tree.getTags());
+        findTree.get().setSticker(tree.getSticker());
+        findTree.get().setDescription(tree.getDescription());
+    }
+
+    @Override
+    public Stream<Tree> findByStudentId(Long id) {
+        return  findAll().stream().filter(m -> m.getStudentKey().equals(id));
     }
 
     @Override

@@ -13,6 +13,7 @@ import sejong.back.web.SessionConst;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 @Controller
 @Slf4j
@@ -31,4 +32,16 @@ public class TreeController {
         treeRepository.save(tree);
         return tree;
     }
+
+    @PostMapping("/forest/mytree/edit")
+    @ResponseBody
+    public Tree updateTree(@ModelAttribute Tree tree, HttpServletRequest request){
+        HttpSession session = request.getSession();
+        Long key = (Long) session.getAttribute(SessionConst.DB_KEY);
+        treeRepository.update(tree,key);
+
+        log.info("editTree = {} foreignKey = {}", tree.getTitle(), tree.getStudentKey());
+        return treeRepository.findById(key).get();
+    }
+
 }

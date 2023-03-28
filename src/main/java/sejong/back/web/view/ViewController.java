@@ -5,12 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import sejong.back.domain.Tree.Tree;
 import sejong.back.domain.login.LoginService;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.member.MemberType;
 import sejong.back.domain.repository.MemberRepository;
+import sejong.back.domain.repository.TreeRepository;
 import sejong.back.web.SessionConst;
 import sejong.back.web.login.LoginForm;
 import sejong.back.web.member.AddMemberForm;
@@ -19,10 +19,8 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Controller
 @Slf4j
@@ -37,7 +35,7 @@ public class ViewController {
 
     private final MemberRepository memberRepository;
     private final LoginService loginService;
-
+    private final TreeRepository treeRepository;
 
     @ModelAttribute("memberTypes")//모델에 통쨰로보여줘야 라디오 버튼이든 뭐든 내용물을 통쨰로 출력할 수 있다.
     public MemberType[] memberTypes() {
@@ -64,15 +62,18 @@ public class ViewController {
     //forest 페이지
     @GetMapping("/forest")
     public String members(HttpServletRequest request, Model model) {//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
-        List<Member> members = memberRepository.findAll();
-        log.info("members={}", members.stream().findFirst());
-
+//        List<Member> members = memberRepository.findAll();
+//        log.info("members={}", members.stream().findFirst());
+//
         HttpSession session = request.getSession(false);//세션을 가져와서 자기 member key를 뽑아야한다.
         long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);//다운 캐스팅.
         Member member = memberRepository.findByKey(myKey);
-        model.addAttribute("members", members);
+//        model.addAttribute("members", members);
         model.addAttribute("member", member);
-        return "members/members";
+        List<Tree> treeList = treeRepository.findAll();
+        model.addAttribute("Trees", treeList);
+        log.info("Trees = {}",treeList);
+        return "tree/forest";
     }
 
     @GetMapping("/forest/{memberKey}")//멤버 상세 페이지이다.
@@ -117,20 +118,31 @@ public class ViewController {
 
     @GetMapping("/forest/mytree/add")
     public String makeTree(Model model){
+        log.info("tree add");
         model.addAttribute("Tree", new Tree());
         return "tree/makeTree";
     }
 
-    @ResponseBody
     @GetMapping("/forest/mytree/edit")
-    public String editTree(){
-        return "Edit!";
+    public String editTree(Model model, HttpServletRequest request){
+        log.info("tree edit");
+
+        HttpSession session = request.getSession(false);//세션을 가져와서 자기 member key를 뽑아야한다.
+        long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);//다운 캐스팅.
+        Stream<Tree> treeList = treeRepository.findByStudentId(myKey);
+
+        Optional<Tree> firstTree = treeList.findFirst();//일단 트리 1개
+        if (firstTree.isEmpty()) {
+            return "redirect:/forest/mytree/add";
+        }
+        model.addAttribute("Tree", firstTree.get());
+        return "tree/editTree";
     }
 
     @PostConstruct
     public void setting() throws IOException {
         //각자 학번 비번으로 적용바람
-//        Member validateMember = loginService.validateSejong("학번", "비번");
-//        memberRepository.save(validateMember);//db에 저장.
+        Member validateMember = loginService.validateSejong("18011881", "19991201");
+        memberRepository.save(validateMember);//db에 저장.
     }
 }

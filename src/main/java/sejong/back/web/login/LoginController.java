@@ -26,8 +26,11 @@ public class LoginController {
     private final LoginService loginService;
 
 
-
-
+    /**
+     * 로그인 정보를 열람한 후
+     * 성공 시  -> 세션값 전송
+     * 실패 시 -> 예외 처리
+     */
     @PostMapping("/login")
     public Response<?> login(@ModelAttribute LoginForm form,
                              @RequestParam(defaultValue = "/") String redirectURI,
@@ -42,12 +45,11 @@ public class LoginController {
 
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
-        session.setAttribute(SessionConst.DB_KEY,loginMember.getKey());
+        session.setAttribute(SessionConst.DB_KEY,loginMember.getKey()); //세션값 DB Key 저장
         /**
-         * TODO
          * 세션값만 넘겨주기
          */
-        return new Response<>("success", "로그인 성공", loginMember);
+        return new Response<>("success", "로그인 성공", session.getId());
     }
 
     @PostMapping("/logout")
