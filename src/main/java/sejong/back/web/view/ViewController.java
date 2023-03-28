@@ -129,7 +129,8 @@ public class ViewController {
 
     @PostConstruct
     public void setting() throws IOException {
-        Member validateMember = loginService.validateSejong("18011881", "19991201");
-        memberRepository.save(validateMember);//db에 저장.
+        //각자 학번 비번으로 적용바람
+//        Member validateMember = loginService.validateSejong("학번", "비번");
+//        memberRepository.save(validateMember);//db에 저장.
     }
 }
