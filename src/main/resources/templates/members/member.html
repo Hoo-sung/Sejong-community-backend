@@ -53,13 +53,13 @@
         <div class="col">
             <button class="w-100 btn btn-primary btn-lg"
                     onclick="location.href='editForm.html'"
-                    th:onclick="|location.href='@{/members/{memberKey}/edit(memberKey=${member.key})}'|"
+                    th:onclick="|location.href='@{/members/{memberKey}(memberKey=${member.key})}'|"
                     type="button" th:text="#{button.send}">쪽지 보내기</button>
         </div>
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
                     onclick="location.href='members.html'"
-                    th:onclick="|location.href='@{/members}'|"
+                    th:onclick="|location.href='@{/forest}'|"
                     type="button" th:text="#{button.cancel}">목록으로</button>
         </div>
     </div>

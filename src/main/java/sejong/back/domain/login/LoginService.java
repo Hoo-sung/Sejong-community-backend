@@ -17,6 +17,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Member login : Repository랑 비교  후로그인
+ * validateSejong : 세종 대양 검증 API
+ *
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -38,10 +43,8 @@ public class LoginService {
         }
     }*/
 
-
     /**
      * 파리미터로 받은 학번, 비밀번호로 세종대 사이트에 로그인해 필요한 정보를 가져옴
-     *
      * 학번, 비밀번호가 틀려도 메소드가 끝까지 실행됨
      */
     public Member validateSejong(String studentId, String password) throws IOException {
