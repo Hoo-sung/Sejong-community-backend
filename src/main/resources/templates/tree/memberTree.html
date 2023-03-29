@@ -1,0 +1,82 @@
+
+
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <link th:href="@{/css/bootstrap.min.css}"
+        href="../css/bootstrap.min.css" rel="stylesheet">
+  <style>
+        .container {
+            max-width: 560px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="py-5 text-center">
+    <h2 th:text="#{page.member}">멤버 상세</h2>
+  </div>
+
+  <div>
+    <label for="name" th:text="#{label.member.name}">멤버 이름</label>
+    <input type="text" id="name" name="name" class="form-control" value="상품A" th:value="${member.name}" readonly>
+  </div>
+  <div>
+    <label for="department" th:text="#{label.member.department}">멤버 학과</label>
+    <input type="text" id="department" name="department" class="form-control" value="10000" th:value="${member.department}" readonly>
+  </div>
+  <div>
+    <label for="studentId" th:text="#{label.member.studentId}">멤버 학번</label>
+    <input type="text" id="studentId" name="studentId" class="form-control" value="10" th:value="${member.studentId}" readonly>
+  </div>
+
+  <div>
+    <label for="title">제목</label>
+    <input type="text" id="title" name="title" th:value="${Tree.title}" class="form-control" placeholder="제목을 입력하세요" readonly>
+  </div>
+  <div>
+    <label for="description">설명</label>
+    <input type="text" id="description" th:value="${Tree.description}" name="description" class="form-control"
+           placeholder="설명을 입력하세요" readonly>
+  </div>
+  <div>태그 등록</div>
+  <div th:each="tag : ${tags}" class="form-check form-check-inline">
+    <input type="checkbox" th:field="${Tree.tags}" th:value="${tag.key}"  class="form-check-input" >
+    <label th:for="${#ids.prev('tags')}" th:text="${tag.value}" class="form-check-label">서울</label>
+  </div>
+  <div>스티커 </div>
+  <div>
+    <label for="title">스티커 제목</label>
+    <input type="text" id="stickerWriter" name="stickerWriter" th:value="${sticker.studentId}" class="form-control" placeholder="제목을 입력하세요" readonly>
+  </div>
+  <div>
+    <label for="description">스티커 설명</label>
+    <input type="text" id="stickerMessage" th:value="${sticker.message}"class="form-control"
+           placeholder="설명을 입력하세요" readonly>
+  </div>
+
+  <hr class="my-4">
+
+  <div class="row">
+    <div class="col">
+      <form th:action method="post">
+        <input type="hidden" id="message" name="message" value ="참여 원해요!">
+      <button class="w-100 btn btn-primary btn-lg"
+              type="submit" th:text="#{button.sticker}">스티커 보내기</button>
+      </form>
+
+    </div>
+    <div class="col">
+      <button class="w-100 btn btn-secondary btn-lg"
+              onclick="location.href='members.html'"
+              th:onclick="|location.href='@{/forest}'|"
+              type="button" th:text="#{button.cancel}">목록으로</button>
+    </div>
+  </div>
+
+</div> <!-- /container -->
+</body>
+</html>

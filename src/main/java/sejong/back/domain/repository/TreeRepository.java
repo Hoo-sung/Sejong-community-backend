@@ -15,6 +15,6 @@ public interface TreeRepository {
 
     Optional<Tree> findById(Long id);
 
-    Stream<Tree> findByStudentId(Long id);
+    Stream<Tree> findByStudentKey(Long id);
 
 }

@@ -2,6 +2,7 @@ package sejong.back.domain.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import sejong.back.domain.member.Member;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-@Component
+@Repository
 public class MemoryMemberRepository implements MemberRepository {
 
     private static final Map<Long, Member> store = new ConcurrentHashMap<>();//long은 Key 이다.

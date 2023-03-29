@@ -28,7 +28,7 @@
     </div>
     <!-- multi checkbox -->
     <div>
-      <div>등록 지역</div>
+      <div>태그 등록</div>
       <div th:each="tag : ${tags}" class="form-check form-check-inline">
         <input type="checkbox" th:field="*{tags}" th:value="${tag.key}" class="form-check-input">
         <label th:for="${#ids.prev('tags')}" th:text="${tag.value}" class="form-check-label">서울</label>

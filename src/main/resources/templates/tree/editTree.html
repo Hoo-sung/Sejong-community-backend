@@ -19,16 +19,16 @@
   <form action="item.html" th:action th:object="${Tree}" method="post">
     <div>
       <label for="title">제목</label>
-      <input type="text" id="title" name="title" class="form-control" placeholder="제목을 입력하세요">
+      <input type="text" id="title" name="title" th:value="*{title}" class="form-control" placeholder="제목을 입력하세요">
     </div>
     <div>
       <label for="description">설명</label>
-      <input type="text" id="description" name="description" class="form-control"
+      <input type="text" id="description" th:value="*{description}" name="description" class="form-control"
              placeholder="설명을 입력하세요">
     </div>
     <!-- multi checkbox -->
     <div>
-      <div>등록 지역</div>
+      <div>태그 등록</div>
       <div th:each="tag : ${tags}" class="form-check form-check-inline">
         <input type="checkbox" th:field="*{tags}" th:value="${tag.key}" class="form-check-input">
         <label th:for="${#ids.prev('tags')}" th:text="${tag.value}" class="form-check-label">서울</label>

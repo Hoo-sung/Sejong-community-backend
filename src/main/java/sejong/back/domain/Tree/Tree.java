@@ -3,6 +3,7 @@ package sejong.back.domain.Tree;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import sejong.back.domain.Sticker.Sticker;
 
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ public class Tree {
     private String title;
     private String description;
     private ArrayList<String> tags;
-    private ArrayList<String> sticker; //sticker 객체 필요
+    private ArrayList<Sticker> sticker; //sticker 객체 필요
 
 
     public Tree(Long studentKey, String title, String description, ArrayList<String> tags) {

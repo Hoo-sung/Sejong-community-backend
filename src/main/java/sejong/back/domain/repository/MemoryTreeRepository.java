@@ -1,6 +1,7 @@
 package sejong.back.domain.repository;
 
 import org.springframework.stereotype.Repository;
+import sejong.back.domain.Sticker.Sticker;
 import sejong.back.domain.Tree.Tree;
 
 import java.util.ArrayList;
@@ -19,15 +20,16 @@ public class MemoryTreeRepository implements TreeRepository {
     @Override
     public Tree save(Tree tree) {
         tree.setId(++sequence);
-        tree.setSticker(new ArrayList<>());
+        tree.setSticker(new ArrayList<Sticker>());
         store.put(tree.getId(), tree);
         return tree;
     }
 
     @Override
     public void update(Tree tree, Long key) {
-        Optional<Tree> findTree = findById(key);
-        findTree.get().setStudentKey(tree.getStudentKey());
+        Stream<Tree> findTreeList = findByStudentKey(key);
+        Optional<Tree> findTree = findTreeList.findFirst();
+
         findTree.get().setTitle(tree.getTitle());
         findTree.get().setTags(tree.getTags());
         findTree.get().setSticker(tree.getSticker());
@@ -35,7 +37,7 @@ public class MemoryTreeRepository implements TreeRepository {
     }
 
     @Override
-    public Stream<Tree> findByStudentId(Long id) {
+    public Stream<Tree> findByStudentKey(Long id) {
         return  findAll().stream().filter(m -> m.getStudentKey().equals(id));
     }
 

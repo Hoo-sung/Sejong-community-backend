@@ -5,11 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import sejong.back.domain.Sticker.Sticker;
 import sejong.back.domain.Tree.Tree;
 import sejong.back.domain.login.LoginService;
 import sejong.back.domain.member.Member;
+import sejong.back.domain.member.MemberGrade;
 import sejong.back.domain.member.MemberType;
 import sejong.back.domain.repository.MemberRepository;
+import sejong.back.domain.repository.StickerRepository;
 import sejong.back.domain.repository.TreeRepository;
 import sejong.back.web.SessionConst;
 import sejong.back.web.login.LoginForm;
@@ -36,6 +39,7 @@ public class ViewController {
     private final MemberRepository memberRepository;
     private final LoginService loginService;
     private final TreeRepository treeRepository;
+    private final StickerRepository stickerRepository;
 
     @ModelAttribute("memberTypes")//모델에 통쨰로보여줘야 라디오 버튼이든 뭐든 내용물을 통쨰로 출력할 수 있다.
     public MemberType[] memberTypes() {
@@ -57,6 +61,11 @@ public class ViewController {
     @GetMapping("/login")//이 url로 Getmapping이 오면 폼을 반환해준다.
     public String loginForm(@ModelAttribute("loginForm") LoginForm form) {
         return "login/loginForm";
+    }
+
+    @GetMapping("/members/add")//회원 가입. radio 버튼은 하나를 반드시 가지고 있어야 하므로 여기서 type을 만들어 줘야 한다.
+    public String addForm(@ModelAttribute("addMemberForm") AddMemberForm addMemberForm) {
+        return "members/addMemberForm";
     }
 
     //forest 페이지
@@ -93,14 +102,19 @@ public class ViewController {
 
         log.info("To other page");
         Member member = memberRepository.findByKey(memberKey);
+        Tree tree = treeRepository.findByStudentKey(member.getKey()).findFirst().get();
         model.addAttribute("member", member);
-        return "members/member"; //그 멤버의 페이지를 보여줘야 한다.
+        model.addAttribute("Tree", tree);
+        Optional<Sticker> sticker = stickerRepository.findByIdTreeId(tree.getId()).findFirst();
+        if(sticker.isEmpty())
+            model.addAttribute("sticker", new Sticker());
+        else
+            model.addAttribute("sticker", sticker.get());
+
+
+        return "tree/memberTree"; //그 멤버의 페이지를 보여줘야 한다.
     }
 
-    @GetMapping("/members/add")//회원 가입. radio 버튼은 하나를 반드시 가지고 있어야 하므로 여기서 type을 만들어 줘야 한다.
-    public String addForm(@ModelAttribute("addMemberForm") AddMemberForm addMemberForm) {
-        return "members/addMemberForm";
-    }
 
     /**
      * mytree로 redirect 해줘서 여기로 올 예정
@@ -123,13 +137,14 @@ public class ViewController {
         return "tree/makeTree";
     }
 
+
     @GetMapping("/forest/mytree/edit")
     public String editTree(Model model, HttpServletRequest request){
         log.info("tree edit");
 
         HttpSession session = request.getSession(false);//세션을 가져와서 자기 member key를 뽑아야한다.
         long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);//다운 캐스팅.
-        Stream<Tree> treeList = treeRepository.findByStudentId(myKey);
+        Stream<Tree> treeList = treeRepository.findByStudentKey(myKey);
 
         Optional<Tree> firstTree = treeList.findFirst();//일단 트리 1개
         if (firstTree.isEmpty()) {
@@ -139,10 +154,19 @@ public class ViewController {
         return "tree/editTree";
     }
 
+
     @PostConstruct
     public void setting() throws IOException {
         //각자 학번 비번으로 적용바람
         Member validateMember = loginService.validateSejong("18011881", "19991201");
         memberRepository.save(validateMember);//db에 저장.
+
+        Member a1 = new Member("김이박", "전자정보통신공학과", "19011901", "abcd!!", "3", "재학", "ff");
+        memberRepository.save(a1);
+
+        Tree a1Tree = new Tree(2L, "백앤드 해커톤 나가실 분", "진또배기들 원해요", new ArrayList<>(Arrays.asList("contest")));
+        log.info("save a1 = {}", a1.getKey());
+        treeRepository.save(a1Tree);
+        log.info("make a1Tree = {}", a1Tree.getId());
     }
 }

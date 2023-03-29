@@ -40,8 +40,8 @@ public class TreeController {
         Long key = (Long) session.getAttribute(SessionConst.DB_KEY);
         treeRepository.update(tree,key);
 
-        log.info("editTree = {} foreignKey = {}", tree.getTitle(), tree.getStudentKey());
-        return treeRepository.findById(key).get();
+        log.info("editTree = {}", tree.getTitle());
+        return treeRepository.findByStudentKey(key).findFirst().get();
     }
 
 }
