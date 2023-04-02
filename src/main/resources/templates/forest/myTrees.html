@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container" style="max-width: 600px">
+    <div class="py-5 text-center">
+        <h2 th:text="#{page.myPages}">게시글 목록</h2>
+    </div>
+
+    <div class="row">
+
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" type="button"
+                    th:onclick="|location.href='@{/}'|"
+                    th:text="#{page.main}">
+            </button>
+        </div>
+
+
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" type="button"
+                    th:onclick="|location.href='@{/forest}'|"
+                    th:text="#{page.forest}">
+            </button>
+        </div>
+
+        <div class="col">
+            <button class="btn btn-primary float-end"
+                    onclick="location.href='addForm.html'"
+                    th:onclick="|location.href='@{/forest/add}'|"
+                    type="button" th:text="#{page.addTree}">게시글 쓰기</button>
+        </div>
+    </div>
+
+    <hr class="my-4">
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th th:text="#{label.tree.key}">Key</th>
+                <th th:text="#{label.tree.memberKey}">이름</th>
+                <th th:text="#{label.tree.title}">과</th>
+                <th th:text="#{label.tree.description}">학번</th>
+                <th th:text="#{label.tree.tags}">재학/휴학 상태</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="tree : ${myTrees}">
+                <td th:text="${tree.treeKey}">멤버 key</a></td>
+                <td th:text="${tree.memberKey}">멤버 key</td>
+                <td><a href="tree.html" th:href="@{|/forest/${tree.treeKey}/edit|}" th:text="${tree.title}">학생 이름</a></td>
+                <td th:text="${tree.description}">10000</td>
+                <td th:text="${tree.tags}">10</td>
+            </tr>
+            </tbody>
+
+
+
+        </table>
+    </div>
+
+</div> <!-- /container -->
+
+</body>
+</html>
