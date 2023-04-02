@@ -47,22 +47,10 @@
         <input type="text" id="status" name="status" class="form-control" value="10" th:value="${member.status}" readonly>
     </div>
 
-
     <div>
-        <label for="memberType" th:text="#{label.member.memberType}">신입/휴학/복학 여부</label>
-        <input type="text" id="memberType" name="memberType" class="form-control" value="10" th:value="${member.memberType}" readonly>
+        <label for="status" th:text="#{label.member.nickName}">맴버 닉네임</label>
+        <input type="text" id="nickName" name="status" class="form-control" value="10" th:value="${member.nickName}" readonly>
     </div>
-
-    <div>
-        <div>태그들</div>
-        <div th:each="tag : ${tagGroups}" class="form-check form-check-inline">
-            <input type="checkbox" th:field="${member.tags}" th:value="${tag}"
-                   class="form-check-input">
-            <label th:for="${#ids.prev('tags')}"
-                   th:text="${tag}" class="form-check-label">서울</label>
-        </div>
-    </div>
-
 
 
     <hr class="my-4">

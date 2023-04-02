@@ -8,17 +8,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.back.domain.member.AddMemberForm;
-import sejong.back.domain.login.LoginService;
+import sejong.back.domain.service.LoginService;
 import sejong.back.domain.member.Member;
-import sejong.back.domain.member.MemberType;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.repository.MemberRepository;
+import sejong.back.domain.service.MemberService;
 import sejong.back.web.SessionConst;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -27,34 +26,26 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberController {
 
-    private final MemberRepository memberRepository;
+    private final MemberService MemberService;
 
     private final LoginService loginService;
 
 
-    @ModelAttribute("memberTypes")//모델에 통쨰로보여줘야 라디오 버튼이든 뭐든 내용물을 통쨰로 출력할 수 있다.
-    public MemberType[] memberTypes(){
-        return MemberType.values();//전체 다 가져오기.
-    }
+//    @ModelAttribute("memberTypes")//모델에 통쨰로보여줘야 라디오 버튼이든 뭐든 내용물을 통쨰로 출력할 수 있다.
+//    public MemberType[] memberTypes(){
+//        return MemberType.values();//전체 다 가져오기.
+//    }
 
-    @ModelAttribute("tagGroups")
-    public List<String> tags(){
-        List<String> tags = new ArrayList<>();
-        tags.add("#스터디");
-        tags.add("#팀플");
-        tags.add("#친목");
 
-        return tags;
-    }
 
     @GetMapping
     public String members(HttpServletRequest request,Model model) {//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
-        List<Member> members = memberRepository.findAll();
+        List<Member> members = MemberService.findAll();
         log.info("members={}", members);
 
         HttpSession session = request.getSession(false);//세션을 가져와서 자기 member key를 뽑아야한다.
         long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);//다운 캐스팅.
-        Member member = memberRepository.findByKey(myKey);
+        Member member = MemberService.findByKey(myKey);
         model.addAttribute("members", members);
         model.addAttribute("member",member);
         return "members/members";
@@ -62,7 +53,7 @@ public class MemberController {
 
     @GetMapping("/{memberKey}")//멤버 상세 페이지이다.
     public String member(@PathVariable long memberKey, Model model) {
-        Member member = memberRepository.findByKey(memberKey);
+        Member member = MemberService.findByKey(memberKey);
         model.addAttribute("member", member);
         return "members/member"; //그 멤버의 페이지를 보여줘야 한다.
     }
@@ -94,7 +85,7 @@ public class MemberController {
         }
 
         //학사 시스템 회원 조회 성공.
-        Member searchmember=memberRepository.findByLoginId(validatemember.getStudentId());//db에 회원 조회.
+        Member searchmember=MemberService.findByLoginId(validatemember.getStudentId());//db에 회원 조회.
 
         if(searchmember==null){//db에 없으면, 회원 가입 절차 정상적으로 진행해야 한다.
 
@@ -102,11 +93,13 @@ public class MemberController {
              * radio 값 하나는 반드시 선택해야 해서 주어야 한다.
              * 태그들 같은 경우는 이런 방식 안해도 될듯?
              */
-            validatemember.setMemberType(addMemberForm.getMemberType());//post 폼에서 가져온 값 바탕으로 저장.
-            validatemember.setTags(addMemberForm.getTags());//태그도 없데이트 해야함.
+//            validatemember.setMemberType(addMemberForm.getMemberType());//post 폼에서 가져온 값 바탕으로 저장.
+//            validatemember.setTags(addMemberForm.getTags());//태그도 없데이트 해야함.
 
-            memberRepository.save(validatemember);//db에 저장.
-            log.info("savedMember={}",memberRepository.findAll());
+
+            validatemember.setNickName(addMemberForm.getNickName());//닉네임까지 멤버 db에 저장한다.
+            MemberService.save(validatemember);//db에 저장.
+            log.info("savedMember={}",MemberService.findAll());
             return "redirect:/login";
         }
         else {
@@ -123,20 +116,20 @@ public class MemberController {
         Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);
 
         if(myKey==memberKey){//자기가 자신의 edit url을 요청한 경우.
-            Member member = memberRepository.findByKey(memberKey);
+            Member member = MemberService.findByKey(memberKey);
             model.addAttribute("member", member);
             return "members/editForm";
         }
 
         else{//남의 페이지 시도한 경우. 자기 멤버 상세를 보여주도록 하자.
-            Member member = memberRepository.findByKey(myKey);//
+            Member member = MemberService.findByKey(myKey);//
             model.addAttribute("member", member);
             return "redirect:/";
         }
 
     }
 
-    @PostMapping("/{memberKey}/edit")
+    @PostMapping("/{memberKey}/edit")//여기를 공개 정보 수정이라고 하자.
     public String edit(@PathVariable Long memberKey, @Validated @ModelAttribute("updateMemberForm") UpdateMemberForm form, BindingResult bindingResult) {
 
 
@@ -145,14 +138,14 @@ public class MemberController {
             return "members/editForm";
         }
 
-        Member updateMemberParam = memberRepository.findByKey(memberKey);
-        updateMemberParam.setMemberType(form.getMemberType());
-        updateMemberParam.setTags(form.getTags());
+        Member updateMemberParam = MemberService.findByKey(memberKey);
+//        updateMemberParam.setMemberType(form.getMemberType());
+//        updateMemberParam.setTags(form.getTags());
 
         /**
          * Todo 객체를 찾아서 똒같은걸 하나 new해서 updatemember을 만들어서 memory.update시키냐, 아님 간단하게 하냐 고민.
          */
-        memberRepository.update(memberKey, updateMemberParam);
+        MemberService.update(memberKey, form);
 
         return "redirect:/members/{memberKey}";
     }

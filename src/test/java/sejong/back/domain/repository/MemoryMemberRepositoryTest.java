@@ -1,13 +1,6 @@
 package sejong.back.domain.repository;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import sejong.back.domain.member.Member;
-
-import org.assertj.core.api.*;
-
-import java.util.List;
+import sejong.back.domain.repository.memory.memberRepository.MemoryMemberRepository;
 
 
 class MemoryMemberRepositoryTest {

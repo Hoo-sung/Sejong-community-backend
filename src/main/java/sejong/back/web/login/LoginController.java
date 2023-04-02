@@ -2,37 +2,28 @@ package sejong.back.web.login;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.back.domain.login.LoginForm;
-import sejong.back.domain.login.LoginService;
+import sejong.back.domain.service.LoginService;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.repository.MemberRepository;
-import sejong.back.domain.repository.MemoryMemberRepository;
+import sejong.back.domain.service.MemberService;
 import sejong.back.web.SessionConst;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class LoginController {//세종대 포탈 api를 이용해야 한다.
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     private final LoginService loginService;
     @GetMapping("/login")//이 url로 Getmapping이 오면 폼을 반환해준다.
@@ -49,7 +40,7 @@ public class LoginController {//세종대 포탈 api를 이용해야 한다.
             return "login/loginForm";
         }
 
-        Member member=memberRepository.findByLoginId(form.getStudentId());
+        Member member=memberService.findByLoginId(form.getStudentId());
 
         Member validatemember = loginService.validateSejong(form.getStudentId(), form.getPassword());
 
@@ -59,7 +50,7 @@ public class LoginController {//세종대 포탈 api를 이용해야 한다.
         }
         if (validatemember!=null&&member==null) {//DB에 저장이 안되어 있으면 회원가입을 먼저 해야한다.
 
-                log.info("18011825 저장되어야 한다={}",memberRepository.findAll());
+                log.info("18011825 저장되어야 한다={}",memberService.findAll());
                 bindingResult.reject("loginFail","회원 가입을 하셔야 합니다.");
                 return "redirect:/members/add";
             }

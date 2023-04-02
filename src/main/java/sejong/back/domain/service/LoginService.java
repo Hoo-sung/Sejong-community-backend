@@ -1,4 +1,4 @@
-package sejong.back.domain.login;
+package sejong.back.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Connection;
@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
 import sejong.back.domain.member.Member;
 import sejong.back.domain.member.MemberGrade;
 import sejong.back.domain.repository.MemberRepository;
@@ -33,10 +34,10 @@ public class LoginService {
 //                .orElse(null);
 //    }
 
-    public Member validateSejong(String studentId, String password) throws IOException {
+    public Member validateSejong(Long studentId, String password) throws IOException {
 
         Map<String, String> data = new HashMap<>();
-        data.put("userId", studentId);
+        data.put("userId", Long.toString(studentId));
         data.put("password", password);
 
         // 로그인 페이지 접속
@@ -112,9 +113,12 @@ public class LoginService {
             String unUsing = info[6];
             String passFlag = info[7];
 
-            if (!studentId.equals(studentIdk)) {
-                return null;
-            }
+//            if (!studentId.equals(studentIdk)) {
+//                return null;
+//            }
+
+              if(!studentId.toString().equals(studentIdk))
+                  return null;
 
             Member member=new Member(name, department, studentId, grade, status, passFlag);
             member.setGrade(MemberGrade.BRONZE);

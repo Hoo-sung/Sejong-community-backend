@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+        .field-error {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2 th:text="#{page.editTree}">게시글 편집</h2>
+    </div>
+
+    <form action="editForm.html" th:action th:object="${tree}" method="post">
+
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}">글로벌 오류 메시지</p>
+        </div>
+
+        <div>
+            <label for="name" th:text="#{label.tree.title}">게시글 제목</label>
+            <input type="text" id="name" th:field="*{title}" class="form-control">
+        </div>
+        <div>
+            <label for="description" th:text="#{label.tree.description}">학번</label>
+            <input type="text" id="description" th:field="*{description}"
+                   th:errorclass="field-error" class="form-control">
+        </div>
+
+        <div>
+            <div>태그들</div>
+            <div th:each="tag : ${tagGroups}" class="form-check form-check-inline">
+                <input type="checkbox" th:field="*{tags}" th:value="${tag}"
+                       class="form-check-input">
+                <label th:for="${#ids.prev('tags')}"
+                       th:text="${tag}" class="form-check-label">서울</label>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row">
+            <div class="col">
+                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.save}">저장</button>
+            </div>
+            <div class="col">
+                <button class="w-100 btn btn-secondary btn-lg"
+                        onclick="location.href='item.html'"
+                        th:onclick="|location.href='@{/forest/{treeKey}(treeKey=${tree.treeKey})}'|"
+                        type="button" th:text="#{button.cancel}">취소</button>
+            </div>
+        </div>
+
+    </form>
+
+</div> <!-- /container -->
+</body>
+</html>

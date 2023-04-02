@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.repository.MemberRepository;
+import sejong.back.domain.service.MemberService;
 import sejong.back.web.SessionConst;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,8 +21,7 @@ import javax.servlet.http.HttpSession;
 public class HomeController {
 
 
-
-    private final MemberRepository repository;
+    private final MemberService memberService;
     @GetMapping("/")
     public String LoginHome(HttpServletRequest request, Model model) {
 
@@ -41,7 +41,7 @@ public class HomeController {
             return "home";
         }
         //세션이 유지되면 로그인 화면으로 이동.
-        Member loginMember = repository.findByKey(dbKey);
+        Member loginMember = memberService.findByKey(dbKey);
         model.addAttribute("member", loginMember);
         return "loginHome";
     }
