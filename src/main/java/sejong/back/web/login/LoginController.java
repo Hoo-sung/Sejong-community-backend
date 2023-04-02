@@ -9,10 +9,12 @@ import sejong.back.domain.login.LoginService;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.repository.MemberRepository;
 import sejong.back.exception.WrongLoginException;
+import sejong.back.exception.WrongLogoutException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
@@ -25,7 +27,7 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public ResponseResult<?> login(@RequestBody LoginForm form,
+    public ResponseResult<?> login(@ModelAttribute LoginForm form,
                                    @RequestParam(defaultValue = "/") String redirectURI,
                                    HttpServletRequest request, Model model) throws IOException {
 
@@ -47,13 +49,13 @@ public class LoginController {
     }
 
     @PostMapping("/logout")
-    public ResponseResult<?> logout(HttpServletRequest request) {
+    public ResponseResult<?> logout(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
+            return new ResponseResult<>(HttpStatus.OK, "로그아웃 성공");
         }
 
-        //TODO 로그인하지 않은 사용자가 로그아웃 요청했을 경우 예외처리 구현
-        return new ResponseResult<>(HttpStatus.OK, "로그아웃 성공");
+        throw new WrongLogoutException("로그인하지 않은 사용자가 로그아웃 요청");
     }
 }
