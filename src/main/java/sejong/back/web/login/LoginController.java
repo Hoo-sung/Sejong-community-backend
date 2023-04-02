@@ -45,7 +45,7 @@ public class LoginController {
 
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
-        return new ResponseResult<>(HttpStatus.OK, "로그인 성공", loginMember);
+        return new ResponseResult<>("로그인 성공", loginMember);
     }
 
     @PostMapping("/logout")
@@ -53,7 +53,7 @@ public class LoginController {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
-            return new ResponseResult<>(HttpStatus.OK, "로그아웃 성공");
+            return new ResponseResult<>("로그아웃 성공");
         }
 
         throw new WrongLogoutException("로그인하지 않은 사용자가 로그아웃 요청");

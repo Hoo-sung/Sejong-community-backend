@@ -15,18 +15,20 @@ import sejong.back.web.member.MemberController;
 public class MemberControllerExceptionAdvice {
 
     @ExceptionHandler
-    public ResponseEntity<ResponseResult> wrongSignUp(WrongSignUpException e) {
-        log.error("[exceptionHandle] Wrong Sign Up", e);
-        ResponseResult<Object> responseResult = new ResponseResult<>(HttpStatus.BAD_REQUEST, e.getMessage());
-        return new ResponseEntity(responseResult, HttpStatus.valueOf(responseResult.getStatusCode()));
-    }
+    public ResponseEntity<ResponseResult<?>> memberExHandler(Exception e) {
+        log.error("[memberExHandler] ex", e);
+        HttpStatus status;
 
-    @ExceptionHandler
-    public ResponseEntity<ResponseResult> doubleSignUp(DoubleSignUpException e) {
-        log.error("[exceptionHandle] Double Sign Up", e);
-        ResponseResult<Object> responseResult = new ResponseResult<>(HttpStatus.BAD_REQUEST, e.getMessage());
-        return new ResponseEntity(responseResult, HttpStatus.valueOf(responseResult.getStatusCode()));
-    }
+        if (e instanceof WrongSignUpException) {
+            status = HttpStatus.BAD_REQUEST;
+        } else if (e instanceof DoubleSignUpException) {
+            status = HttpStatus.BAD_REQUEST;
+        } else {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
 
+        ResponseResult<Object> responseResult = new ResponseResult<>(e.getMessage());
+        return new ResponseEntity(responseResult, status);
+    }
 
 }

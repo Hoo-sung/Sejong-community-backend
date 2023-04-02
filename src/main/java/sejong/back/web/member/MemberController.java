@@ -33,10 +33,6 @@ public class MemberController {
      *     그래서 AddMemberForm의 name을 nickname으로 바꾸고, Member에 nickname 필드 추가
      *
      * @TODO Gradle을 통해서 실행하면 이상하게 AddMemberForm을 인식하지 못함
-     *
-     * @TODO 리턴 타입을 ResponseResult<?>로 하지 말고 ResponseEntity<ResponseResult<?>> 같은 걸로 하면
-     *      LoginControllerExceptionAdvice에 적어놓은 문제를 해결할 수 있지 않을까? ResponseEntity애 직접 HTTP 상태 코드를 집어넣을 수 있으니까
-     *      (API 예외 처리 1강 참고)
      */
     @PostMapping("/add")
     public ResponseResult<?> save(@Validated @ModelAttribute AddMemberForm addMemberForm, BindingResult bindingResult) throws IOException {
@@ -58,7 +54,7 @@ public class MemberController {
             validateMember.setNickname(addMemberForm.getNickname());
             memberRepository.save(validateMember);//db에 저장.
             log.info("savedMember={}", memberRepository.findAll());
-            return new ResponseResult<>(HttpStatus.OK, "회원가입 성공");
+            return new ResponseResult<>("회원가입 성공");
         } else {
             log.info("회원 가입된 사용자입니다={} {}", searchMember.getStudentId(), searchMember.getName());
             throw new DoubleSignUpException("이미 회원가입된 사용자");

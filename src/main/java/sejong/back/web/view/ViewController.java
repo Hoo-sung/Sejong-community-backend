@@ -31,8 +31,7 @@ import java.util.Map;
 /**
  * 일단 아직은 Front 없으니 대략적인 뷰들 여기에 나둠
  *
- * TODO
- * Validation 아직 적용 X
+ * TODO Validation 아직 적용 X
  */
 public class ViewController {
 

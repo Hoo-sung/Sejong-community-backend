@@ -15,18 +15,20 @@ import sejong.back.web.login.LoginController;
 public class LoginControllerExceptionAdvice {
 
     @ExceptionHandler
-    public ResponseEntity<ResponseResult> wrongLogin(WrongLoginException e) {
-        log.error("[exceptionHandle] Wrong Login", e);
-        ResponseResult<Object> responseResult = new ResponseResult<>(HttpStatus.BAD_REQUEST, e.getMessage());
-        return new ResponseEntity(responseResult, HttpStatus.valueOf(responseResult.getStatusCode()));
-    }
+    public ResponseEntity<ResponseResult<?>> loginExHandler(Exception e) {
+        log.error("[loginExHandler] ex", e);
+        HttpStatus status;
 
-    @ExceptionHandler
-    public ResponseEntity<ResponseResult> wrongLogout(WrongLogoutException e) {
-        log.error("[exceptionHandle] Wrong Logout", e);
-        ResponseResult<Object> responseResult = new ResponseResult<>(HttpStatus.FORBIDDEN, e.getMessage());
-        return new ResponseEntity(responseResult, HttpStatus.valueOf(responseResult.getStatusCode()));
-    }
+        if (e instanceof WrongLoginException) {
+            status = HttpStatus.BAD_REQUEST;
+        } else if (e instanceof WrongLogoutException) {
+            status = HttpStatus.FORBIDDEN;
+        } else {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
 
+        ResponseResult<Object> responseResult = new ResponseResult<>(e.getMessage());
+        return new ResponseEntity(responseResult, status);
+    }
 
 }
