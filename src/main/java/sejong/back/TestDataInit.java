@@ -31,7 +31,7 @@ public class TestDataInit {
 
         Member member1 = null;
         try {
-            member1 = loginService.validateSejong(Long.valueOf(a), "eodnjs1405-");
+            member1 = loginService.validateSejong(Long.valueOf(a), "님꺼넣으셈");
             Member member2 = loginService.validateSejong(Long.valueOf(b) ,"fa484869");
             member1.setNickName("하하하");
             member2.setNickName("호호호");
