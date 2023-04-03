@@ -12,7 +12,10 @@ import sejong.back.domain.member.AddMemberForm;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.service.LoginService;
+import sejong.back.domain.service.StickerService;
 import sejong.back.domain.service.TreeService;
+import sejong.back.domain.sticker.AddStickerForm;
+import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.tree.AddTreeForm;
 import sejong.back.domain.tree.Tree;
 import sejong.back.domain.tree.UpdateTreeForm;
@@ -34,6 +37,8 @@ public class TreeController {
     private final LoginService loginService;
     private final TreeService treeService;
 
+    private final StickerService stickerService;
+
 
     @ModelAttribute("tagGroups")
     public List<String> tags(){
@@ -51,19 +56,25 @@ public class TreeController {
 
         HttpSession session = request.getSession(false);
         Long memberKey = (Long) session.getAttribute(SessionConst.DB_KEY);
-        List<Tree> trees = treeService.findAllExcludeMe(memberKey);
+        List<Tree> trees = treeService.findAll();
         log.info("forest={}", trees);
 
         model.addAttribute("forest", trees);
         return "forest/forest";//게시글 전체 보여주는 페이지.
     }
 
-    @GetMapping("/{treeKey}")//트리 아이디로 게시글 검색.
-    public String searchTree(@PathVariable Long treeKey, Model model) {
+    @GetMapping("/{treeKey}")//트리 아이디로 게시글 검색.  게시글 목록에서 열로 리다이렉트 되어서 온다.
+    public String searchTree(@PathVariable Long treeKey, Model model,HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+        Long dbKey = (Long)session.getAttribute(SessionConst.DB_KEY);
 
         Tree tree = treeService.findByTreeId(treeKey);
         model.addAttribute("tree", tree);
-        return "forest/tree"; //그 멤버의 페이지를 보여줘야 한다.
+        if(tree.getMemberKey()==dbKey)
+            return "forest/tree2";
+        else
+            return "forest/tree"; //그 멤버의 페이지를 보여줘야 한다.
     }
 
     @GetMapping("/myPage")//자기 트리들 보여주는 페이지.
@@ -83,14 +94,6 @@ public class TreeController {
     }
 
     @PostMapping("/add")
-    /**
-     * 학사시스템을 바탕으로 이름, 학번 등 가져올 수 있는 정보는 가져와서 validatemember에 저장되어있다.
-     * 그리므로 여기에 회원가입 폼에서 사용자가 추가해야할 요소들인
-     * 1.신입 재학, 휴학 여부를 선택하고
-     * 2.태그들을 가지고 싶은거 선택하게 해야한다.
-     *
-     * 이것을 받아서 학사 시스템으로 로그인 잘 되서 검증된 멤버인 validatemember에 담고 내용을 추가해서 저장한다. db에
-     */
     public String save(@Validated @ModelAttribute AddTreeForm addTreeForm, BindingResult result,HttpServletRequest request
     ,Model model) throws IOException {
         if (result.hasErrors()) {
@@ -103,7 +106,7 @@ public class TreeController {
 
         Tree savedTree = treeService.save(tree);
         model.addAttribute("tree", savedTree);
-        return "forest/tree";
+        return "forest/tree2";
     }
 
     @GetMapping("/{treeKey}/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
@@ -143,6 +146,49 @@ public class TreeController {
          */
 
         return "redirect:/forest/{treeKey}";
+    }
+
+    /**
+     * 여기부터 스티커 add/edit만 이 url을 이용한다.
+     * forest/add는 게시글 추가 기능.
+     * *forest/{treeKey}//add는 스티커추가 기능이다.
+     * */
+
+
+    @GetMapping("/{treeKey}/add") //한번 스티커 붙이면 또 못붙이고 자기 스티커 상세로 라디이렉트 시켜야함.
+    public String addForm(@ModelAttribute("addStickerForm") AddStickerForm addStickerForm,HttpServletRequest request, @PathVariable Long treeKey,Model model) {
+
+        HttpSession session = request.getSession(false);
+        Long memberKey = (Long)session.getAttribute(SessionConst.DB_KEY);
+
+        Sticker sticker = stickerService.findByMemberKeyAndTreeKey(memberKey, treeKey);
+
+        if(sticker!=null){//이미 한 사용자가 한 개시물로 보낸 쪽지가 있으면 그것 상세 페이지로 라디이렉트 시켜야함.
+            Long stickerKey = sticker.getStickerKey();
+            return "redirect:/sticker";
+        }
+        Tree StickerOnThistree = treeService.findByTreeId(treeKey);
+        model.addAttribute("tree",StickerOnThistree);
+        return "sticker/addStickerForm";
+    }
+
+    @PostMapping("{treeKey}/add")   //한번 스티커 붙이면 또 못붙이고 자기 스티커 상세로 라디이렉트 시켜야함.
+    public String save(@Validated @ModelAttribute AddStickerForm addStickerForm, @PathVariable Long treeKey, BindingResult result, HttpServletRequest request
+            , Model model) throws IOException {
+        if (result.hasErrors()) {
+            return "sticker/addStickerForm";
+        }
+
+        HttpSession session = request.getSession(false);
+        Long fromMemberKey = (Long)session.getAttribute(SessionConst.DB_KEY);
+        Tree tree = treeService.findByTreeId(treeKey);
+        Long toMemberKey = tree.getMemberKey();
+        Sticker sticker = new Sticker(fromMemberKey,toMemberKey, treeKey, addStickerForm.getSubject(), addStickerForm.getMessage());
+
+        Sticker savedSticker = stickerService.save(sticker);
+        model.addAttribute("tree", tree);
+        model.addAttribute("sticker", savedSticker);
+        return "sticker/sticker";
     }
 
 

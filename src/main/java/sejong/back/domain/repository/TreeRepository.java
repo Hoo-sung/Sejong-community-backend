@@ -15,6 +15,8 @@ public interface TreeRepository {
 
     public List<Tree> findAllExcludeMe(Long memberKey);
 
+    public List<Tree> findAll();
+
     public List<Tree> findAll(TreeSearchCond cond);
 
     public List<Tree> findMyTrees(Long myTreeKey);

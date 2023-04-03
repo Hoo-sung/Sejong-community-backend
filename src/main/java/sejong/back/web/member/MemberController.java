@@ -1,4 +1,4 @@
-package sejong.back.web.Member;
+package sejong.back.web.member;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,6 @@ import sejong.back.domain.member.AddMemberForm;
 import sejong.back.domain.service.LoginService;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.member.UpdateMemberForm;
-import sejong.back.domain.repository.MemberRepository;
 import sejong.back.domain.service.MemberService;
 import sejong.back.web.SessionConst;
 
@@ -52,10 +51,18 @@ public class MemberController {
     }
 
     @GetMapping("/{memberKey}")//멤버 상세 페이지이다.
-    public String member(@PathVariable long memberKey, Model model) {
+    public String member(@PathVariable long memberKey,HttpServletRequest request, Model model) {
+
+        HttpSession session = request.getSession(false);
+        Long dbKey = (Long) session.getAttribute(SessionConst.DB_KEY);
+
         Member member = MemberService.findByKey(memberKey);
         model.addAttribute("member", member);
-        return "members/member"; //그 멤버의 페이지를 보여줘야 한다.
+
+        if(dbKey==memberKey)
+            return "members/member2";//자기 자신의정보를 볼때는 쪽지 보내기가 없는 html을 보내야한다.
+        else
+            return "members/member"; //그 멤버의 페이지를 보여줘야 한다.
     }
 
     @GetMapping("/add")//회원 가입. radio 버튼은 하나를 반드시 가지고 있어야 하므로 여기서 type을 만들어 줘야 한다.

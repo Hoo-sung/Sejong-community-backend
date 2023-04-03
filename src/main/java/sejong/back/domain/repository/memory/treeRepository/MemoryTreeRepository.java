@@ -47,6 +47,11 @@ public class MemoryTreeRepository implements TreeRepository {
     }
 
     @Override
+    public List<Tree> findAll() {
+        return new ArrayList<>(storeTree.values());
+    }
+
+    @Override
     public List<Tree> findMyTrees(Long myDbKey) {//tree중에 mydbKey값을 가진것만 출력하기.
         return storeTree.values().stream()
                 .filter(tree->{

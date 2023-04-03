@@ -33,6 +33,8 @@ public class TreeService {
         return treeRepository.findAllExcludeMe(memberKey);
     }
 
+    public List<Tree> findAll(){   return treeRepository.findAll();}
+
 
     public List<Tree> findMyTrees(Long myDbKey) {//tree중에 mydbKey값을 가진것만 출력하기.
         return treeRepository.findMyTrees(myDbKey);
