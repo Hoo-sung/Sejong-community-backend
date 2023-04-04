@@ -1,4 +1,4 @@
-package sejong.back.domain.login;
+package sejong.back.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +8,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
 import sejong.back.domain.member.Member;
 import sejong.back.domain.member.MemberGrade;
 import sejong.back.domain.repository.MemberRepository;
@@ -35,7 +39,6 @@ public class LoginService {
         if (findMember == null) { //db에 studentId에 맞는 회원이 없을 때
             return null;
         }
-
         if (findMember.getPassword().equals(password)) {
             return findMember;
         } else { //studentId는 맞지만 password를 잘못 입력했을 때
@@ -47,10 +50,10 @@ public class LoginService {
      * 파리미터로 받은 학번, 비밀번호로 세종대 사이트에 로그인해 필요한 정보를 가져옴
      * 학번, 비밀번호가 틀려도 메소드가 끝까지 실행됨
      */
-    public Member validateSejong(String studentId, String password) throws IOException {
+    public Member validateSejong(Long studentId, String password) throws IOException {
 
         Map<String, String> data = new HashMap<>();
-        data.put("userId", studentId);
+        data.put("userId", Long.toString(studentId));
         data.put("password", password);
 
         Connection.Response loginPageResponse = Jsoup.connect("http://classic.sejong.ac.kr/userLogin.do")
@@ -109,7 +112,7 @@ public class LoginService {
         return info;
     }
 
-    private Member makeMemberFromParsedData(String studentId, String[] info) {
+    private Member makeMemberFromParsedData(Long studentId, String[] info) {
         String department = info[0];
         String studentIdk = info[1];
         String name = info[2];
@@ -119,7 +122,7 @@ public class LoginService {
         String unUsing = info[6];
         String passFlag = info[7];
 
-        if (!studentId.equals(studentIdk)) {
+        if (studentId != Long.parseLong(studentIdk)) {
             return null;
         }
 

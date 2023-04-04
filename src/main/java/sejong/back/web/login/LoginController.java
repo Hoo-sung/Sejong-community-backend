@@ -2,12 +2,15 @@ package sejong.back.web.login;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import sejong.back.domain.login.LoginService;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import sejong.back.domain.login.LoginForm;
 import sejong.back.domain.member.Member;
-import sejong.back.domain.repository.MemberRepository;
+import sejong.back.domain.service.LoginService;
+import sejong.back.domain.service.MemberService;
 import sejong.back.exception.WrongLoginException;
 import sejong.back.exception.WrongLogoutException;
 import sejong.back.web.ResponseResult;
@@ -23,7 +26,7 @@ import java.io.IOException;
 @Slf4j
 public class LoginController {
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final LoginService loginService;
 
     @PostMapping("/login")
@@ -37,14 +40,14 @@ public class LoginController {
             throw new WrongLoginException("아이디나 비밀번호가 세종대 계정과 다름");
         }
 
-        Member loginMember = memberRepository.findByLoginId(form.getStudentId());
+        Member loginMember = memberService.findByLoginId(form.getStudentId());
         log.info("loginMember={}", loginMember);
         if (loginMember == null) { //로그인 계정이 세종대 계정은 맞지만 우리 서비스에 회원가입이 안 돼있을때
             throw new WrongLoginException("회원가입 필요");
         }
 
         HttpSession session = request.getSession();
-        session.setAttribute(SessionConst.LOGIN_MEMBER, loginMember);
+        session.setAttribute(SessionConst.DB_KEY, loginMember.getKey()); // 이 부분 잘 이해가 안 됨 TODO
         return new ResponseResult<>("로그인 성공", loginMember);
     }
 

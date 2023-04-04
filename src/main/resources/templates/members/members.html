@@ -35,6 +35,9 @@
                 <th th:text="#{label.member.name}">이름</th>
                 <th th:text="#{label.member.department}">과</th>
                 <th th:text="#{label.member.studentId}">학번</th>
+                <th th:text="#{label.member.status}">재학/휴학 상태</th>
+                <th th:text="#{label.member.nickName}">닉네임</th>
+<!--                <th th:text="#{label.member.tags}">태그들</th>-->
             </tr>
             </thead>
             <tbody>
@@ -43,6 +46,10 @@
                 <td><a href="member.html" th:href="@{|/forest/${member.key}|}" th:text="${member.name}">학생 이름</a></td>
                 <td th:text="${member.department}">10000</td>
                 <td th:text="${member.studentId}">10</td>
+                <td th:text="${member.status}">10</td>
+                <td th:text="${member.nickName}">10</td>
+<!--                <td th:text="${member.tags}">10</td>-->
+
             </tr>
             </tbody>
         </table>

@@ -6,7 +6,7 @@ plugins {
 
 group = 'sejong'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 
 configurations {
 	compileOnly {
@@ -23,6 +23,20 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.jsoup:jsoup:1.15.4'
+
+	//JdbcTemplate 추가
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+	//MyBatis 스프링 부트 3.0 추가
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.1'
+
+	//h2 데이터베이스 추가
+	runtimeOnly 'com.h2database:h2'
+
+
+	//테스트에서 lombok 사용
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
-import sejong.back.domain.Tree.Tree;
-import sejong.back.domain.login.LoginService;
+import sejong.back.domain.service.LoginService;
+import sejong.back.domain.tree.Tree;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.member.MemberType;
 import sejong.back.domain.repository.MemberRepository;
@@ -25,7 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+//TODO TreeController랑 겹치는 게 많아서 일단 주석 처리함
+//@Controller
 @Slf4j
 @RequiredArgsConstructor
 /**
@@ -37,7 +38,6 @@ public class ViewController {
 
     private final MemberRepository memberRepository;
     private final LoginService loginService;
-
 
     @ModelAttribute("memberTypes")//모델에 통쨰로보여줘야 라디오 버튼이든 뭐든 내용물을 통쨰로 출력할 수 있다.
     public MemberType[] memberTypes() {
@@ -116,8 +116,10 @@ public class ViewController {
     }
 
     @GetMapping("/forest/mytree/add")
-    public String makeTree(Model model) {
-        model.addAttribute("Tree", new Tree());
+    public String makeTree(HttpServletRequest request, Model model) {
+        HttpSession session = request.getSession(false);
+        Long memberKey = (Long) session.getAttribute(SessionConst.DB_KEY);
+        model.addAttribute("Tree", new Tree(memberKey));
         return "tree/makeTree";
     }
 
@@ -129,7 +131,7 @@ public class ViewController {
 
     @PostConstruct
     public void setting() throws IOException {
-        Member validateMember = loginService.validateSejong("18011881", "19991201");
+        Member validateMember = loginService.validateSejong(18011881L, "19991201");
         memberRepository.save(validateMember);//db에 저장.
     }
 }

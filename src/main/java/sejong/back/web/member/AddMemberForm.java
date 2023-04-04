@@ -15,7 +15,7 @@ public class AddMemberForm {
     private String nickname;//닉네임(이름X)
 
     @NotEmpty
-    private String studentId;//학번
+    private Long studentId;//학번
 
     @NotEmpty
     private String password;//비밀번호

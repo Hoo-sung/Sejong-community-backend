@@ -1,0 +1,65 @@
+
+
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 560px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="py-5 text-center">
+        <h2 th:text="#{page.sticker}">스티커 정보</h2>
+    </div>
+
+    <div>
+        <label for="title" th:text="#{label.sticker.post}">스티커 붙인 게시물</label>
+        <input type="text" id="title" name="title" class="form-control" value="1" th:value="${tree.title}" readonly>
+    </div>
+
+    <div>
+        <label for="description" th:text="#{label.sticker.postInfo}">게시글 내용</label>
+        <input type="text" id="description" name="description" class="form-control" value="1" th:value="${tree.description}" readonly>
+    </div>
+
+    <div>
+        <label for="toMemberKey" th:text="#{label.sticker.to}">받는 이</label>
+        <input type="text" id="toMemberKey" name="toMemberKey" class="form-control" value="1" th:value="${sticker.toMemberKey}" readonly>
+    </div>
+    <div>
+        <label for="subject" th:text="#{label.sticker.subject}">제목</label>
+        <input type="text" id="subject" name="subject" class="form-control" value="상품A" th:value="${sticker.subject}" readonly>
+    </div>
+    <div>
+        <label for="message" th:text="#{label.sticker.message}">메시지</label>
+        <input type="text" id="message" name="message" class="form-control" value="10000" th:value="${sticker.message}" readonly>
+    </div>
+
+    <hr class="my-4">
+
+    <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    onclick="location.href='editForm.html'"
+                    th:onclick="|location.href='@{/forest}'|"
+                    type="button" th:text="#{button.forest}">목록으로</button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg"
+                    onclick="location.href='members.html'"
+                    th:onclick="|location.href='@{/}'|"
+                    type="button" th:text="#{button.main}">홈으로</button>
+        </div>
+    </div>
+
+</div> <!-- /container -->
+</body>
+</html>
