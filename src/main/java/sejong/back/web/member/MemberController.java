@@ -2,7 +2,6 @@ package sejong.back.web.member;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -18,13 +17,15 @@ import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 //TODO rest api를 쓰는거면 로그인 안된 사용자가 접근할 떄 리다이렉트시키는 걸 서버에서 해줘야하는거 아님 클라에서 해주는거?
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
@@ -37,43 +38,52 @@ public class MemberController {
 //        return MemberType.values();//전체 다 가져오기.
 //    }
 
-    @GetMapping
-    public String members(HttpServletRequest request, Model model) {//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
+    //TODO 멤버 검색 페이지로 다른 멤버의 정보를 볼 일은 없을 듯
+    //      왜냐하면 "/forest"에서 다른 사람의 트리를 보면 되니까
+    //      우선 주석 처리
+//    @GetMapping//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
+    public ResponseResult<?> members(HttpServletRequest request, Model model) {
+        //TODO member 전체를 담아서 넘겨주는 건 보안상 문제가 될 수도 있음. ShowMember 등의 새로운 클래스를 만들어서 보여줄 필드만 담아서 넘겨줘야함
         List<Member> members = memberService.findAll();
         log.info("members={}", members);
 
         HttpSession session = request.getSession(false);//세션을 가져와서 자기 member key를 뽑아야한다.
-        long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);//다운 캐스팅.
+        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);//다운 캐스팅.
         Member member = memberService.findByKey(myKey);
-        model.addAttribute("members", members);
-        model.addAttribute("member", member);
-        return "members/members";
+
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("members", members);
+        data.put("member", member);
+
+        return new ResponseResult<>("멤버 조회 성공", data);
     }
 
-    @GetMapping("/{memberKey}")//멤버 상세 페이지이다.
-    public String member(@PathVariable long memberKey, HttpServletRequest request, Model model) {
+    @GetMapping("/my-page")//자신의 멤버 상세 페이지이다.
+    public ResponseResult<?> member(HttpServletRequest request, Model model) {
 
         HttpSession session = request.getSession(false);
         Long dbKey = (Long) session.getAttribute(SessionConst.DB_KEY);
 
-        Member member = memberService.findByKey(memberKey);
-        model.addAttribute("member", member);
+        Member member = memberService.findByKey(dbKey);
 
-        if (dbKey == memberKey)
-            return "members/member2";//자기 자신의정보를 볼때는 쪽지 보내기가 없는 html을 보내야한다.
-        else
-            return "members/member"; //그 멤버의 페이지를 보여줘야 한다.
+        if (member == null) {
+            //TODO 예외 처리
+            throw new NullPointerException("내 정보를 찾을 수 없음");
+        }
+
+        return new ResponseResult<>("내 정보 조회 성공", member);
+
     }
 
     @GetMapping("/add")//회원 가입. radio 버튼은 하나를 반드시 가지고 있어야 하므로 여기서 type을 만들어 줘야 한다.
     public String addForm(@ModelAttribute("addMemberForm") AddMemberForm addMemberForm) {
+        //TODO 뷰 렌더링
         return "members/addMemberForm";
     }
 
 
     /**
      * @TODO 우리 서비스에서 회원가입할 때 입력한 이름과 세종대 계정에 등록된 이름이 다른 경우엔 어떻게 처리?
-     * <p>
      * ==> 우선은 회원가입 시 이름이 아니라 닉네임을 작성하도록 변경해봤음.
      * 어차피 이름은 아이디, 비번만 맞으면 세종대 사이트에서 가져오면 되니까
      * 그래서 AddMemberForm의 name을 nickname으로 바꾸고, Member에 nickname 필드 추가
@@ -113,42 +123,42 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/{memberKey}/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
-    public String editForm(@PathVariable Long memberKey, Model model, HttpServletRequest request) {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
+    @GetMapping("/my-page/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
+    public String editForm(Model model, HttpServletRequest request) {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
 
         HttpSession session = request.getSession(false);//있는 세션을 가져온다.
         Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);
 
-        if (myKey == memberKey) {//자기가 자신의 edit url을 요청한 경우.
-            Member member = memberService.findByKey(memberKey);
-            model.addAttribute("member", member);
-            return "members/editForm";
-        } else {//남의 페이지 시도한 경우. 자기 멤버 상세를 보여주도록 하자.
-            Member member = memberService.findByKey(myKey);//
-            model.addAttribute("member", member);
-            return "redirect:/";
+        Member member = memberService.findByKey(myKey);
+
+        if (member == null) {
+            //TODO 예외 처리
+            throw new NullPointerException("내 정보를 찾을 수 없음");
         }
 
+        //TODO 뷰 렌더링
+        model.addAttribute("member", member);
+        return "members/editForm";
     }
 
-    @PostMapping("/{memberKey}/edit")//여기를 공개 정보 수정이라고 하자.
-    public String edit(@PathVariable Long memberKey, @Validated @ModelAttribute("updateMemberForm") UpdateMemberForm form, BindingResult bindingResult) {
-
+    @PostMapping("/my-page/edit")//여기를 공개 정보 수정이라고 하자.
+    public ResponseResult<?> edit(HttpServletRequest request, @Validated @ModelAttribute("updateMemberForm") UpdateMemberForm form, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             log.info("errors={}", bindingResult);
-            return "members/editForm";
+            //TODO 예외 처리
+            throw new IllegalArgumentException("비어있는 값이 있음");
         }
 
-        Member updateMemberParam = memberService.findByKey(memberKey);
-//        updateMemberParam.setMemberType(form.getMemberType());
-//        updateMemberParam.setTags(form.getTags());
+        HttpSession session = request.getSession(false);//있는 세션을 가져온다.
+        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);
+
+        Member updateMember = memberService.findByKey(myKey);
 
         /**
          * Todo 객체를 찾아서 똒같은걸 하나 new해서 updatemember을 만들어서 memory.update시키냐, 아님 간단하게 하냐 고민.
          */
-        memberService.update(memberKey, form);
-
-        return "redirect:/members/{memberKey}";
+        memberService.update(myKey, form);
+        return new ResponseResult<>("멤버 정보 수정 성공", updateMember);
     }
 }

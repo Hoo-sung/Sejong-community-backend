@@ -13,7 +13,6 @@ public class UpdateStickerForm {
     @NotBlank
     private String subject;
 
-
     @NotBlank
     private String message;
 }

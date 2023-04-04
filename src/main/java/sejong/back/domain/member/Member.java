@@ -25,7 +25,6 @@ public class Member {
 
     private String currentGrade;//현재 학년
     private String status;//재학 휴학 여부.
-    private String flag;//고전독서 인증 여부.
 
     private Long key;//서버에서 관리하는 키.
     private MemberGrade grade;//경험치이다.
@@ -35,13 +34,12 @@ public class Member {
 //    private List<String> tags;//태그들도 우리가 만들어서 고르는 식으로 해야할거 같음.
 
 
-    public Member(String name, String department, Long studentId, String currentGrade, String status, String flag) {
+    public Member(String name, String department, Long studentId, String currentGrade, String status) {
         this.name = name;
         this.department = department;
         this.studentId = studentId;
         this.currentGrade = currentGrade;
         this.status = status;
-        this.flag = flag;
     }
 
     /**

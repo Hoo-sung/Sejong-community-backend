@@ -122,11 +122,11 @@ public class LoginService {
         String unUsing = info[6];
         String passFlag = info[7];
 
-        if (studentId != Long.parseLong(studentIdk)) {
+        if (!studentIdk.equals(studentId.toString())) {
             return null;
         }
 
-        Member member = new Member(name, department, studentId, grade, status, passFlag);
+        Member member = new Member(name, department, studentId, grade, status);
         member.setGrade(MemberGrade.BRONZE);
         return member;
     }
