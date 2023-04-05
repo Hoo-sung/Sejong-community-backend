@@ -15,9 +15,9 @@ import sejong.back.exception.DoubleSignUpException;
 import sejong.back.exception.WrongSignUpException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
+import sejong.back.web.argumentresolver.Login;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
@@ -58,19 +58,18 @@ public class MemberController {
         return new ResponseResult<>("멤버 조회 성공", data);
     }
 
+    /**
+     * 모든 @SessionAttribute의 required는 true
+     */
     @GetMapping("/my-page")//자신의 멤버 상세 페이지이다.
-    public ResponseResult<?> member(HttpServletRequest request, Model model) {
+    public ResponseResult<?> member(@SessionAttribute(name = SessionConst.DB_KEY) Long myKey,
+                                    HttpServletRequest request, Model model) {
 
-        HttpSession session = request.getSession(false);
-        Long dbKey = (Long) session.getAttribute(SessionConst.DB_KEY);
-
-        Member member = memberService.findByKey(dbKey);
-
+        Member member = memberService.findByKey(myKey);
         if (member == null) {
             //TODO 예외 처리
             throw new NullPointerException("내 정보를 찾을 수 없음");
         }
-
         return new ResponseResult<>("내 정보 조회 성공", member);
 
     }
@@ -124,25 +123,22 @@ public class MemberController {
     }
 
     @GetMapping("/my-page/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
-    public String editForm(Model model, HttpServletRequest request) {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
-
-        HttpSession session = request.getSession(false);//있는 세션을 가져온다.
-        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);
+    public String editForm(@SessionAttribute(name = SessionConst.DB_KEY) Long myKey, Model model, HttpServletRequest request) {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
 
         Member member = memberService.findByKey(myKey);
-
         if (member == null) {
             //TODO 예외 처리
             throw new NullPointerException("내 정보를 찾을 수 없음");
         }
-
         //TODO 뷰 렌더링
         model.addAttribute("member", member);
         return "members/editForm";
     }
 
     @PostMapping("/my-page/edit")//여기를 공개 정보 수정이라고 하자.
-    public ResponseResult<?> edit(HttpServletRequest request, @Validated @ModelAttribute("updateMemberForm") UpdateMemberForm form, BindingResult bindingResult) {
+    public ResponseResult<?> edit(@SessionAttribute(name = SessionConst.DB_KEY) Long myKey, HttpServletRequest request,
+                                  @Validated @ModelAttribute("updateMemberForm") UpdateMemberForm form,
+                                  BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             log.info("errors={}", bindingResult);
@@ -150,11 +146,7 @@ public class MemberController {
             throw new IllegalArgumentException("비어있는 값이 있음");
         }
 
-        HttpSession session = request.getSession(false);//있는 세션을 가져온다.
-        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);
-
         Member updateMember = memberService.findByKey(myKey);
-
         /**
          * Todo 객체를 찾아서 똒같은걸 하나 new해서 updatemember을 만들어서 memory.update시키냐, 아님 간단하게 하냐 고민.
          */

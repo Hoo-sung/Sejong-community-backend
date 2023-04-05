@@ -33,5 +33,4 @@ public class MemberService {
     public void update(Long key, UpdateMemberForm updateMember) {
         memberRepository.update(key, updateMember);
     }
-
 }

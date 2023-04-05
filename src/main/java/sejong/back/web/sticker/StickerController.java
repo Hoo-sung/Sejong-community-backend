@@ -28,7 +28,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StickerController {
 
-    private final StickerRepository stickerRepository;
     private final StickerService stickerService;
     private final TreeService treeService;
 
@@ -40,10 +39,8 @@ public class StickerController {
      * @return
      */
     @GetMapping//내가 보냈던 스티커들 볼 수 있는 기능 제공.
-    public ResponseResult<?> sticker(HttpServletRequest request, Model model) {//자기가 보냈던 스티커들 정보 볼 수 있는 페이지.
-
-        HttpSession session = request.getSession(false);
-        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);
+    public ResponseResult<?> sticker(@SessionAttribute(name = SessionConst.DB_KEY) Long myKey,
+                                     HttpServletRequest request, Model model) {//자기가 보냈던 스티커들 정보 볼 수 있는 페이지.
 
         List<Sticker> stickers = stickerService.findByMemberId(myKey);
 
@@ -52,10 +49,8 @@ public class StickerController {
     }
 
     @GetMapping("/{stickerKey}")//스티커에 대한 상세 정보 보는 페이지.
-    public ResponseResult<?> searchSticker(@PathVariable Long stickerKey, Model model, HttpServletRequest request) {
-
-        HttpSession session = request.getSession(false);
-        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);
+    public ResponseResult<?> searchSticker(@SessionAttribute(name = SessionConst.DB_KEY) Long myKey,
+                                           @PathVariable Long stickerKey, Model model, HttpServletRequest request) {
 
         Optional<Sticker> sticker = stickerService.findByStickerId(myKey, stickerKey);
         if (sticker.isEmpty()) {
@@ -77,10 +72,8 @@ public class StickerController {
 
 
     @GetMapping("/{stickerKey}/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
-    public String editForm(@PathVariable Long stickerKey, Model model, HttpServletRequest request) {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
-
-        HttpSession session = request.getSession(false);//있는 세션을 가져온다.
-        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);
+    public String editForm(@SessionAttribute(name = SessionConst.DB_KEY) Long myKey,
+                           @PathVariable Long stickerKey, Model model, HttpServletRequest request) {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
 
         Optional<Sticker> sticker = stickerService.findByStickerId(myKey, stickerKey);
         if (sticker.isEmpty()) {
@@ -105,7 +98,8 @@ public class StickerController {
     }
 
     @PostMapping("/{stickerKey}/edit")//
-    public ResponseResult<?> edit(HttpServletRequest request, @PathVariable Long stickerKey,
+    public ResponseResult<?> edit(@SessionAttribute(name = SessionConst.DB_KEY) Long myKey,
+                                  HttpServletRequest request, @PathVariable Long stickerKey,
                                   @Validated @ModelAttribute("updateStickerForm") UpdateStickerForm form,
                                   BindingResult bindingResult) {
 
@@ -113,9 +107,6 @@ public class StickerController {
             log.info("errors={}", bindingResult);
             throw new IllegalArgumentException("빈 값이 있음");
         }
-
-        HttpSession session = request.getSession(false);//있는 세션을 가져온다.
-        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);
 
         Optional<Sticker> sticker = stickerService.findByStickerId(myKey, stickerKey);
         if (sticker.isEmpty()) {
