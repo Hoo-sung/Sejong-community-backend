@@ -17,6 +17,7 @@ import sejong.back.domain.tree.Tree;
 import sejong.back.domain.tree.UpdateTreeForm;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
+import sejong.back.web.argumentresolver.Login;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -54,8 +55,8 @@ public class TreeController {
     }
 
     @GetMapping("/{treeKey}")//트리 아이디로 게시글 검색. 게시글 목록에서 열로 리다이렉트 되어서 온다.
-    public ResponseResult<?> searchTree(@SessionAttribute(name = SessionConst.DB_KEY) Long myKey,
-                                        @PathVariable Long treeKey, Model model, HttpServletRequest request) {
+    public ResponseResult<?> searchTree(@Login Long myKey, @PathVariable Long treeKey,
+                                        Model model, HttpServletRequest request) {
 
         Tree tree = treeService.findByTreeId(treeKey);
         model.addAttribute("tree", tree);
@@ -70,8 +71,7 @@ public class TreeController {
     }
 
     @GetMapping("/my-trees")//자기 트리들 보여주는 페이지.
-    public ResponseResult<?> myTrees(@SessionAttribute(name = SessionConst.DB_KEY) Long myKey,
-                                     HttpServletRequest request, Model model) {
+    public ResponseResult<?> myTrees(@Login Long myKey, HttpServletRequest request, Model model) {
 
         List<Tree> trees = treeService.findMyTrees(myKey);
         return new ResponseResult<>("본인 전체 트리 조회 성공", trees);
@@ -84,7 +84,7 @@ public class TreeController {
     }
 
     @PostMapping("/my-trees/add")
-    public ResponseResult<?> save(@SessionAttribute(name = SessionConst.DB_KEY) Long myKey,
+    public ResponseResult<?> save(@Login Long myKey,
                                   @Validated @ModelAttribute AddTreeForm addTreeForm, BindingResult result,
                                   HttpServletRequest request, Model model) throws IOException {
 
@@ -99,24 +99,21 @@ public class TreeController {
     }
 
     @GetMapping("/my-trees/{treeKey}/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
-    public String editForm(@SessionAttribute(name = SessionConst.DB_KEY) Long myKey,
+    public String editForm(@Login Long myKey,
                            @PathVariable Long treeKey, Model model, HttpServletRequest request) {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
 
         Tree tree = treeService.findByTreeId(treeKey);//트리 키로 찾아서 이 트리에 있는 dbkey가 자신 세션에 있는거면 편집가능하다.*********
-        Long myTreeMemberKey = tree.getMemberKey();
-
-        if (myKey == myTreeMemberKey) {//자기가 자신의 edit url을 요청한 경우.
-            //TODO 뷰 렌더링
-            model.addAttribute("tree", tree);
-            return "forest/editForm";
-        } else {//남의 페이지 시도한 경우. 자기 멤버 상세를 보여주도록 하자.
+        if (myKey != tree.getMemberKey()) {//남의 페이지 시도한 경우. 자기 멤버 상세를 보여주도록 하자.
             return "redirect:/forest/{treeKey}";
         }
+        //TODO 뷰 렌더링
+        model.addAttribute("tree", tree);
+        return "forest/editForm";
     }
 
     @PostMapping("/my-trees/{treeKey}/edit")//
-    public ResponseResult<?> edit(@PathVariable Long treeKey, @Validated @ModelAttribute("updateTreeForm") UpdateTreeForm form,
-                                  BindingResult bindingResult) {
+    public ResponseResult<?> edit(@Login Long myKey, @PathVariable Long treeKey,
+                                  @Validated @ModelAttribute("updateTreeForm") UpdateTreeForm form, BindingResult bindingResult) throws IllegalAccessException {
 
         if (bindingResult.hasErrors()) {
             //TODO 예외 처리
@@ -125,22 +122,23 @@ public class TreeController {
         }
 
         Tree tree = treeService.findByTreeId(treeKey);
-        treeService.update(treeKey, form);
-
+        if (myKey != tree.getMemberKey()) {
+            throw new IllegalAccessException("남의 트리에 접근 시도");
+        }
         /**
          * Todo 객체를 찾아서 똒같은걸 하나 new해서 updatemember을 만들어서 memory.update시키냐, 아님 간단하게 하냐 고민.
          */
-
+        treeService.update(treeKey, form);
         return new ResponseResult<>("트리 정보 수정 성공", tree);
     }
 
     /**
      * 여기부터 스티커 add/edit만 이 url을 이용한다.
      * forest/add는 게시글 추가 기능.
-     * *forest/{treeKey}//add는 스티커추가 기능이다.
+     * *forest/{treeKey}/add는 스티커추가 기능이다.
      */
     @GetMapping("/{treeKey}/add") //한번 스티커 붙이면 또 못붙이고 자기 스티커 상세로 라디이렉트 시켜야함.
-    public String addForm(@SessionAttribute(name = SessionConst.DB_KEY) Long myKey,
+    public String addForm(@Login Long myKey,
                           @ModelAttribute("addStickerForm") AddStickerForm addStickerForm, HttpServletRequest request,
                           @PathVariable Long treeKey, Model model) {
 
@@ -157,7 +155,7 @@ public class TreeController {
     }
 
     @PostMapping("{treeKey}/add")   //TODO 한번 스티커 붙이면 또 못붙이고 자기 스티커 상세로 라디이렉트 시켜야함.
-    public ResponseResult<?> save(@SessionAttribute(name = SessionConst.DB_KEY) Long fromMemberKey,
+    public ResponseResult<?> save(@Login Long fromMemberKey,
                                   @Validated @ModelAttribute AddStickerForm addStickerForm, @PathVariable Long treeKey,
                                   BindingResult result, HttpServletRequest request, Model model) throws IOException {
 
