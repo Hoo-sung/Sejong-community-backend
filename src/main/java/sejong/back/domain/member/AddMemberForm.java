@@ -3,9 +3,8 @@ package sejong.back.domain.member;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Map;
 
 @Data
 public class AddMemberForm {
@@ -18,6 +17,8 @@ public class AddMemberForm {
 
     @NotBlank
     private String password;//비밀번호
+
+    private Map<String, Boolean> dataRange;//정보 공개범위 설정
 
 //    private MemberType memberType;//멤버 타입도 넣어야 한다.
 

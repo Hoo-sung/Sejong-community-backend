@@ -17,17 +17,19 @@ public class MemberControllerExceptionAdvice {
     @ExceptionHandler
     public ResponseEntity<ResponseResult<?>> memberExHandler(Exception e) {
         log.error("[memberExHandler] ex", e);
+        ResponseResult<Object> responseResult = new ResponseResult<>(e.getMessage());
         HttpStatus status;
 
         if (e instanceof WrongSignUpException) {
-            status = HttpStatus.BAD_REQUEST;
+            status = HttpStatus.OK;
+            responseResult.setErrorCode(-101);
         } else if (e instanceof DoubleSignUpException) {
-            status = HttpStatus.BAD_REQUEST;
+            status = HttpStatus.OK;
+            responseResult.setErrorCode(-102);
         } else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
-        ResponseResult<Object> responseResult = new ResponseResult<>(e.getMessage());
         return new ResponseEntity(responseResult, status);
     }
 

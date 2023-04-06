@@ -11,13 +11,10 @@ import sejong.back.domain.member.Member;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.MemberService;
-import sejong.back.exception.DoubleSignUpException;
-import sejong.back.exception.WrongSignUpException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -88,31 +85,44 @@ public class MemberController {
      * 이것을 받아서 학사 시스템으로 로그인 잘 되서 검증된 멤버인 validatemember에 담고 내용을 추가해서 저장한다. db에
      */
     @PostMapping
-    public void save(@Validated @ModelAttribute AddMemberForm addMemberForm, BindingResult bindingResult,
-                     HttpServletResponse response) throws IOException {
+    public ResponseResult<?> save(@Validated @RequestBody AddMemberForm addMemberForm, BindingResult bindingResult,
+                                  HttpServletResponse response) throws IOException {
+
+        log.info("studentId={}", addMemberForm.getStudentId());
+        log.info("password={}", addMemberForm.getPassword());
+        log.info("dataRange={}", addMemberForm.getDataRange());
+
+        ResponseResult<Object> responseResult = new ResponseResult();
 
         if (bindingResult.hasErrors()) { //닉네임, 학번, 비번 중 빈 값이 있을 경우
-            throw new WrongSignUpException("비어있는 값이 있음");
+            responseResult.setMessage("비어있는 값이 있음");
+            responseResult.setErrorCode(-101);
+            return responseResult;
         }
 
         Member validateMember = loginService.validateSejong(addMemberForm.getStudentId(), addMemberForm.getPassword());
-        if (validateMember == null) { // 잘못된 계정으로 회원가입 시도한 경우
-            throw new WrongSignUpException("잘못된 계정으로 회원가입 시도");
+        if (validateMember == null) { //잘못된 계정으로 회원가입 시도한 경우
+            responseResult.setMessage("잘못된 계정으로 회원가입 시도");
+            responseResult.setErrorCode(-102);
+            return responseResult;
         }
 
         //학사 시스템 회원 조회 성공.
         Member searchMember = memberService.findByLoginId(validateMember.getStudentId());//db에 회원 조회.
-        if (searchMember != null) {
+        if (searchMember != null) { //해당 계정으로 회원가입한 적이 있으면
             log.info("회원 가입된 사용자입니다={} {}", searchMember.getStudentId(), searchMember.getName());
-            throw new DoubleSignUpException("이미 회원가입된 사용자");
+            responseResult.setMessage("이미 회원가입된 사용자");
+            responseResult.setErrorCode(-103);
+            return responseResult;
         }
 
         //db에 없으면, 회원 가입 절차 정상적으로 진행해야 한다.
-        //닉네임은 검증이 다 끝난 후 따로 추가. TODO 근데 setter가 컨트롤러에 직접 보이는게 좀 별로임
+        //닉네임과 공개 벙위는 검증이 다 끝난 후 따로 추가. TODO 근데 setter가 컨트롤러에 직접 보이는게 좀 별로임
         validateMember.setNickname(addMemberForm.getNickname());
+        validateMember.setDataRange(addMemberForm.getDataRange());
         memberService.save(validateMember);//db에 저장.
         log.info("validateMember={} {}", validateMember.getStudentId(), validateMember.getName());
-        response.sendRedirect("/login");
+        return new ResponseResult<>();
     }
 
     @GetMapping("/my-page/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
