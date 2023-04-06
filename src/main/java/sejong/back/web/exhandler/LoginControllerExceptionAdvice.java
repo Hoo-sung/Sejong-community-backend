@@ -16,7 +16,7 @@ public class LoginControllerExceptionAdvice {
 
     @ExceptionHandler
     public ResponseEntity<ResponseResult<?>> loginExHandler(Exception e) {
-        log.error("[loginExHandler] ex", e);
+        log.error("[loginExHandler] ex = {}", e);
         HttpStatus status;
 
         if (e instanceof WrongLoginException) {
@@ -29,6 +29,10 @@ public class LoginControllerExceptionAdvice {
 
         ResponseResult<Object> responseResult = new ResponseResult<>(e.getMessage());
         return new ResponseEntity(responseResult, status);
+        /**
+         * rest api가 통신이 되는 경우는 status를 200으로 보내야지
+         * 안그러면 front가 못 받고 뱉어냄
+         */
     }
 
 }

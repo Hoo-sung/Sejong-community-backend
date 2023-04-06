@@ -3,6 +3,7 @@ package sejong.back.web;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -15,9 +16,10 @@ import org.springframework.http.HttpStatus;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL) //Json 데이터로 반환할 떄 null인 필드는 표시하지 않음
 @Builder
-@Getter
+@Getter @Setter
 public class ResponseResult<T> {
 
+    private int errorCode;
     private String message; //결과 메시지(한글. 에러 메시지도 여기에 저장)
     private T data;
 
