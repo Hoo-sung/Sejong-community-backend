@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Map;
+
 /**
  * 회원 이름
  * 학과
@@ -28,6 +30,8 @@ public class Member {
 
     private Long key;//서버에서 관리하는 키.
     private MemberGrade grade;//경험치이다.
+
+    private Map<String, Boolean> dataRange;
 
 //    사용자가 바꿀 수 있는 필드.
 //    private MemberType memberType;//신/재학/휴학 여부.

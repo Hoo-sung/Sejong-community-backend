@@ -3,10 +3,7 @@ package sejong.back.web.login;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sejong.back.domain.login.LoginForm;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.service.LoginService;
@@ -29,10 +26,16 @@ public class LoginController {
     private final MemberService memberService;
     private final LoginService loginService;
 
+    @GetMapping("/login")
+    public String login() {
+        return "회원가입 시 리다이렉트 되는지 확인하기 위해 대충 만들어둔 메서드";
+    }
+
+    //로그인 성공했을 떄 기본적인 리다이렉트 경로는 /forest(트리(게시판) 검색 페이지)
     @PostMapping("/login")
-    public ResponseResult<?> login(@ModelAttribute LoginForm form,
-                                   @RequestParam(defaultValue = "/") String redirectURI,
-                                   HttpServletRequest request, Model model) throws IOException {
+    public void login(@ModelAttribute LoginForm form,
+                                   @RequestParam(defaultValue = "/forest") String redirectURI,
+                                   HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
 
         Member validateMember = loginService.validateSejong(form.getStudentId(), form.getPassword());
         log.info("validateMember={}", validateMember);
@@ -42,13 +45,14 @@ public class LoginController {
 
         Member loginMember = memberService.findByLoginId(form.getStudentId());
         log.info("loginMember={}", loginMember);
-        if (loginMember == null) { //로그인 계정이 세종대 계정은 맞지만 우리 서비스에 회원가입이 안 돼있을때
+        if (loginMember == null) { //로그인 정보가 세종대 계정과 일치하지만 우리 서비스에 회원가입이 안 돼있을때
             throw new WrongLoginException("회원가입 필요");
         }
 
         HttpSession session = request.getSession();
-        session.setAttribute(SessionConst.DB_KEY, loginMember.getKey()); // 이 부분 잘 이해가 안 됨 TODO
-        return new ResponseResult<>("로그인 성공", loginMember);
+        session.setAttribute(SessionConst.DB_KEY, loginMember.getKey());
+        log.info("redirectURI={}", redirectURI);
+        response.sendRedirect(redirectURI);
     }
 
     @PostMapping("/logout")

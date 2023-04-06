@@ -62,6 +62,7 @@ public class TreeController {
         model.addAttribute("tree", tree);
         if (tree.getMemberKey() == myKey) { //트리 검색 페이지에서 클릭한 트리가 내 트리
             //TODO return까지 임시로 만든 것. 나중에 프론트팀과 응답 스펙 다시 맞추고 구체화
+            //TODO 트리 게시판에서 내껄 클릭해서 my-page로 리다이렉트 시킬 때 쿼리 파리미터를 treeid=2 등으로 붙여서 보내준다.
             HashMap<String, String> redirectUri = new HashMap<>();
             redirectUri.put("redirectURI", "/forest/my-trees");
             return new ResponseResult<>("클릭한 트리가 내 트리", redirectUri);
@@ -89,7 +90,7 @@ public class TreeController {
                                   HttpServletRequest request, Model model) throws IOException {
 
         if (result.hasErrors()) {
-            //TODO 예외 처리
+            //TODO 예외 처리. 그런데 노션 참고해
             throw new IllegalArgumentException("빈 값이 있음");
         }
 
@@ -125,9 +126,6 @@ public class TreeController {
         if (myKey != tree.getMemberKey()) {
             throw new IllegalAccessException("남의 트리에 접근 시도");
         }
-        /**
-         * Todo 객체를 찾아서 똒같은걸 하나 new해서 updatemember을 만들어서 memory.update시키냐, 아님 간단하게 하냐 고민.
-         */
         treeService.update(treeKey, form);
         return new ResponseResult<>("트리 정보 수정 성공", tree);
     }
@@ -154,7 +152,7 @@ public class TreeController {
         return "sticker/addStickerForm";
     }
 
-    @PostMapping("{treeKey}/add")   //TODO 한번 스티커 붙이면 또 못붙이고 자기 스티커 상세로 라디이렉트 시켜야함.
+    @PostMapping("{treeKey}/add")   //한번 스티커 붙이면 또 못붙이고 자기 스티커 상세로 라디이렉트 시켜야함.
     public ResponseResult<?> save(@Login Long fromMemberKey,
                                   @Validated @ModelAttribute AddStickerForm addStickerForm, @PathVariable Long treeKey,
                                   BindingResult result, HttpServletRequest request, Model model) throws IOException {

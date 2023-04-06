@@ -19,7 +19,6 @@ public class Tree {
     private  String title;//게시글 제목
     private  String description;//게시글 설명
     private  ArrayList<String> tags;
-    private  ArrayList<String> stickers;//TODO 이거는 그냥 Sticker의 treeKey를 이용해서 조회하도록 하는 거 아님?
 
     public Tree(Long memberKey, String title, String description, ArrayList<String> tags) {
         this.memberKey = memberKey;
