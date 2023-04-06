@@ -1,6 +1,7 @@
 package sejong.back.web;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -11,9 +12,9 @@ import org.springframework.http.HttpStatus;
  *          ex) 카카오 rest api: code는 별다른 규칙이 없는 음수로 정함
  * TODO 3. 응답 스펙을 조금 세분화해도 됨. 정상 응답과 에러 응답 등(더 자세히 나눠도 되고). api 문서만 정확하게 만들면 되니까.
  * TODO 4. 앵간하면 정상 로직을 다 웬만큼 개발한 다음에 예외 처리를 하는게 좋을 듯
- *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL) //Json 데이터로 반환할 떄 null인 필드는 표시하지 않음
+@Builder
 @Getter
 public class ResponseResult<T> {
 

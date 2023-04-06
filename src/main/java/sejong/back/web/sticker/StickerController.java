@@ -52,6 +52,7 @@ public class StickerController {
     public ResponseResult<?> searchSticker(@Login Long myKey, @PathVariable Long stickerKey,
                                            Model model, HttpServletRequest request) {
 
+        //TODO 다른 사람 스티커 조회는 상관없음.
         Optional<Sticker> sticker = stickerService.findByStickerId(myKey, stickerKey);
         if (sticker.isEmpty()) {
             //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
