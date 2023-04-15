@@ -64,6 +64,8 @@ public class TreeController {
     }
 
     @GetMapping("/{treeKey}")//트리 아이디로 게시글 검색.  게시글 목록에서 열로 리다이렉트 되어서 온다.
+
+    //붙여진 스티커들도 리스트로 줘야한다.
     public String searchTree(@PathVariable Long treeKey, Model model,HttpServletRequest request) {
 
         HttpSession session = request.getSession(false);
@@ -71,6 +73,11 @@ public class TreeController {
 
         Tree tree = treeService.findByTreeId(treeKey);
         model.addAttribute("tree", tree);
+
+        //TreeKey로 붙여진 스티커들 찾기.
+        List<Sticker> stickers = stickerService.findByTreeId(treeKey);
+        model.addAttribute("stickers",stickers);
+
         if(tree.getMemberKey()==dbKey)
             return "forest/tree2";
         else

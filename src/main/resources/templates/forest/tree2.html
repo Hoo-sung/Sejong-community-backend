@@ -47,6 +47,26 @@
         </div>
     </div>
 
+    <div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th th:text="#{label.sticker.subject}">제목</th>
+                <th th:text="#{label.sticker.message}">내용</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="sticker : ${stickers}">
+                <td th:text="${sticker.subject}">스티커 제목</a></td>
+                <td th:text="${sticker.message}">스티커 내용</td>
+            </tr>
+            </tbody>
+
+
+
+        </table>
+    </div>
 
 
     <hr class="my-4">
