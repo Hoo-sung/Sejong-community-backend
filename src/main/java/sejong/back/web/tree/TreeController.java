@@ -14,6 +14,7 @@ import sejong.back.domain.sticker.AddStickerForm;
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.tree.AddTreeForm;
 import sejong.back.domain.tree.Tree;
+import sejong.back.domain.tree.TreeSearchCond;
 import sejong.back.domain.tree.UpdateTreeForm;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -47,11 +49,24 @@ public class TreeController {
     }
 
     @GetMapping//tree 전체 찾기.
-    public ResponseResult<?> forest() {//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
+    public ResponseResult<?> forest(HttpServletRequest request) {//멤버 검색 페이지이다. 클라이언트 요청의 경우의 수는 2가지
+        /***
+         * 1. query parameter 있는 경우
+         * 필터링 해서 보내줄 것
+         * 2. query parameter 없는 경우
+         * 최신 데이터 20개 보내줄 것
+         */
+        String title = request.getParameter("title");
+        String description = request.getParameter("description");
+        String tag = request.getParameter("tag");
+        String page = request.getParameter("page"); //받아올때는 int로 불가능함 filtering logic에서 변환해서 사용
 
-            List<Tree> trees = treeService.findAll();
-            log.info("forest={}", trees);
-            return new ResponseResult<>("모든 트리 조회 성공", trees);
+        TreeSearchCond treeSearchCond = new TreeSearchCond(title,description,tag,page);
+        log.info("search condition = {}",treeSearchCond);
+
+        List<Tree> trees = treeService.findAll();
+        log.info("forest={}", trees);
+        return new ResponseResult<>("모든 트리 조회 성공", trees);
     }
 
     @GetMapping("/{treeKey}")//트리 아이디로 게시글 검색. 게시글 목록에서 열로 리다이렉트 되어서 온다.

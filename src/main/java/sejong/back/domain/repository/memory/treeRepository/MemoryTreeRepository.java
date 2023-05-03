@@ -66,8 +66,37 @@ public class MemoryTreeRepository implements TreeRepository {
      */
     @Override
     public List<Tree> findAll(TreeSearchCond cond) {
-        return null;
+        return findAll().stream()
+                .filter(tree->{
+                    if (cond.getTitle() != null) {
+                        return tree.getTitle().contains(cond.getTitle().strip());
+                    }
+                    return true;
+                }) //title
+                .filter(tree->{
+                    if (cond.getDescription() != null) {
+                        return tree.getDescription().contains(cond.getDescription().strip());
+                    }
+                    return true;
+                }) //description
+                .filter(tree->{
+                    if (cond.getTag() != null) {
+                        return tree.getTags().get(0).equals(cond.getTag()); //일단 테그 한개
+                    }
+                    return true;
+                })//tag
+                .filter(tree->{
+                    if (cond.getPage() != null) {
+                        Integer page = Integer.valueOf(cond.getPage());
+                        return tree.getTreeKey()>20*(page-1)&& tree.getTreeKey()<=20*page;
+                    }
+                    return true;
+                })//page
+
+                .collect(Collectors.toList());
+
     }
+
 
     public void clearStore(){
         storeTree.clear();
