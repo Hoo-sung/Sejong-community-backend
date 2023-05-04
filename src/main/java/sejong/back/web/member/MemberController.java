@@ -1,5 +1,6 @@
 package sejong.back.web.member;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
@@ -11,6 +12,7 @@ import sejong.back.domain.member.Member;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.MemberService;
+import sejong.back.exception.WrongSessionIdException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //TODO rest api를 쓰는거면 로그인 안된 사용자가 접근할 떄 리다이렉트시키는 걸 서버에서 해줘야하는거 아님 클라에서 해주는거?
 //==> PRG 참고
@@ -138,17 +141,24 @@ public class MemberController {
         return "members/editForm";
     }
 
-    @PostMapping("/my-page/edit")//여기를 공개 정보 수정이라고 하자.
-    public ResponseResult<?> edit(@Login Member updateMember, HttpServletRequest request,
-                                  @Validated @ModelAttribute("updateMemberForm") UpdateMemberForm form,
-                                  BindingResult bindingResult) {
+    @PatchMapping//여기를 공개 정보 수정이라고 하자.
+    public void edit(@Login Long myKey, @RequestBody UpdateMemberForm updateMemberForm,
+                                  HttpServletRequest request) throws Exception {
 
-        if (bindingResult.hasErrors()) {
-            log.info("errors={}", bindingResult);
-            //TODO 예외 처리
-            throw new IllegalArgumentException("비어있는 값이 있음");
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
+        if (!sessionId.equals(updateMemberForm.getSessionId())) { //클라이언트로부터 받은 sessionId와 api 서버에 저장된 sessionId가 다를 때
+            throw new WrongSessionIdException("sessionId가 다름");
         }
-        memberService.update(updateMember.getKey(), form);
-        return new ResponseResult<>("멤버 정보 수정 성공", updateMember);
+
+        Member member = memberService.findByKey(myKey);
+        member.setNickname(updateMemberForm.getNickname());
+        member.setDataRange(updateMemberForm.getDataRange());
+    }
+
+    //회원 정보 수정이 정상적으로 이루어졌는지 테스트하는 컨트롤러
+    @GetMapping
+    public Member showMember(@Login Member member) {
+        return member;
     }
 }
