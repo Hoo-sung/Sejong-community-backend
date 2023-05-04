@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sejong.back.exception.DoubleSignUpException;
+import sejong.back.exception.WrongSessionIdException;
 import sejong.back.exception.WrongSignUpException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.member.MemberController;
@@ -26,6 +27,9 @@ public class MemberControllerExceptionAdvice {
         } else if (e instanceof DoubleSignUpException) {
             status = HttpStatus.OK;
             responseResult.setErrorCode(-102);
+        } else if (e instanceof WrongSessionIdException) {
+            status = HttpStatus.BAD_REQUEST;
+            responseResult.setErrorCode(-199);
         } else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
