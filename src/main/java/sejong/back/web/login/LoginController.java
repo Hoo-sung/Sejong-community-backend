@@ -47,6 +47,8 @@ public class LoginController {
         log.info("loginMember={}", loginMember);
         if (loginMember == null) { //로그인 정보가 세종대 계정과 일치하지만 우리 서비스에 회원가입이 안 돼있을때
             throw new WrongLoginException("회원가입 필요");
+
+
         }
 
         HttpSession session = request.getSession();

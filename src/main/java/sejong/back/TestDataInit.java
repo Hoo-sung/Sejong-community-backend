@@ -24,7 +24,6 @@ public class TestDataInit {
     public void initData() {
         log.info("test data init");
         Long studentId = 18011834L;
-
         Member member = null;
         try {
             member = loginService.validateSejong(studentId, "fa484869");

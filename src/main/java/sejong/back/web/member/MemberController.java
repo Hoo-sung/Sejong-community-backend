@@ -94,6 +94,8 @@ public class MemberController {
             throw new WrongSignUpException("비어있는 값이 있음");
         }
 
+
+
         Member validateMember = loginService.validateSejong(addMemberForm.getStudentId(), addMemberForm.getPassword());
         if (validateMember == null) { // 잘못된 계정으로 회원가입 시도한 경우
             throw new WrongSignUpException("잘못된 계정으로 회원가입 시도");
