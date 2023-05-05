@@ -86,11 +86,15 @@ public class MemoryTreeRepository implements TreeRepository {
                     return true;
                 })//tag
                 .filter(tree->{
+                    Integer page;
                     if (cond.getPage() != null) {
-                        Integer page = Integer.valueOf(cond.getPage());
-                        return tree.getTreeKey()>20*(page-1)&& tree.getTreeKey()<=20*page;
+                         page = Integer.valueOf(cond.getPage());
+
                     }
-                    return true;
+                    else{
+                        page=1;
+                    }
+                    return tree.getTreeKey()>20*(page-1)&& tree.getTreeKey()<=20*page;
                 })//page
 
                 .collect(Collectors.toList());

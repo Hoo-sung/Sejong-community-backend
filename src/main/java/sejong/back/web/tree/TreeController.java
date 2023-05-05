@@ -64,7 +64,7 @@ public class TreeController {
         TreeSearchCond treeSearchCond = new TreeSearchCond(title,description,tag,page);
         log.info("search condition = {}",treeSearchCond);
 
-        List<Tree> trees = treeService.findAll();
+        List<Tree> trees = treeService.findAll(treeSearchCond);
         log.info("forest={}", trees);
         return new ResponseResult<>("모든 트리 조회 성공", trees);
     }
