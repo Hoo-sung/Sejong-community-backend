@@ -34,9 +34,14 @@ public class LoginController {
 
     //로그인 성공했을 떄 기본적인 리다이렉트 경로는 /forest(트리(게시판) 검색 페이지)
     @PostMapping("/login")
-    public ResponseResult<Object> login(@ModelAttribute LoginForm form,
+    public ResponseResult<Object> login(@RequestBody LoginForm form,
                                         @RequestParam(defaultValue = "/forest") String redirectURI,
                                         HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
+
+        /**
+         * TODO
+         * 혹시 모르니까 bindingresult 확인
+         */
 
         Member validateMember = loginService.validateSejong(form.getStudentId(), form.getPassword());
         log.info("validateMember={}", validateMember);
