@@ -2,7 +2,6 @@ package sejong.back.web.tree;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -16,15 +15,14 @@ import sejong.back.domain.tree.AddTreeForm;
 import sejong.back.domain.tree.Tree;
 import sejong.back.domain.tree.UpdateTreeForm;
 import sejong.back.web.ResponseResult;
-import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -49,17 +47,23 @@ public class TreeController {
     @GetMapping//tree 전체 찾기.
     public ResponseResult<?> forest() {//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
 
-            List<Tree> trees = treeService.findAll();
-            log.info("forest={}", trees);
-            return new ResponseResult<>("모든 트리 조회 성공", trees);
+        List<Tree> trees = treeService.findAll();
+        log.info("forest={}", trees);
+        return new ResponseResult<>("모든 트리 조회 성공", trees);
     }
 
     @GetMapping("/{treeKey}")//트리 아이디로 게시글 검색. 게시글 목록에서 열로 리다이렉트 되어서 온다.
-    public ResponseResult<?> searchTree(@Login Long myKey, @PathVariable Long treeKey,
-                                        Model model, HttpServletRequest request) {
-
+    public TreeAndStickers searchTree(@Login Long myKey, @PathVariable Long treeKey) {
         Tree tree = treeService.findByTreeId(treeKey);
-        model.addAttribute("tree", tree);
+        List<Sticker> stickers = stickerService.findByTreeId(treeKey);
+
+        //TODO 내 트리에 접근하는 경우와 다른 사람 트리에 접근하는 경우를 나눠서 로직 구현
+        //TODO 프론트랑 스펙 다시 맞추기
+
+        if (tree.getMemberKey() == myKey) return new TreeAndStickers(tree, stickers, true);
+        else return new TreeAndStickers(tree, stickers, false);
+
+/*
         if (tree.getMemberKey() == myKey) { //트리 검색 페이지에서 클릭한 트리가 내 트리
             //TODO return까지 임시로 만든 것. 나중에 프론트팀과 응답 스펙 다시 맞추고 구체화
             //TODO 트리 게시판에서 내껄 클릭해서 my-page로 리다이렉트 시킬 때 쿼리 파리미터를 treeid=2 등으로 붙여서 보내준다.
@@ -68,7 +72,9 @@ public class TreeController {
             return new ResponseResult<>("클릭한 트리가 내 트리", redirectUri);
         } else { //트리 검색 페이지에서 클릭한 트리가 내 트리가 아님
             return new ResponseResult<>("클릭한 트리가 내 트리가 아님", tree);
-        }
+        }*/
+
+
     }
 
     @GetMapping("/my-trees")//자기 트리들 보여주는 페이지.
@@ -84,19 +90,22 @@ public class TreeController {
         return "forest/addTreeForm";
     }
 
-    @PostMapping("/my-trees/add")
-    public ResponseResult<?> save(@Login Long myKey,
-                                  @Validated @ModelAttribute AddTreeForm addTreeForm, BindingResult result,
-                                  HttpServletRequest request, Model model) throws IOException {
+    @PostMapping  //새로운 트리 생성
+    public Map<String, String> save(@Login Long myKey,
+                                    @Validated @RequestBody AddTreeForm addTreeForm, BindingResult result) throws IOException {
 
         if (result.hasErrors()) {
-            //TODO 예외 처리. 그런데 노션 참고해
             throw new IllegalArgumentException("빈 값이 있음");
         }
 
-        Tree tree = new Tree(myKey, addTreeForm.getTitle(), addTreeForm.getDescription(), addTreeForm.getTags());
+        Tree tree = new Tree(myKey, addTreeForm.getTitle(), addTreeForm.getDescription(), addTreeForm.getTags(), addTreeForm.getDataRange());
         Tree savedTree = treeService.save(tree);
-        return new ResponseResult<>("새로운 트리 생성 성공", savedTree);
+
+        Map<String, String> responseData = new HashMap<>();
+        responseData.put("message", "success");
+        responseData.put("redirectURL", "forest/" + savedTree.getTreeKey());
+
+        return responseData;
     }
 
     @GetMapping("/my-trees/{treeKey}/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
