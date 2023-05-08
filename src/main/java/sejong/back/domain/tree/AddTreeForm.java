@@ -4,10 +4,12 @@ package sejong.back.domain.tree;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Getter
@@ -22,4 +24,5 @@ public class AddTreeForm {
 
     private ArrayList<String> tags;
 
+    private Map<String, Boolean> dataRange;
 }
