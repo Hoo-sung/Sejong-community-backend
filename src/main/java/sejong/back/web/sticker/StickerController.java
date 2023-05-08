@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import sejong.back.domain.repository.StickerRepository;
 import sejong.back.domain.service.StickerService;
 import sejong.back.domain.service.TreeService;
+import sejong.back.domain.sticker.AddStickerForm;
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.sticker.UpdateStickerForm;
 import sejong.back.domain.tree.Tree;
@@ -18,6 +19,7 @@ import sejong.back.web.argumentresolver.Login;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -58,21 +60,46 @@ public class StickerController {
             //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
             throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
         }
+
         Sticker findSticker = sticker.get();
         Long treeKey = findSticker.getTreeKey();
         Tree stickerOnThisTree = treeService.findByTreeId(treeKey);
 
-        /**
-         * 스티커 붙이는 게시물도 모델로 가져오자. 스티커 상세 정보에서 어떤 게시물에 보내는건지도 간략해 정보 보여줘야 하므로.
-         */
+
         HashMap<String, Object> data = new HashMap<>();
-        data.put("sticker", findSticker);
-        data.put("tree", stickerOnThisTree);
-        return new ResponseResult<>("스티커 상세 정보 조회 성공", data);
+
+        if (myKey == findSticker.getFromMemberKey() //자신이 쓴 스티커
+                || myKey == stickerOnThisTree.getMemberKey()) { //자신의 트리에 붙은 스티커
+            data.put("message", findSticker.getMessage());
+            return new ResponseResult<>("스티커 열람", data);
+        }
+        else{
+            ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.");
+            responseResult.setErrorCode(-120);
+            return responseResult;
+        }
+    }
+
+    @PostMapping   //스티커 붙이기
+    public ResponseResult<?> save(@Login Long fromMemberKey,
+                                  @Validated @ModelAttribute AddStickerForm addStickerForm, @RequestParam Long treeId,
+                                  BindingResult result, HttpServletRequest request, Model model) throws IOException {
+
+        if (result.hasErrors()) {
+            //TODO 예외 처리
+            throw new IllegalArgumentException("빈 값이 들어있음");
+        }
+
+        Tree tree = treeService.findByTreeId(treeId);
+        Long toMemberKey = tree.getMemberKey();
+        Sticker sticker = new Sticker(fromMemberKey, toMemberKey, treeId, addStickerForm.getSubject(), addStickerForm.getMessage());
+
+        Sticker savedSticker = stickerService.save(sticker);
+        return new ResponseResult<>("스티커 작성 성공", savedSticker);
     }
 
 
-    @GetMapping("/{stickerKey}/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
+//    @PatchMapping("/{treeKey}")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
     public String editForm(@Login Long myKey, @PathVariable Long stickerKey,
                            Model model, HttpServletRequest request) {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
 
@@ -98,7 +125,7 @@ public class StickerController {
 
     }
 
-    @PostMapping("/{stickerKey}/edit")//
+    @PatchMapping("/{stickerKey}")//
     public ResponseResult<?> edit(@Login Long myKey,
                                   HttpServletRequest request, @PathVariable Long stickerKey,
                                   @Validated @ModelAttribute("updateStickerForm") UpdateStickerForm form,

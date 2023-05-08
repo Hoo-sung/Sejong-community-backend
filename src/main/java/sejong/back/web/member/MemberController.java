@@ -141,13 +141,15 @@ public class MemberController {
     }
 
     @PatchMapping//여기를 공개 정보 수정이라고 하자.
-    public void edit(@Login Long myKey, @RequestBody UpdateMemberForm updateMemberForm,
-                                  HttpServletRequest request) throws Exception {
+    public void edit(@RequestBody UpdateMemberForm updateMemberForm,
+                     HttpServletRequest request,@Login Long myKey) throws Exception {
 
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
         String sessionId = session.getId();
-        if (!sessionId.equals(updateMemberForm.getSessionId())) { //클라이언트로부터 받은 sessionId와 api 서버에 저장된 sessionId가 다를 때
-            throw new WrongSessionIdException("sessionId가 다름");
+        log.info("Patching Session = {}", sessionId);
+
+        if (sessionId==null) { //클라이언트로부터 받은 sessionId와 api 서버에 저장된 sessionId가 다를 때
+            throw new WrongSessionIdException("로그인 X");
         }
 
         Member member = memberService.findByKey(myKey);

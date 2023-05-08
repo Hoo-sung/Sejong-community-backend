@@ -63,9 +63,10 @@ public class LoginController {
         }
 
         HttpSession session = request.getSession();
+        log.info("session ={}", session.getId());
         session.setAttribute(SessionConst.DB_KEY, loginMember.getKey());
+
         Map<String,String> data = new HashMap<>();
-        data.put("sessionId",session.getId());
         data.put("redirectURL", redirectURI);
 
         return new ResponseResult<>("로그인 성공", data);

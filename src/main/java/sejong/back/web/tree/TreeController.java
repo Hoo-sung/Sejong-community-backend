@@ -167,21 +167,5 @@ public class TreeController {
         return "sticker/addStickerForm";
     }
 
-    @PostMapping("{treeKey}/add")   //한번 스티커 붙이면 또 못붙이고 자기 스티커 상세로 라디이렉트 시켜야함.
-    public ResponseResult<?> save(@Login Long fromMemberKey,
-                                  @Validated @ModelAttribute AddStickerForm addStickerForm, @PathVariable Long treeKey,
-                                  BindingResult result, HttpServletRequest request, Model model) throws IOException {
 
-        if (result.hasErrors()) {
-            //TODO 예외 처리
-            throw new IllegalArgumentException("빈 값이 들어있음");
-        }
-
-        Tree tree = treeService.findByTreeId(treeKey);
-        Long toMemberKey = tree.getMemberKey();
-        Sticker sticker = new Sticker(fromMemberKey, toMemberKey, treeKey, addStickerForm.getSubject(), addStickerForm.getMessage());
-
-        Sticker savedSticker = stickerService.save(sticker);
-        return new ResponseResult<>("스티커 작성 성공", savedSticker);
-    }
 }
