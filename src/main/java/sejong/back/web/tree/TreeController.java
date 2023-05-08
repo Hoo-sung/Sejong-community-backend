@@ -13,16 +13,18 @@ import sejong.back.domain.sticker.AddStickerForm;
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.tree.AddTreeForm;
 import sejong.back.domain.tree.Tree;
+import sejong.back.domain.tree.TreeSearchCond;
 import sejong.back.domain.tree.UpdateTreeForm;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.argumentresolver.Login;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -45,9 +47,22 @@ public class TreeController {
     }
 
     @GetMapping//tree 전체 찾기.
-    public ResponseResult<?> forest() {//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
+    public ResponseResult<?> forest(HttpServletRequest request) {//멤버 검색 페이지이다. 클라이언트 요청의 경우의 수는 2가지
+        /***
+         * 1. query parameter 있는 경우
+         * 필터링 해서 보내줄 것
+         * 2. query parameter 없는 경우
+         * 최신 데이터 20개 보내줄 것
+         */
+        String title = request.getParameter("title");
+        String description = request.getParameter("description");
+        String tag = request.getParameter("tag");
+        String page = request.getParameter("page"); //받아올때는 int로 불가능함 filtering logic에서 변환해서 사용
 
-        List<Tree> trees = treeService.findAll();
+        TreeSearchCond treeSearchCond = new TreeSearchCond(title, description, tag, page);
+        log.info("search condition = {}", treeSearchCond);
+
+        List<Tree> trees = treeService.findAll(treeSearchCond);
         log.info("forest={}", trees);
         return new ResponseResult<>("모든 트리 조회 성공", trees);
     }
@@ -161,21 +176,23 @@ public class TreeController {
         return "sticker/addStickerForm";
     }
 
-    @PostMapping("{treeKey}/add")   //한번 스티커 붙이면 또 못붙이고 자기 스티커 상세로 라디이렉트 시켜야함.
-    public ResponseResult<?> save(@Login Long fromMemberKey,
-                                  @Validated @ModelAttribute AddStickerForm addStickerForm, @PathVariable Long treeKey,
-                                  BindingResult result, HttpServletRequest request, Model model) throws IOException {
+    @PostConstruct
+    public void testEnvironment() {
+        Map<String, Boolean> dataRange = new HashMap<>();
+        dataRange.put("studentId", true);
+        dataRange.put("department", false);
 
-        if (result.hasErrors()) {
-            //TODO 예외 처리
-            throw new IllegalArgumentException("빈 값이 들어있음");
-        }
+        Tree tree1 = new Tree(1L, " 공부하자", "7시에", new ArrayList<>(Arrays.asList("공부")), dataRange);
+        Tree tree2 = new Tree(2L, "놀자", "8시에", new ArrayList<>(Arrays.asList("밥약")), dataRange);
+        Tree tree3 = new Tree(3L, "공모전 나가자", "9시에", new ArrayList<>(Arrays.asList("공부")), dataRange);
+        Tree tree4 = new Tree(1L, "집 가자", "11시에", new ArrayList<>(Arrays.asList("밥약")), dataRange);
+        Tree tree5 = new Tree(2L, "밥 먹자", "6시에", new ArrayList<>(Arrays.asList("밥약")), dataRange);
 
-        Tree tree = treeService.findByTreeId(treeKey);
-        Long toMemberKey = tree.getMemberKey();
-        Sticker sticker = new Sticker(fromMemberKey, toMemberKey, treeKey, addStickerForm.getSubject(), addStickerForm.getMessage());
-
-        Sticker savedSticker = stickerService.save(sticker);
-        return new ResponseResult<>("스티커 작성 성공", savedSticker);
+        treeService.save(tree1);
+        treeService.save(tree2);
+        treeService.save(tree3);
+        treeService.save(tree4);
+        treeService.save(tree5);
     }
+
 }
