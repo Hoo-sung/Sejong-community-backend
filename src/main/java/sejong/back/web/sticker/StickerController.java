@@ -17,6 +17,7 @@ import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -58,7 +59,7 @@ public class StickerController {
         Optional<Sticker> sticker = stickerService.findByStickerId(myKey, stickerKey);
         if (sticker.isEmpty()) {
             //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
-            throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
+            throw new NullPointerException("stickerKey에 맞는 스티커가 없음");
         }
 
         Sticker findSticker = sticker.get();
@@ -93,7 +94,6 @@ public class StickerController {
         Tree tree = treeService.findByTreeId(treeId);
         Long toMemberKey = tree.getMemberKey();
         Sticker sticker = new Sticker(fromMemberKey, toMemberKey, treeId, addStickerForm.getSubject(), addStickerForm.getMessage());
-
         Sticker savedSticker = stickerService.save(sticker);
         return new ResponseResult<>("스티커 작성 성공", savedSticker);
     }
@@ -147,4 +147,14 @@ public class StickerController {
         return new ResponseResult<>("스티커 수정 성공", findSticker);
     }
 
+    @PostConstruct
+    public void testEnvironment(){
+        Sticker sticker1 = new Sticker(1L, 2L, 2L,"HI","Na hal le");
+        Sticker sticker2 = new Sticker(2L, 3L, 3L,"HI","Na hal le");
+        Sticker sticker3 = new Sticker(3L, 1L, 1L,"HI","Na hal le");
+        stickerService.save(sticker1);
+        stickerService.save(sticker2);
+        stickerService.save(sticker3);
+
+    }
 }

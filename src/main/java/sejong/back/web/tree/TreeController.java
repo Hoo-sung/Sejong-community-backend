@@ -20,13 +20,11 @@ import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -167,5 +165,19 @@ public class TreeController {
         return "sticker/addStickerForm";
     }
 
+    @PostConstruct
+    public void testEnvironment(){
+        Tree tree1 = new Tree(1L," 공부하자","7시에",new ArrayList<>(Arrays.asList("공부")));
+        Tree tree2 = new Tree(2L,"놀자","8시에",new ArrayList<>(Arrays.asList("밥약")));
+        Tree tree3 = new Tree(3L,"공모전 나가자","9시에",new ArrayList<>(Arrays.asList("공부")));
+        Tree tree4 = new Tree(1L,"집 가자","11시에",new ArrayList<>(Arrays.asList("밥약")));
+        Tree tree5 = new Tree(2L,"밥 먹자","6시에",new ArrayList<>(Arrays.asList("밥약")));
+
+        treeService.save(tree1);
+        treeService.save(tree2);
+        treeService.save(tree3);
+        treeService.save(tree4);
+        treeService.save(tree5);
+    }
 
 }

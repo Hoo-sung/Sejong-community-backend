@@ -17,6 +17,7 @@ import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -162,4 +163,20 @@ public class MemberController {
     public Member showMember(@Login Member member) {
         return member;
     }
+
+    @PostConstruct
+    public void TestEnvironment(){
+
+        //member
+        Member m1 = new Member("A", "Computer Science", Long.valueOf(19011901), "3", "재학");
+        Member m2 = new Member("B", "Computer Science", Long.valueOf(18011881), "4", "재학");
+        Member m3 = new Member("C", "Computer Science", Long.valueOf(20000001), "1", "재학");
+        //save
+
+        memberService.save(m1);
+        memberService.save(m2);
+        memberService.save(m3);
+
+    }
+
 }

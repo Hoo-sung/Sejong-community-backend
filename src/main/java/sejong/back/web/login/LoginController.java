@@ -12,6 +12,7 @@ import sejong.back.exception.WrongLogoutException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -84,4 +85,6 @@ public class LoginController {
 
         throw new WrongLogoutException("로그인하지 않은 사용자가 로그아웃 요청");
     }
+
+
 }
