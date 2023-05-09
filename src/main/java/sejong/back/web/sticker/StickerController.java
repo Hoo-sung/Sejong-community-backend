@@ -93,7 +93,7 @@ public class StickerController {
 
         Tree tree = treeService.findByTreeId(treeId);
         Long toMemberKey = tree.getMemberKey();
-        Sticker sticker = new Sticker(fromMemberKey, toMemberKey, treeId, addStickerForm.getSubject(), addStickerForm.getMessage());
+        Sticker sticker = new Sticker(fromMemberKey, toMemberKey, treeId, addStickerForm.getSubject(), addStickerForm.getMessage(),1);
         Sticker savedSticker = stickerService.save(sticker);
         return new ResponseResult<>("스티커 작성 성공", savedSticker);
     }
@@ -131,6 +131,7 @@ public class StickerController {
                                   @Validated @ModelAttribute("updateStickerForm") UpdateStickerForm form,
                                   BindingResult bindingResult) {
 
+        log.info("스티커 수정 ");
         if (bindingResult.hasErrors()) {
             log.info("errors={}", bindingResult);
             throw new IllegalArgumentException("빈 값이 있음");
@@ -141,17 +142,22 @@ public class StickerController {
             //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
             throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
         }
-        Sticker findSticker = sticker.get();
-        stickerService.update(stickerKey, form);
 
-        return new ResponseResult<>("스티커 수정 성공", findSticker);
+        Sticker findSticker = sticker.get();
+
+        if (myKey == findSticker.getFromMemberKey()) { //자신의 트리에 붙은 스티커
+            stickerService.update(stickerKey, form);
+            log.info("나의 스티커 수정 = {}", findSticker.getTitle());
+            return new ResponseResult<>("스티커 수정 성공", findSticker);}
+
+        return new ResponseResult<>("내 스티커가 아닙니다.");
     }
 
     @PostConstruct
     public void testEnvironment(){
-        Sticker sticker1 = new Sticker(1L, 2L, 2L,"HI","Na hal le");
-        Sticker sticker2 = new Sticker(2L, 3L, 3L,"HI","Na hal le");
-        Sticker sticker3 = new Sticker(3L, 1L, 1L,"HI","Na hal le");
+        Sticker sticker1 = new Sticker(1L, 2L, 2L,"HI","Na hal le",1);
+        Sticker sticker2 = new Sticker(2L, 3L, 3L,"HI","Na hal le yo",1);
+        Sticker sticker3 = new Sticker(3L, 1L, 1L,"HI","Na hal le lel yo",1);
         stickerService.save(sticker1);
         stickerService.save(sticker2);
         stickerService.save(sticker3);

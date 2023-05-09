@@ -65,6 +65,7 @@ public class TreeController {
 
         List<Tree> trees = treeService.findAll(treeSearchCond);
         log.info("forest={}", trees);
+
         return new ResponseResult<>("모든 트리 조회 성공", trees);
     }
 
@@ -179,11 +180,14 @@ public class TreeController {
 
     @PostConstruct
     public void testEnvironment(){
-        Tree tree1 = new Tree(1L," 공부하자","7시에",new ArrayList<>(Arrays.asList("공부")));
-        Tree tree2 = new Tree(2L,"놀자","8시에",new ArrayList<>(Arrays.asList("밥약")));
-        Tree tree3 = new Tree(3L,"공모전 나가자","9시에",new ArrayList<>(Arrays.asList("공부")));
-        Tree tree4 = new Tree(1L,"집 가자","11시에",new ArrayList<>(Arrays.asList("밥약")));
-        Tree tree5 = new Tree(2L,"밥 먹자","6시에",new ArrayList<>(Arrays.asList("밥약")));
+        Map<String, Boolean> dataRange = new HashMap<>();
+        dataRange.put("studentId",true);
+        dataRange.put("department", false);
+        Tree tree1 = new Tree(1L," 공부하자","7시에",new ArrayList<>(Arrays.asList("공부")),dataRange);
+        Tree tree2 = new Tree(2L,"놀자","8시에",new ArrayList<>(Arrays.asList("밥약")),dataRange);
+        Tree tree3 = new Tree(3L,"공모전 나가자","9시에",new ArrayList<>(Arrays.asList("공부")),dataRange);
+        Tree tree4 = new Tree(1L,"집 가자","11시에",new ArrayList<>(Arrays.asList("밥약")),dataRange);
+        Tree tree5 = new Tree(2L,"밥 먹자","6시에",new ArrayList<>(Arrays.asList("밥약")),dataRange);
 
         treeService.save(tree1);
         treeService.save(tree2);
