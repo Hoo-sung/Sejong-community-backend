@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.*;
 
 @Slf4j
@@ -64,6 +65,7 @@ public class TreeController {
 
         List<Tree> trees = treeService.findAll(treeSearchCond);
         log.info("forest={}", trees);
+
         return new ResponseResult<>("모든 트리 조회 성공", trees);
     }
 

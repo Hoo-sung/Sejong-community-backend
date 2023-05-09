@@ -28,8 +28,12 @@ public class LoginController {
     private final LoginService loginService;
 
     @GetMapping("/login")
-    public String login() {
-        return "회원가입 시 리다이렉트 되는지 확인하기 위해 대충 만들어둔 메서드";
+    public Boolean loginCheck(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if(session==null)
+            return false;
+
+        return true;
     }
 
     //로그인 성공했을 떄 기본적인 리다이렉트 경로는 /forest(트리(게시판) 검색 페이지)

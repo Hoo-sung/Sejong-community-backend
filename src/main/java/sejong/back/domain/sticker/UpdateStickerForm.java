@@ -11,7 +11,11 @@ import javax.validation.constraints.NotBlank;
 public class UpdateStickerForm {
 
     @NotBlank
-    private String subject;
+    private Integer type;
+
+
+    @NotBlank
+    private String title;
 
     @NotBlank
     private String message;
