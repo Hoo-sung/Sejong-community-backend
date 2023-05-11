@@ -156,12 +156,19 @@ public class StickerController {
 
     @PostConstruct
     public void testEnvironment(){
-        Sticker sticker1 = new Sticker(1L, 2L, 2L,"HI","Na hal le",1);
-        Sticker sticker2 = new Sticker(2L, 3L, 3L,"HI","Na hal le yo",1);
-        Sticker sticker3 = new Sticker(3L, 1L, 1L,"HI","Na hal le lel yo",1);
+        Sticker sticker1 = new Sticker(1L, 2L, 2L,"HI1","Na hal le",1);
+        Sticker sticker2 = new Sticker(1L, 3L, 3L,"HI2","Na hal le yo",1);
+        Sticker sticker3 = new Sticker(2L, 1L, 1L,"HI3","Na hal le yoyo",2);
+        Sticker sticker4 = new Sticker(2L, 3L, 3L,"HI4","Na hal le yoyoyo",2);
+        Sticker sticker5 = new Sticker(3L, 1L, 1L,"HI5","Na hal le yoyoyoyo",1);
+        Sticker sticker6 = new Sticker(3L, 2L, 2L,"HI6","Na hal le yoyoyoyoyo",2);
+
         stickerService.save(sticker1);
         stickerService.save(sticker2);
         stickerService.save(sticker3);
+        stickerService.save(sticker4);
+        stickerService.save(sticker5);
+        stickerService.save(sticker6);
 
     }
 }

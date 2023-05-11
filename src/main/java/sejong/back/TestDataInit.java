@@ -20,7 +20,7 @@ public class TestDataInit {
     /**
      * 확인용 초기 데이터 추가
      */
-    @EventListener(ApplicationReadyEvent.class)
+//    @EventListener(ApplicationReadyEvent.class)
     public void initData() {
         log.info("test data init");
         Long studentId = 18011834L;

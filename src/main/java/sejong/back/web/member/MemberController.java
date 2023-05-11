@@ -143,7 +143,7 @@ public class MemberController {
 
     @PatchMapping//여기를 공개 정보 수정이라고 하자.
     public void edit(@Login Long myKey, @RequestBody UpdateMemberForm updateMemberForm,
-                                  HttpServletRequest request) throws Exception {
+                     HttpServletRequest request) throws Exception {
 
         HttpSession session = request.getSession();
         String sessionId = session.getId();
@@ -160,5 +160,32 @@ public class MemberController {
     @GetMapping
     public Member showMember(@Login Member member) {
         return member;
+    }
+
+    @PostConstruct
+    public void TestEnvironment() throws IOException {
+
+        Map<String, Boolean> dataRange = new HashMap<>();
+        dataRange.put("studentId", false);
+        dataRange.put("department", false);
+
+        //validate
+        Member vm1 = loginService.validateSejong(17011843L, "garam2835!");
+        vm1.setNickname("hwang");
+        vm1.setDataRange(dataRange);
+
+        Member vm2 = loginService.validateSejong(18011881L, "19991201");
+        vm2.setNickname("kim");
+        vm2.setDataRange(dataRange);
+
+        Member vm3 = loginService.validateSejong(18011834L, "fa484869");
+        vm3.setNickname("kwon");
+        vm3.setDataRange(dataRange);
+
+        //save
+        memberService.save(vm1);
+        memberService.save(vm2);
+        memberService.save(vm3);
+
     }
 }

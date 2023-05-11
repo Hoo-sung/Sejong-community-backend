@@ -126,10 +126,4 @@ public class ViewController {
     public String editTree() {
         return "Edit!";
     }
-
-    @PostConstruct
-    public void setting() throws IOException {
-        Member validateMember = loginService.validateSejong(18011881L, "19991201");
-        memberRepository.save(validateMember);//db에 저장.
-    }
 }
