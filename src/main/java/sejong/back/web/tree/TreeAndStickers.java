@@ -2,6 +2,7 @@ package sejong.back.web.tree;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import sejong.back.domain.sticker.ShowStickerForm;
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.tree.Tree;
 
@@ -11,15 +12,10 @@ import java.util.List;
 @Data
 public class TreeAndStickers {
     private Tree tree;
-    private List<Sticker> stickers;
+    private List stickers;
     private Boolean isMine;
 
-    public TreeAndStickers(Tree tree, List<Sticker> stickers) {
-        this.tree = tree;
-        this.stickers = stickers;
-    }
-
-    public TreeAndStickers(Tree tree, List<Sticker> stickers, Boolean isMine) {
+    public TreeAndStickers(Tree tree, List stickers, Boolean isMine) {
         this.tree = tree;
         this.stickers = stickers;
         this.isMine = isMine;

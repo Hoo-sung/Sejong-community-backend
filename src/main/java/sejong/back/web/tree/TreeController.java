@@ -10,6 +10,7 @@ import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.StickerService;
 import sejong.back.domain.service.TreeService;
 import sejong.back.domain.sticker.AddStickerForm;
+import sejong.back.domain.sticker.ShowStickerForm;
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.tree.AddTreeForm;
 import sejong.back.domain.tree.Tree;
@@ -74,11 +75,16 @@ public class TreeController {
         Tree tree = treeService.findByTreeId(treeKey);
         List<Sticker> stickers = stickerService.findByTreeId(treeKey);
 
-        //TODO 내 트리에 접근하는 경우와 다른 사람 트리에 접근하는 경우를 나눠서 로직 구현
-        //TODO 프론트랑 스펙 다시 맞추기
-
-        if (tree.getMemberKey() == myKey) return new TreeAndStickers(tree, stickers, true);
-        else return new TreeAndStickers(tree, stickers, false);
+        //내 트리에 접근하는 경우와 다른 사람 트리에 접근하는 경우를 나눠서 로직 구현
+        if (tree.getMemberKey() == myKey) {
+            return new TreeAndStickers(tree, stickers, true);
+        }
+        else {
+            List<ShowStickerForm> otherStickers = new ArrayList<>();
+            stickers.stream()
+                    .forEach((sticker) -> otherStickers.add(stickerService.register(sticker)));
+            return new TreeAndStickers(tree, otherStickers, false);
+        }
 
 /*
         if (tree.getMemberKey() == myKey) { //트리 검색 페이지에서 클릭한 트리가 내 트리
