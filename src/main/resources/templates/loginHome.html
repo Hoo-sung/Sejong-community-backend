@@ -16,12 +16,19 @@
     <h4 class="mb-3" th:text="|재학/휴학: ${member.status}|">로그인 사용자 이름</h4>
     <h4 class="mb-3" th:text="|고전 독서 완료 학기/여부: ${member.flag}|">로그인 사용자 이름</h4>
     <h4 class="mb-3" th:text="|현재 등급: ${member.grade}|">로그인 사용자 이름</h4>
+    <h4 class="mb-3" th:text="|닉네임: ${member.nickName}|">로그인 사용자 이름</h4>
+<!--    <h4 class="mb-3" th:text="|현재 신입/재학/휴학/졸업 상태: ${member.memberType}|">로그인 사용자 이름</h4>-->
     <hr class="my-4">
     <div class="row">
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg" type="button"
-                    th:onclick="|location.href='@{/members}'|">
+<<<<<<< HEAD
+                    th:onclick="|location.href='@{/forest}'|">
                 검색 페이지
+=======
+                    th:onclick="|location.href='@{/members}'|">
+                멤버 검색 페이지
+>>>>>>> Lee
             </button>
         </div>
         <div class="col">
@@ -31,6 +38,15 @@
                 </button>
             </form>
         </div>
+
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" type="button"
+                    th:onclick="|location.href='@{/forest}'|">
+                게시물 검색 페이지
+            </button>
+        </div>
+
+
     </div>
     <hr class="my-4">
 </div> <!-- /container -->

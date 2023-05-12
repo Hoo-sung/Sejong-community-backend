@@ -43,9 +43,15 @@
     </div>
 
     <div>
-        <label for="status" th:text="#{label.member.status}">멤버 재학/휴학/졸업 여부</label>
+        <label for="status" th:text="#{label.member.status}">현재 상태</label>
         <input type="text" id="status" name="status" class="form-control" value="10" th:value="${member.status}" readonly>
     </div>
+
+    <div>
+        <label for="status" th:text="#{label.member.nickName}">맴버 닉네임</label>
+        <input type="text" id="nickName" name="status" class="form-control" value="10" th:value="${member.nickName}" readonly>
+    </div>
+
 
     <hr class="my-4">
 
@@ -53,14 +59,18 @@
         <div class="col">
             <button class="w-100 btn btn-primary btn-lg"
                     onclick="location.href='editForm.html'"
-                    th:onclick="|location.href='@{/members/{memberKey}/edit(memberKey=${member.key})}'|"
+                    th:onclick="|location.href='@{/members/{memberKey}(memberKey=${member.key})}'|"
                     type="button" th:text="#{button.send}">쪽지 보내기</button>
         </div>
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
                     onclick="location.href='members.html'"
-                    th:onclick="|location.href='@{/members}'|"
+                    th:onclick="|location.href='@{/forest}'|"
+<<<<<<< HEAD
                     type="button" th:text="#{button.cancel}">목록으로</button>
+=======
+                    type="button" th:text="#{button.forest}">목록으로</button>
+>>>>>>> Lee
         </div>
     </div>
 
