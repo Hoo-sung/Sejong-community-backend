@@ -52,28 +52,6 @@
         </div>
 
 
-        <!--        <div>-->
-<!--            <div>신입/휴학/복학 여부</div>-->
-<!--            <div th:each="type : ${memberTypes}" class="form-check form-check-inline">-->
-<!--                <input type="radio" th:field="*{memberType}" th:value="${type.name()}"-->
-<!--                       class="form-check-input">-->
-<!--                <label th:for="${#ids.prev('memberType')}" th:text="${type.description}"-->
-<!--                       class="form-check-label">-->
-<!--                    BOOK-->
-<!--                </label>-->
-<!--            </div>-->
-<!--        </div>-->
-
-<!--        <div>-->
-<!--            <div>태그들</div>-->
-<!--            <div th:each="tag : ${tagGroups}" class="form-check form-check-inline">-->
-<!--                <input type="checkbox" th:field="*{tags}" th:value="${tag}"-->
-<!--                       class="form-check-input">-->
-<!--                <label th:for="${#ids.prev('tags')}"-->
-<!--                       th:text="${tag}" class="form-check-label">서울</label>-->
-<!--            </div>-->
-<!--        </div>-->
-
 
         <hr class="my-4">
 
@@ -83,15 +61,11 @@
             </div>
             <div class="col">
                 <button class="w-100 btn btn-secondary btn-lg"
-<<<<<<< HEAD
+
                         onclick="location.href='item.html'"
                         th:onclick="|location.href='@{/forest}'|"
                         type="button" th:text="#{button.cancel}">취소</button>
-=======
-                        onclick="location.href='forest.html'"
-                        th:onclick="|location.href='@{/forest}'|"
-                        type="button" th:text="#{button.cancel}">게시글 목록</button>
->>>>>>> Lee
+
             </div>
         </div>
 

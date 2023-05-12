@@ -17,9 +17,11 @@ public class UpdateTreeForm {
     @NotBlank
     private String description;//간단한 설명
 
-    private List<Integer> tags;//정수 배열로.
+
+    private List<Integer> tags;
 
     private boolean requestId;
     private boolean requestDepartment;
+
 
 }

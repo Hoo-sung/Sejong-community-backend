@@ -5,7 +5,6 @@ import sejong.back.domain.sticker.AddStickerForm;
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.sticker.StickerSearchCond;
 import sejong.back.domain.sticker.UpdateStickerForm;
-import sejong.back.domain.tree.Tree;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +22,7 @@ public class MemoryStickerRepository implements StickerRepository {
     @Override
     public Sticker save(Long fromMemberId,Long toMemberId, Long tree_id,String writer, AddStickerForm form) {
 
-        Sticker sticker = new Sticker(fromMemberId, toMemberId, tree_id,form.getTitle(), form.getMessage());
+        Sticker sticker = new Sticker(fromMemberId, toMemberId, tree_id,form.getTitle(), form.getMessage(),form.getType());
         sticker.setStickerKey(++stickerSequence);
         storeSticker.put(sticker.getStickerKey(), sticker);
         return sticker;
@@ -68,6 +67,7 @@ public class MemoryStickerRepository implements StickerRepository {
     public void update(Long stickerKey, UpdateStickerForm form) {//스티커 제목이랑 메시지를 업데이트 해야한다.
 
         Sticker updateSticker = storeSticker.get(stickerKey);
+        updateSticker.setType(form.getType());
         updateSticker.setTitle(form.getTitle());
         updateSticker.setMessage(form.getMessage());
 

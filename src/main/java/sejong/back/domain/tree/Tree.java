@@ -15,35 +15,39 @@ import java.util.Map;
 @Setter
 public class Tree {
 
-    private  Long treeKey;
+
+    private Long treeKey;
     private  Long memberKey;//만든 사람의 정보 저장하는 값.
 
-    private  String title;//게시글 제목
-    private  String description;//게시글 설명
+    private String title;//게시글 제목
+    private String description;//게시글 설명
+    /**
+     * 1.스터디
+     * 2.팀플
+     * 3.잡담
+     * 4.친목
+     * 5.고민 상담
+     * 6.정보 교류
+     */
+    private List<Integer> tags;
 
-    private Timestamp created_at;
+    private Timestamp created_at;//만든 시간
+    private Timestamp updated_at;//수정 시간
 
-    private Timestamp updated_at;
-
-
-    //공개 범위.
     private boolean requestId;
     private boolean requestDepartment;
 
-
-    private List<String> tags;//담아서 줄게.
-
-    public Tree(Long memberKey, String title, String description,boolean requestId,boolean requestDepartment,Timestamp created_at,Timestamp updated_at) {
+    public Tree(Long memberKey, String title, String description, List<Integer> tags, boolean requestId, boolean requestDepartment) {
         this.memberKey = memberKey;
         this.title = title;
         this.description = description;
+        this.tags = tags;
         this.requestId = requestId;
-        this.requestDepartment=requestDepartment;
-        this.created_at=created_at;
-        this.updated_at=updated_at;
+        this.requestDepartment = requestDepartment;
     }
 
-    public Tree( Long memberKey, String title, String description, boolean requestId, boolean requestDepartment) {
+
+    public Tree(Long memberKey, String title, String description, boolean requestId, boolean requestDepartment,Timestamp created_at, Timestamp updated_at) {
 
         this.memberKey = memberKey;
         this.title = title;

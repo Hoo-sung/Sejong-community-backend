@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Map;
+
 /**
  * 회원 이름
  * 학과
@@ -29,12 +31,9 @@ public class Member {
     private Long key;//서버에서 관리하는 키.
 //    private MemberGrade grade;//경험치이다.
 
-<<<<<<< Updated upstream
-=======
-    private boolean openStudentId;
-    private boolean openDepartment;
+    private boolean openStudentId; //공개 범위 ID
+    private boolean openDepartment; // 공개 범위 학과
 
->>>>>>> Stashed changes
 //    사용자가 바꿀 수 있는 필드.
 //    private MemberType memberType;//신/재학/휴학 여부.
 //    private List<String> tags;//태그들도 우리가 만들어서 고르는 식으로 해야할거 같음.
@@ -64,4 +63,5 @@ public class Member {
      * 랜덤 field 변수 생성(랜덤 키);
      * final 여부 생각해보자.
      */
+
 }

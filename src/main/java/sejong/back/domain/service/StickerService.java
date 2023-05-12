@@ -6,6 +6,8 @@ import sejong.back.domain.member.Member;
 import sejong.back.domain.repository.MemberRepository;
 import sejong.back.domain.repository.StickerRepository;
 import sejong.back.domain.sticker.AddStickerForm;
+import sejong.back.domain.sticker.ShowStickerForm;
+
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.sticker.StickerSearchCond;
 import sejong.back.domain.sticker.UpdateStickerForm;
@@ -56,6 +58,15 @@ public class StickerService {
 
     public Sticker findByMemberKeyAndTreeKey(Long memberKey, Long treeKey) {
         return stickerRepository.findByMemberKeyAndTreeKey(memberKey, treeKey);
+    }
+
+    public ShowStickerForm register(Sticker sticker) {
+        return new ShowStickerForm(sticker.getStickerKey(),
+                sticker.getFromMemberKey(),
+                sticker.getToMemberKey(),
+                sticker.getTreeKey(),
+                sticker.getTitle(),
+                sticker.getType());
     }
 
 }

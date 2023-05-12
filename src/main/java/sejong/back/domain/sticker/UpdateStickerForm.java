@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class UpdateStickerForm {
 
+
     @NotBlank
     private String title;
 

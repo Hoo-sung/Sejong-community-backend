@@ -128,6 +128,7 @@ public class ViewController {
         return "Edit!";
     }
 
+
     @PostConstruct
     public void setting() throws IOException, SQLException {
         Member validateMember = loginService.validateSejong(18011881L, "19991201");
