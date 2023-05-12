@@ -54,11 +54,10 @@ public class StickerController {
     @GetMapping("/{stickerKey}")//스티커에 대한 상세 정보 보는 페이지.
     public ResponseResult<?> searchSticker(@Login Long myKey, @PathVariable Long stickerKey,
                                            Model model, HttpServletRequest request) {
-
-        //TODO 다른 사람 스티커 조회는 상관없음.
+        log.info("스티커 열람");
         Optional<Sticker> sticker = stickerService.findByStickerId(myKey, stickerKey);
+
         if (sticker.isEmpty()) {
-            //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
             throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
         }
         Sticker findSticker = sticker.get();
@@ -73,6 +72,7 @@ public class StickerController {
         if (myKey == findSticker.getFromMemberKey() //자신이 쓴 스티커
                 || myKey == stickerOnThisTree.getMemberKey()) { //자신의 트리에 붙은 스티커
             data.put("message", findSticker.getMessage());
+            log.info("열람가능 message = {}", data.get("message"));
             return new ResponseResult<>("스티커 열람", data);
         }
         else{
@@ -84,7 +84,8 @@ public class StickerController {
 
     @PostMapping   //스티커 붙이기
     public ResponseResult<?> save(@Login Long fromMemberKey,
-                                  @Validated @ModelAttribute AddStickerForm addStickerForm, @RequestParam Long treeId,
+                                  @Validated @RequestBody AddStickerForm addStickerForm,
+                                  @RequestParam Long treeId,
                                   BindingResult result, HttpServletRequest request, Model model) throws IOException {
 
         if (result.hasErrors()) {
@@ -94,7 +95,7 @@ public class StickerController {
 
         Tree tree = treeService.findByTreeId(treeId);
         Long toMemberKey = tree.getMemberKey();
-        Sticker sticker = new Sticker(fromMemberKey, toMemberKey, treeId, addStickerForm.getTitle(), addStickerForm.getMessage(),1);
+        Sticker sticker = new Sticker(fromMemberKey, toMemberKey, treeId, addStickerForm.getTitle(), addStickerForm.getMessage(), addStickerForm.getType());
         Sticker savedSticker = stickerService.save(sticker);
         return new ResponseResult<>("스티커 작성 성공", savedSticker);
     }

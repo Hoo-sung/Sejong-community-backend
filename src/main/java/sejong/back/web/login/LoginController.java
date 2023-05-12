@@ -1,6 +1,7 @@
 package sejong.back.web.login;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
@@ -30,6 +31,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public LoginCheck loginCheck(HttpServletRequest request) {
+        log.info("Login Checking...");
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute(SessionConst.DB_KEY) == null)
             return new LoginCheck(false);
@@ -81,6 +83,7 @@ public class LoginController {
     }
 
     @AllArgsConstructor
+    @Getter
     static class LoginCheck {
         private Boolean isLogin;
     }

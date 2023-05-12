@@ -30,7 +30,9 @@ public class StickerService {
     }
 
     public Optional<Sticker> findByStickerId(Long myKey, Long stickerKey) {
-        List<Sticker> stickers = stickerRepository.findByMemberId(myKey);
+
+//        List<Sticker> stickers = stickerRepository.findByMemberId(myKey);
+        List<Sticker> stickers = stickerRepository.findAll();
 
         return stickers.stream()
                 .filter(sticker -> (sticker.getStickerKey() == stickerKey))
