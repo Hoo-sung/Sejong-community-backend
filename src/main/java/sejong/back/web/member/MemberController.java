@@ -1,6 +1,5 @@
 package sejong.back.web.member;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
@@ -12,9 +11,9 @@ import sejong.back.domain.member.Member;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.MemberService;
+import sejong.back.domain.service.TreeService;
 import sejong.back.exception.WrongSessionIdException;
 import sejong.back.web.ResponseResult;
-import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
 
 import javax.annotation.PostConstruct;
@@ -23,8 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 //TODO rest api를 쓰는거면 로그인 안된 사용자가 접근할 떄 리다이렉트시키는 걸 서버에서 해줘야하는거 아님 클라에서 해주는거?
 //==> PRG 참고
@@ -36,6 +33,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final LoginService loginService;
+    private final TreeService treeService;
 
 //    @ModelAttribute("memberTypes")//모델에 통쨰로보여줘야 라디오 버튼이든 뭐든 내용물을 통쨰로 출력할 수 있다.
 //    public MemberType[] memberTypes(){
@@ -45,34 +43,6 @@ public class MemberController {
     //TODO 멤버 검색 페이지로 다른 멤버의 정보를 볼 일은 없을 듯
     //      왜냐하면 "/forest"에서 다른 사람의 트리를 보면 되니까
     //      우선 주석 처리
-//    @GetMapping//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
-    public ResponseResult<?> members(HttpServletRequest request, Model model) {
-        List<Member> members = memberService.findAll();
-        log.info("members={}", members);
-
-        HttpSession session = request.getSession(false);//세션을 가져와서 자기 member key를 뽑아야한다.
-        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);//다운 캐스팅.
-        Member member = memberService.findByKey(myKey);
-
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("members", members);
-        data.put("member", member);
-
-        return new ResponseResult<>("멤버 조회 성공", data);
-    }
-
-    /**
-     * 모든 @SessionAttribute의 required는 true
-     */
-//    @GetMapping("/my-page")//자신의 멤버 상세 페이지이다.
-    public ResponseResult<?> member(@Login Member member) {
-
-        if (member == null) {
-            //TODO 예외 처리
-            throw new NullPointerException("내 정보를 찾을 수 없음");
-        }
-        return new ResponseResult<>("내 정보 조회 성공", member);
-    }
 
     /**
      * @TODO 우리 서비스에서 회원가입할 때 입력한 이름과 세종대 계정에 등록된 이름이 다른 경우엔 어떻게 처리?
@@ -164,33 +134,33 @@ public class MemberController {
 
     //회원 정보 수정이 정상적으로 이루어졌는지 테스트하는 컨트롤러
     @GetMapping
-    public Member showMember(@Login Member member) {
-        return member;
+    public HashMap<String, Object> showMember(@Login Member member) {
+        log.info("정보 열람 = {}", member.getKey());
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("member", member);
+        data.put("treeId", treeService.findMyTrees(member.getKey()));
+
+
+        return data;
     }
 
     @PostConstruct
     public void TestEnvironment() throws IOException {
 
-        //validate
-        Member vm1 = loginService.validateSejong(17011843L, "garam2835!");
-        vm1.setNickname("hwang");
-        vm1.setOpenStudentId(false);
-        vm1.setOpenDepartment(false);
+        //member
+        Member m1 = new Member("A", "Computer Science", Long.valueOf(19011901), "3", "재학");
 
-        Member vm2 = loginService.validateSejong(18011881L, "19991201");
-        vm2.setNickname("kim");
-        vm2.setOpenStudentId(false);
-        vm2.setOpenDepartment(true);
-
-        Member vm3 = loginService.validateSejong(18011834L, "fa484869");
-        vm3.setNickname("kwon");
-        vm3.setOpenStudentId(true);
-        vm3.setOpenDepartment(true);
+        Member validateMember = loginService.validateSejong(Long.valueOf(18011881), "19991201");
+        Member m2 = new Member("B", "Computer Science", Long.valueOf(18011881), "4", "재학");
+        Member m3 = new Member("C", "Computer Science", Long.valueOf(20000001), "1", "재학");
+        Member m4 = new Member("C", "Electric Communication", Long.valueOf(18010741), "3", "재학");
 
         //save
-        memberService.save(vm1);
-        memberService.save(vm2);
-        memberService.save(vm3);
+
+        memberService.save(m1);
+        memberService.save(m2);
+        memberService.save(m3);
+        memberService.save(m4);
 
     }
 }

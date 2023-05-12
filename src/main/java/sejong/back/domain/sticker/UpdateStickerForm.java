@@ -5,12 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 public class UpdateStickerForm {
 
-    @NotBlank
+    @NotNull
     private Integer type;
 
     @NotBlank

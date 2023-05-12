@@ -2,6 +2,7 @@ package sejong.back.web.sticker;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultLifecycleProcessor;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -68,16 +69,24 @@ public class StickerController {
          * 스티커 붙이는 게시물도 모델로 가져오자. 스티커 상세 정보에서 어떤 게시물에 보내는건지도 간략해 정보 보여줘야 하므로.
          */
         HashMap<String, Object> data = new HashMap<>();
-
-        if (myKey == findSticker.getFromMemberKey() //자신이 쓴 스티커
-                || myKey == stickerOnThisTree.getMemberKey()) { //자신의 트리에 붙은 스티커
+        if (myKey == findSticker.getFromMemberKey()) {//자신이 쓴 스티커
+            data.put("stickerAuth", 2); //자신이 쓴 스티커 경우 del fix 모두 가능
             data.put("message", findSticker.getMessage());
+
+            log.info("열람가능 message = {}", data.get("message"));
+
+            return new ResponseResult<>("스티커 열람", data);
+        } else if ( myKey == stickerOnThisTree.getMemberKey()) {
+            data.put("message", findSticker.getMessage());
+            data.put("stickerAuth", 1); //자신이 쓴 스티커 경우 del 가능
             log.info("열람가능 message = {}", data.get("message"));
             return new ResponseResult<>("스티커 열람", data);
-        }
-        else{
-            ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.");
+
+        } else{//자신의 트리에 붙은 스티커
+            data.put("stickerAuth", 0); //남의 스티커 경우 모두 불가능
+            ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.",data);
             responseResult.setErrorCode(-120);
+            log.info("열람 불가능 message");
             return responseResult;
         }
     }
@@ -97,6 +106,7 @@ public class StickerController {
         Long toMemberKey = tree.getMemberKey();
         Sticker sticker = new Sticker(fromMemberKey, toMemberKey, treeId, addStickerForm.getTitle(), addStickerForm.getMessage(), addStickerForm.getType());
         Sticker savedSticker = stickerService.save(sticker);
+
         return new ResponseResult<>("스티커 작성 성공", savedSticker);
     }
 
@@ -130,7 +140,7 @@ public class StickerController {
     @PatchMapping("/{stickerKey}")//
     public ResponseResult<?> edit(@Login Long myKey,
                                   HttpServletRequest request, @PathVariable Long stickerKey,
-                                  @Validated @ModelAttribute("updateStickerForm") UpdateStickerForm form,
+                                  @Validated @RequestBody UpdateStickerForm form,
                                   BindingResult bindingResult) {
         log.info("스티커 수정 ");
         if (bindingResult.hasErrors()) {
