@@ -94,7 +94,7 @@ public class MemberController {
 
         log.info("studentId={}", addMemberForm.getStudentId());
         log.info("password={}", addMemberForm.getPassword());
-        log.info("dataRange={}", addMemberForm.getDataRange());
+        log.info("dataRange={}", addMemberForm.isOpenStudentId());
 
         ResponseResult<Object> responseResult = new ResponseResult();
 
@@ -123,7 +123,8 @@ public class MemberController {
         //db에 없으면, 회원 가입 절차 정상적으로 진행해야 한다.
         //닉네임과 공개 벙위는 검증이 다 끝난 후 따로 추가. TODO 근데 setter가 컨트롤러에 직접 보이는게 좀 별로임
         validateMember.setNickname(addMemberForm.getNickname());
-        validateMember.setDataRange(addMemberForm.getDataRange());
+        validateMember.setOpenStudentId(addMemberForm.isOpenStudentId());
+        validateMember.setOpenDepartment(addMemberForm.isOpenDepartment());
         memberService.save(validateMember);//db에 저장.
         log.info("validateMember={} {}", validateMember.getStudentId(), validateMember.getName());
         return new ResponseResult<>();
@@ -145,15 +146,19 @@ public class MemberController {
     public void edit(@Login Long myKey, @RequestBody UpdateMemberForm updateMemberForm,
                      HttpServletRequest request) throws Exception {
 
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
         String sessionId = session.getId();
-        if (!sessionId.equals(updateMemberForm.getSessionId())) { //클라이언트로부터 받은 sessionId와 api 서버에 저장된 sessionId가 다를 때
-            throw new WrongSessionIdException("sessionId가 다름");
+        log.info("Patching Session = {}", sessionId);
+
+        if (sessionId==null) { //클라이언트로부터 받은 sessionId와 api 서버에 저장된 sessionId가 다를 때
+            throw new WrongSessionIdException("로그인 X");
         }
 
         Member member = memberService.findByKey(myKey);
         member.setNickname(updateMemberForm.getNickname());
-        member.setDataRange(updateMemberForm.getDataRange());
+        member.setOpenStudentId(updateMemberForm.isOpenStudentId());
+        member.setOpenDepartment(updateMemberForm.isOpenDepartment());
+
     }
 
     //회원 정보 수정이 정상적으로 이루어졌는지 테스트하는 컨트롤러
@@ -165,22 +170,21 @@ public class MemberController {
     @PostConstruct
     public void TestEnvironment() throws IOException {
 
-        Map<String, Boolean> dataRange = new HashMap<>();
-        dataRange.put("studentId", false);
-        dataRange.put("department", false);
-
         //validate
         Member vm1 = loginService.validateSejong(17011843L, "garam2835!");
         vm1.setNickname("hwang");
-        vm1.setDataRange(dataRange);
+        vm1.setOpenStudentId(false);
+        vm1.setOpenDepartment(false);
 
         Member vm2 = loginService.validateSejong(18011881L, "19991201");
         vm2.setNickname("kim");
-        vm2.setDataRange(dataRange);
+        vm2.setOpenStudentId(false);
+        vm2.setOpenDepartment(true);
 
         Member vm3 = loginService.validateSejong(18011834L, "fa484869");
         vm3.setNickname("kwon");
-        vm3.setDataRange(dataRange);
+        vm3.setOpenStudentId(true);
+        vm3.setOpenDepartment(true);
 
         //save
         memberService.save(vm1);

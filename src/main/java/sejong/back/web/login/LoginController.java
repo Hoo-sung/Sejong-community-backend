@@ -63,11 +63,8 @@ public class LoginController {
 
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.DB_KEY, loginMember.getKey());
-        Map<String, String> data = new HashMap<>();
-        data.put("sessionId", session.getId());
-        data.put("redirectURL", redirectURI);
 
-        return new ResponseResult<>("로그인 성공", data);
+        return new ResponseResult<>("로그인 성공");
         //ResponseResult 대신 ResponseEntity
         // 데이터 안에 데이터가 불편해서
     }

@@ -71,8 +71,12 @@ public class TreeController {
     }
 
     @GetMapping("/{treeKey}")//트리 아이디로 게시글 검색. 게시글 목록에서 열로 리다이렉트 되어서 온다.
-    public TreeAndStickers searchTree(@Login Long myKey, @PathVariable Long treeKey) {
+    public TreeAndStickers searchTree(@Login Long myKey, @PathVariable Long treeKey) throws NullPointerException {
         Tree tree = treeService.findByTreeId(treeKey);
+        if(tree == null){
+            log.error("트리 ID에 해당되는 트리 X");
+            throw new NullPointerException("트리 ID에 해당되는 트리 X");
+        }
         List<Sticker> stickers = stickerService.findByTreeId(treeKey);
 
         //내 트리에 접근하는 경우와 다른 사람 트리에 접근하는 경우를 나눠서 로직 구현
@@ -121,13 +125,15 @@ public class TreeController {
             throw new IllegalArgumentException("빈 값이 있음");
         }
 
-        Tree tree = new Tree(myKey, addTreeForm.getTitle(), addTreeForm.getDescription(), addTreeForm.getTags(), addTreeForm.getDataRange());
+        log.info("add Tree ^^ = {}", addTreeForm.getTitle());
+        Tree tree = new Tree(myKey, addTreeForm.getTitle(), addTreeForm.getDescription(), addTreeForm.getTags(), addTreeForm.isRequestId(), addTreeForm.isRequestDepartment());
         Tree savedTree = treeService.save(tree);
 
         Map<String, String> responseData = new HashMap<>();
         responseData.put("message", "success");
         responseData.put("redirectURL", "forest/" + savedTree.getTreeKey());
 
+        log.info("Add tree Success");
         return responseData;
     }
 
@@ -186,21 +192,20 @@ public class TreeController {
 
     @PostConstruct
     public void testEnvironment() {
-        Map<String, Boolean> dataRange = new HashMap<>();
-        dataRange.put("studentId", true);
-        dataRange.put("department", false);
 
-        Tree tree1 = new Tree(1L, " 공부하자", "7시에", new ArrayList<>(Arrays.asList("공부")), dataRange);
-        Tree tree2 = new Tree(2L, "놀자", "8시에", new ArrayList<>(Arrays.asList("밥약")), dataRange);
-        Tree tree3 = new Tree(3L, "공모전 나가자", "9시에", new ArrayList<>(Arrays.asList("공부")), dataRange);
-        Tree tree4 = new Tree(1L, "집 가자", "11시에", new ArrayList<>(Arrays.asList("밥약")), dataRange);
-        Tree tree5 = new Tree(2L, "밥 먹자", "6시에", new ArrayList<>(Arrays.asList("밥약")), dataRange);
+        Tree tree1 = new Tree(1L," 공부하자","7시에",new ArrayList<>(Arrays.asList(1)),true,false);
+        Tree tree2 = new Tree(2L, "팀플하자", "8시에", new ArrayList<>(Arrays.asList(2)), true, false);
+        Tree tree3 = new Tree(3L,"카톡하자","9시에",new ArrayList<>(Arrays.asList(3)),true, false);
+        Tree tree4 = new Tree(1L,"밥 먹자","11시에",new ArrayList<>(Arrays.asList(4)),false, true);
+        Tree tree5 = new Tree(2L,"고민 들어줘","6시에",new ArrayList<>(Arrays.asList(5)),false, false);
+        Tree tree6 = new Tree(3L,"취업 어떻게 해요","6시에",new ArrayList<>(Arrays.asList(6)),true, true);
 
         treeService.save(tree1);
         treeService.save(tree2);
         treeService.save(tree3);
         treeService.save(tree4);
         treeService.save(tree5);
+        treeService.save(tree6);
     }
 
 }

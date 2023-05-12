@@ -22,7 +22,9 @@ public class AddTreeForm {
     @NotBlank
     private String description;
 
-    private ArrayList<String> tags;
+    private List<Integer> tags;
 
-    private Map<String, Boolean> dataRange;
+    private boolean requestId;
+    private boolean requestDepartment;
+
 }

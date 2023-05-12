@@ -1,12 +1,16 @@
 package sejong.back.domain.member;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
-@Data
+//@Data
+@Getter
+@Setter
 public class AddMemberForm {
 
     @NotBlank
@@ -18,7 +22,12 @@ public class AddMemberForm {
     @NotBlank
     private String password;//비밀번호
 
-    private Map<String, Boolean> dataRange;//정보 공개범위 설정
+    private boolean openStudentId; //공개 범위 ID
+
+
+    private boolean openDepartment; // 공개 범위 학과
+
+
 
 //    private MemberType memberType;//멤버 타입도 넣어야 한다.
 
