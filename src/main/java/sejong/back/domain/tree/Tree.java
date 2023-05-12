@@ -20,7 +20,7 @@ public class Tree {
 
     private  String title;//게시글 제목
     private  String description;//게시글 설명
-    private  List<String> tags;
+    private  List<Integer> tags;
 //    private Map<String, Boolean> dataRange;
 
     private Timestamp created_at;//만든 시간
@@ -29,7 +29,7 @@ public class Tree {
     private boolean requestId;
     private boolean requestDepartment;
 
-    public Tree(Long memberKey, String title, String description, List<String> tags, boolean requestId, boolean requestDepartment) {
+    public Tree(Long memberKey, String title, String description, List<Integer> tags, boolean requestId, boolean requestDepartment) {
         this.memberKey = memberKey;
         this.title = title;
         this.description = description;

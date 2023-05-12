@@ -97,6 +97,33 @@ public class TreeController {
 
     }
 
+    /**
+     * tree 수정
+     * @param myKey //로그인 값
+     * @param treeKey //트리 주소
+     * @param updateTreeForm //수정 내용
+     * @param result //오류 값 저장
+     * @return
+     */
+    @PatchMapping("/{treeKey}")
+    public  ResponseResult edit(@Login Long myKey,@PathVariable Long treeKey,
+                                @Validated @RequestBody UpdateTreeForm updateTreeForm, BindingResult result){
+        if (result.hasErrors()) {
+            throw new IllegalArgumentException("오류 있음");
+        }
+        log.info("트리 수정");
+        Tree tree = treeService.findByTreeId(treeKey);
+        if(tree.getMemberKey()!=myKey){
+            ResponseResult responseResult = new ResponseResult<>("나의 트리가 아닙니다.");
+            responseResult.setErrorCode(-333);
+            return responseResult;
+        }
+        treeService.update(treeKey, updateTreeForm);
+        log.info("트리 수정 완료 제목 ={}", treeService.findByTreeId(treeKey).getTitle());
+
+        return new ResponseResult<>("수정 완료");
+    }
+
     @GetMapping("/my-trees")//자기 트리들 보여주는 페이지.
     public ResponseResult<?> myTrees(@Login Long myKey, HttpServletRequest request, Model model) {
 
@@ -130,6 +157,7 @@ public class TreeController {
         return responseData;
     }
 
+
     @GetMapping("/my-trees/{treeKey}/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
     public String editForm(@Login Long myKey,
                            @PathVariable Long treeKey, Model model, HttpServletRequest request) {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
@@ -143,23 +171,6 @@ public class TreeController {
         return "forest/editForm";
     }
 
-    @PostMapping("/my-trees/{treeKey}/edit")//
-    public ResponseResult<?> edit(@Login Long myKey, @PathVariable Long treeKey,
-                                  @Validated @ModelAttribute("updateTreeForm") UpdateTreeForm form, BindingResult bindingResult) throws IllegalAccessException {
-
-        if (bindingResult.hasErrors()) {
-            //TODO 예외 처리
-            log.info("errors={}", bindingResult);
-            throw new IllegalArgumentException("빈 값이 들어있음");
-        }
-
-        Tree tree = treeService.findByTreeId(treeKey);
-        if (myKey != tree.getMemberKey()) {
-            throw new IllegalAccessException("남의 트리에 접근 시도");
-        }
-        treeService.update(treeKey, form);
-        return new ResponseResult<>("트리 정보 수정 성공", tree);
-    }
 
     /**
      * 여기부터 스티커 add/edit만 이 url을 이용한다.
@@ -188,11 +199,11 @@ public class TreeController {
         Map<String, Boolean> dataRange = new HashMap<>();
         dataRange.put("studentId",true);
         dataRange.put("department", false);
-        Tree tree1 = new Tree(1L," 공부하자","7시에",new ArrayList<>(Arrays.asList("공부")),true,false);
-        Tree tree2 = new Tree(2L, "놀자", "8시에", new ArrayList<>(Arrays.asList("밥약")), true, false);
-        Tree tree3 = new Tree(3L,"공모전 나가자","9시에",new ArrayList<>(Arrays.asList("공부")),true, false);
-        Tree tree4 = new Tree(1L,"집 가자","11시에",new ArrayList<>(Arrays.asList("밥약")),false, true);
-        Tree tree5 = new Tree(2L,"밥 먹자","6시에",new ArrayList<>(Arrays.asList("밥약")),false, false);
+        Tree tree1 = new Tree(1L," 공부하자","7시에",new ArrayList<>(Arrays.asList(1)),true,false);
+        Tree tree2 = new Tree(2L, "놀자", "8시에", new ArrayList<>(Arrays.asList(4)), true, false);
+        Tree tree3 = new Tree(3L,"공모전 나가자","9시에",new ArrayList<>(Arrays.asList(1)),true, false);
+        Tree tree4 = new Tree(1L,"집 가자","11시에",new ArrayList<>(Arrays.asList(3)),false, true);
+        Tree tree5 = new Tree(2L,"밥 먹자","6시에",new ArrayList<>(Arrays.asList(2)),false, false);
 
         treeService.save(tree1);
         treeService.save(tree2);

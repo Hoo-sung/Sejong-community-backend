@@ -16,7 +16,7 @@ public class UpdateTreeForm {
     @NotBlank
     private String description;//간단한 설명
 
-    private ArrayList<String> tags;
+    private  List<Integer> tags;
 
     private boolean requestId;
     private boolean requestDepartment;

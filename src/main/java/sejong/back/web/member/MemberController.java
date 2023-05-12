@@ -159,6 +159,7 @@ public class MemberController {
         member.setOpenStudentId(updateMemberForm.isOpenStudentId());
         member.setOpenDepartment(updateMemberForm.isOpenDepartment());
 
+        log.info("확인용 로그 = {}", member.getName());
     }
 
     //회원 정보 수정이 정상적으로 이루어졌는지 테스트하는 컨트롤러
