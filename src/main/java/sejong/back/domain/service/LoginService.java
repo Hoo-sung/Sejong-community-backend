@@ -127,7 +127,6 @@ public class LoginService {
         }
 
         Member member = new Member(name, department, studentId, grade, status);
-        member.setGrade(MemberGrade.BRONZE);
         return member;
     }
 }

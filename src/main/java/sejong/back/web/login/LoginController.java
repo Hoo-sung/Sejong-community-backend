@@ -17,6 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+<<<<<<< Updated upstream
+=======
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+>>>>>>> Stashed changes
 
 @RestController
 @RequiredArgsConstructor
@@ -33,9 +39,15 @@ public class LoginController {
 
     //로그인 성공했을 떄 기본적인 리다이렉트 경로는 /forest(트리(게시판) 검색 페이지)
     @PostMapping("/login")
+<<<<<<< Updated upstream
     public void login(@ModelAttribute LoginForm form,
                                    @RequestParam(defaultValue = "/forest") String redirectURI,
                                    HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
+=======
+    public ResponseResult<Object> login(@ModelAttribute LoginForm form,
+                                        @RequestParam(defaultValue = "/forest") String redirectURI,
+                                        HttpServletRequest request, HttpServletResponse response, Model model) throws IOException, SQLException {
+>>>>>>> Stashed changes
 
         Member validateMember = loginService.validateSejong(form.getStudentId(), form.getPassword());
         log.info("validateMember={}", validateMember);

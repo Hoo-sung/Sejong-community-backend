@@ -5,11 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import sejong.back.config.MemoryConfig;
+import sejong.back.config.DatabaseV1Config;
 import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.MemberService;
 
-@Import(MemoryConfig.class)
+@Import(DatabaseV1Config.class)
 @SpringBootApplication(scanBasePackages ="sejong.back.web")
 public class BackApplication {
 

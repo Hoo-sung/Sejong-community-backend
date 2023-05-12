@@ -18,6 +18,7 @@ import sejong.back.web.argumentresolver.Login;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +41,7 @@ public class StickerController {
      * @return
      */
     @GetMapping//내가 보냈던 스티커들 볼 수 있는 기능 제공.
-    public ResponseResult<?> sticker(@Login Long myKey, HttpServletRequest request, Model model) {//자기가 보냈던 스티커들 정보 볼 수 있는 페이지.
+    public ResponseResult<?> sticker(@Login Long myKey, HttpServletRequest request, Model model) throws SQLException {//자기가 보냈던 스티커들 정보 볼 수 있는 페이지.
 
         List<Sticker> stickers = stickerService.findByMemberId(myKey);
 
@@ -50,7 +51,7 @@ public class StickerController {
 
     @GetMapping("/{stickerKey}")//스티커에 대한 상세 정보 보는 페이지.
     public ResponseResult<?> searchSticker(@Login Long myKey, @PathVariable Long stickerKey,
-                                           Model model, HttpServletRequest request) {
+                                           Model model, HttpServletRequest request) throws SQLException {
 
         //TODO 다른 사람 스티커 조회는 상관없음.
         Optional<Sticker> sticker = stickerService.findByStickerId(myKey, stickerKey);
@@ -74,7 +75,7 @@ public class StickerController {
 
     @GetMapping("/{stickerKey}/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
     public String editForm(@Login Long myKey, @PathVariable Long stickerKey,
-                           Model model, HttpServletRequest request) {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
+                           Model model, HttpServletRequest request) throws SQLException {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
 
         Optional<Sticker> sticker = stickerService.findByStickerId(myKey, stickerKey);
         if (sticker.isEmpty()) {
@@ -102,7 +103,7 @@ public class StickerController {
     public ResponseResult<?> edit(@Login Long myKey,
                                   HttpServletRequest request, @PathVariable Long stickerKey,
                                   @Validated @ModelAttribute("updateStickerForm") UpdateStickerForm form,
-                                  BindingResult bindingResult) {
+                                  BindingResult bindingResult) throws SQLException {
 
         if (bindingResult.hasErrors()) {
             log.info("errors={}", bindingResult);

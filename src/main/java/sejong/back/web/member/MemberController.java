@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class MemberController {
     //      왜냐하면 "/forest"에서 다른 사람의 트리를 보면 되니까
     //      우선 주석 처리
 //    @GetMapping//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
-    public ResponseResult<?> members(HttpServletRequest request, Model model) {
+    public ResponseResult<?> members(HttpServletRequest request, Model model) throws SQLException {
         List<Member> members = memberService.findAll();
         log.info("members={}", members);
 
@@ -87,8 +88,18 @@ public class MemberController {
      * 이것을 받아서 학사 시스템으로 로그인 잘 되서 검증된 멤버인 validatemember에 담고 내용을 추가해서 저장한다. db에
      */
     @PostMapping
+<<<<<<< Updated upstream
     public void save(@Validated @ModelAttribute AddMemberForm addMemberForm, BindingResult bindingResult,
                      HttpServletResponse response) throws IOException {
+=======
+    public ResponseResult<?> save(@Validated @RequestBody AddMemberForm addMemberForm, BindingResult bindingResult,
+                                  HttpServletResponse response) throws IOException, SQLException {
+
+        log.info("studentId={}", addMemberForm.getStudentId());
+        log.info("password={}", addMemberForm.getPassword());
+
+        ResponseResult<Object> responseResult = new ResponseResult();
+>>>>>>> Stashed changes
 
         if (bindingResult.hasErrors()) { //닉네임, 학번, 비번 중 빈 값이 있을 경우
             throw new WrongSignUpException("비어있는 값이 있음");
@@ -111,6 +122,11 @@ public class MemberController {
         //db에 없으면, 회원 가입 절차 정상적으로 진행해야 한다.
         //닉네임은 검증이 다 끝난 후 따로 추가. TODO 근데 setter가 컨트롤러에 직접 보이는게 좀 별로임
         validateMember.setNickname(addMemberForm.getNickname());
+<<<<<<< Updated upstream
+=======
+        validateMember.setOpenStudentId(addMemberForm.isOpenStudentId());
+        validateMember.setOpenDepartment(addMemberForm.isOpenDepartment());
+>>>>>>> Stashed changes
         memberService.save(validateMember);//db에 저장.
         log.info("validateMember={} {}", validateMember.getStudentId(), validateMember.getName());
         response.sendRedirect("/login");
@@ -133,6 +149,7 @@ public class MemberController {
                                   @Validated @ModelAttribute("updateMemberForm") UpdateMemberForm form,
                                   BindingResult bindingResult) {
 
+<<<<<<< Updated upstream
         if (bindingResult.hasErrors()) {
             log.info("errors={}", bindingResult);
             //TODO 예외 처리
@@ -140,5 +157,23 @@ public class MemberController {
         }
         memberService.update(updateMember.getKey(), form);
         return new ResponseResult<>("멤버 정보 수정 성공", updateMember);
+=======
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute(SessionConst.DB_KEY) != myKey) { //클라이언트로부터 받은 sessionId와 api 서버에 저장된 sessionId가 다를 때
+            throw new WrongSessionIdException("sessionId가 다름");
+        }
+
+        Member member = memberService.findByKey(myKey);
+        member.setNickname(updateMemberForm.getNickname());
+        member.setOpenStudentId(updateMemberForm.isOpenStudentId());
+        member.setOpenDepartment(updateMemberForm.isOpenDepartment());
+        memberService.update(myKey, updateMemberForm);
+    }
+
+    //회원 정보 수정이 정상적으로 이루어졌는지 테스트하는 컨트롤러
+    @GetMapping
+    public Member showMember(@Login Member member) {
+        return member;
+>>>>>>> Stashed changes
     }
 }

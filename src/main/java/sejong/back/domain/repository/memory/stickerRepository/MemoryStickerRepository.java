@@ -1,6 +1,7 @@
 package sejong.back.domain.repository.memory.stickerRepository;
 
 import sejong.back.domain.repository.StickerRepository;
+import sejong.back.domain.sticker.AddStickerForm;
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.sticker.StickerSearchCond;
 import sejong.back.domain.sticker.UpdateStickerForm;
@@ -20,8 +21,9 @@ public class MemoryStickerRepository implements StickerRepository {
 
 
     @Override
-    public Sticker save(Sticker sticker) {
+    public Sticker save(Long fromMemberId,Long toMemberId, Long tree_id,String writer, AddStickerForm form) {
 
+        Sticker sticker = new Sticker(fromMemberId, toMemberId, tree_id,form.getTitle(), form.getMessage());
         sticker.setStickerKey(++stickerSequence);
         storeSticker.put(sticker.getStickerKey(), sticker);
         return sticker;
@@ -66,7 +68,7 @@ public class MemoryStickerRepository implements StickerRepository {
     public void update(Long stickerKey, UpdateStickerForm form) {//스티커 제목이랑 메시지를 업데이트 해야한다.
 
         Sticker updateSticker = storeSticker.get(stickerKey);
-        updateSticker.setSubject(form.getSubject());
+        updateSticker.setTitle(form.getTitle());
         updateSticker.setMessage(form.getMessage());
 
     }
@@ -79,6 +81,11 @@ public class MemoryStickerRepository implements StickerRepository {
                 }
             }
             return null;
+
+    }
+
+    @Override
+    public void delete(Long stickerKey) {
 
     }
 }

@@ -9,6 +9,7 @@ import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.MemberService;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class TestDataInit {
             member = loginService.validateSejong(studentId, "fa484869");
             member.setNickname("호호호");
             memberService.save(member);
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             throw new RuntimeException(e);
         }
     }

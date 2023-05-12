@@ -27,8 +27,14 @@ public class Member {
     private String status;//재학 휴학 여부.
 
     private Long key;//서버에서 관리하는 키.
-    private MemberGrade grade;//경험치이다.
+//    private MemberGrade grade;//경험치이다.
 
+<<<<<<< Updated upstream
+=======
+    private boolean openStudentId;
+    private boolean openDepartment;
+
+>>>>>>> Stashed changes
 //    사용자가 바꿀 수 있는 필드.
 //    private MemberType memberType;//신/재학/휴학 여부.
 //    private List<String> tags;//태그들도 우리가 만들어서 고르는 식으로 해야할거 같음.
@@ -40,6 +46,18 @@ public class Member {
         this.studentId = studentId;
         this.currentGrade = currentGrade;
         this.status = status;
+    }
+
+    public Member(String name, String department, Long studentId, String nickname, String currentGrade, String status, Long key, boolean openStudentId, boolean openDepartment) {
+        this.name = name;
+        this.department = department;
+        this.studentId = studentId;
+        this.nickname = nickname;
+        this.currentGrade = currentGrade;
+        this.status = status;
+        this.key = key;
+        this.openStudentId = openStudentId;
+        this.openDepartment = openDepartment;
     }
 
     /**

@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Getter
@@ -20,6 +21,10 @@ public class AddTreeForm {
     @NotBlank
     private String description;
 
-    private ArrayList<String> tags;
+    private List<Integer> tags;//정수 배열로.
+
+    private boolean requestId;
+    private boolean requestDepartment;
+
 
 }

@@ -5,6 +5,7 @@ import sejong.back.domain.member.Member;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.repository.MemberRepository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -33,6 +34,11 @@ public class JdbcMemberRepository implements MemberRepository {
 
     @Override
     public void update(Long key, UpdateMemberForm form) {
+
+    }
+
+    @Override
+    public void delete(Long key) throws SQLException {
 
     }
 }
