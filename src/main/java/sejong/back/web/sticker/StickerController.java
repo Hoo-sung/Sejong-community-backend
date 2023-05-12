@@ -131,7 +131,6 @@ public class StickerController {
                                   HttpServletRequest request, @PathVariable Long stickerKey,
                                   @Validated @ModelAttribute("updateStickerForm") UpdateStickerForm form,
                                   BindingResult bindingResult) {
-
         log.info("스티커 수정 ");
         if (bindingResult.hasErrors()) {
             log.info("errors={}", bindingResult);
@@ -140,7 +139,7 @@ public class StickerController {
 
         Optional<Sticker> sticker = stickerService.findByStickerId(myKey, stickerKey);
         if (sticker.isEmpty()) {
-            //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
+            //내것이 아닐때도 null 됨
             throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
         }
 

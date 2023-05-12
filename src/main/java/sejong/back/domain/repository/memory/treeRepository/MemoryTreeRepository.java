@@ -80,8 +80,10 @@ public class MemoryTreeRepository implements TreeRepository {
                     return true;
                 }) //description
                 .filter(tree->{
+                    Integer tag;
                     if (cond.getTag() != null) {
-                        return tree.getTags().get(0).equals(cond.getTag()); //일단 테그 한개
+                        tag = Integer.valueOf(cond.getTag());
+                        return tree.getTags().get(0).equals(tag); //일단 테그 한개
                     }
                     return true;
                 })//tag
@@ -111,5 +113,7 @@ public class MemoryTreeRepository implements TreeRepository {
         updateTree.setTitle(form.getTitle());
         updateTree.setDescription(form.getDescription());
         updateTree.setTags(form.getTags());
+        updateTree.setRequestId(form.isRequestId());
+        updateTree.setRequestDepartment(form.isRequestDepartment());
     }
 }
