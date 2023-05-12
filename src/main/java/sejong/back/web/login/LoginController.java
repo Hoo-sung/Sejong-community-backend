@@ -1,5 +1,7 @@
 package sejong.back.web.login;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
@@ -44,11 +46,6 @@ public class LoginController {
                                         @RequestParam(defaultValue = "/forest") String redirectURI,
                                         HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
 
-        /**
-         * TODO
-         * 혹시 모르니까 bindingresult 확인
-         */
-
         Member validateMember = loginService.validateSejong(form.getStudentId(), form.getPassword());
         log.info("validateMember={}", validateMember);
         if (validateMember == null) { //로그인 정보가 세종대 계정정보와 다를 때
@@ -72,10 +69,7 @@ public class LoginController {
         log.info("session ={}", session.getId());
         session.setAttribute(SessionConst.DB_KEY, loginMember.getKey());
 
-        Map<String,String> data = new HashMap<>();
-        data.put("redirectURL", redirectURI);
-
-        return new ResponseResult<>("로그인 성공", data);
+        return new ResponseResult<>("로그인 성공");
         //ResponseResult 대신 ResponseEntity
         // 데이터 안에 데이터가 불편해서
     }
@@ -91,5 +85,10 @@ public class LoginController {
         throw new WrongLogoutException("로그인하지 않은 사용자가 로그아웃 요청");
     }
 
+    @AllArgsConstructor
+    @Getter
+    static class LoginCheck {
+        private Boolean isLogin;
+    }
 
 }
