@@ -13,7 +13,6 @@ public class UpdateStickerForm {
     @NotBlank
     private Integer type;
 
-
     @NotBlank
     private String title;
 

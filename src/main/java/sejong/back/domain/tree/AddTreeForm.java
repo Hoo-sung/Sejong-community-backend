@@ -24,5 +24,7 @@ public class AddTreeForm {
 
     private ArrayList<String> tags;
 
-    private Map<String, Boolean> dataRange;
+    private boolean requestId;
+    private boolean requestDepartment;
+
 }

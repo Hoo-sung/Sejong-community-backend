@@ -93,7 +93,7 @@ public class StickerController {
 
         Tree tree = treeService.findByTreeId(treeId);
         Long toMemberKey = tree.getMemberKey();
-        Sticker sticker = new Sticker(fromMemberKey, toMemberKey, treeId, addStickerForm.getSubject(), addStickerForm.getMessage(),1);
+        Sticker sticker = new Sticker(fromMemberKey, toMemberKey, treeId, addStickerForm.getTitle(), addStickerForm.getMessage(),1);
         Sticker savedSticker = stickerService.save(sticker);
         return new ResponseResult<>("스티커 작성 성공", savedSticker);
     }

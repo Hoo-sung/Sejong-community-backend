@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,15 +20,22 @@ public class Tree {
 
     private  String title;//게시글 제목
     private  String description;//게시글 설명
-    private  ArrayList<String> tags;
-    private Map<String, Boolean> dataRange;
+    private  List<String> tags;
+//    private Map<String, Boolean> dataRange;
 
-    public Tree(Long memberKey, String title, String description, ArrayList<String> tags, Map<String, Boolean> dataRange) {
+    private Timestamp created_at;//만든 시간
+    private Timestamp updated_at;//수정 시간
+
+    private boolean requestId;
+    private boolean requestDepartment;
+
+    public Tree(Long memberKey, String title, String description, List<String> tags, boolean requestId, boolean requestDepartment) {
         this.memberKey = memberKey;
         this.title = title;
         this.description = description;
         this.tags = tags;
-        this.dataRange = dataRange;
+        this.requestId = requestId;
+        this.requestDepartment = requestDepartment;
     }
 
 

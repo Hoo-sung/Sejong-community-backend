@@ -94,7 +94,7 @@ public class MemberController {
 
         log.info("studentId={}", addMemberForm.getStudentId());
         log.info("password={}", addMemberForm.getPassword());
-        log.info("dataRange={}", addMemberForm.getDataRange());
+        log.info("dataRange={}", addMemberForm.isOpenStudentId());
 
         ResponseResult<Object> responseResult = new ResponseResult();
 
@@ -123,7 +123,8 @@ public class MemberController {
         //db에 없으면, 회원 가입 절차 정상적으로 진행해야 한다.
         //닉네임과 공개 벙위는 검증이 다 끝난 후 따로 추가. TODO 근데 setter가 컨트롤러에 직접 보이는게 좀 별로임
         validateMember.setNickname(addMemberForm.getNickname());
-        validateMember.setDataRange(addMemberForm.getDataRange());
+        validateMember.setOpenStudentId(addMemberForm.isOpenStudentId());
+        validateMember.setOpenDepartment(addMemberForm.isOpenDepartment());
         memberService.save(validateMember);//db에 저장.
         log.info("validateMember={} {}", validateMember.getStudentId(), validateMember.getName());
         return new ResponseResult<>();
@@ -155,7 +156,9 @@ public class MemberController {
 
         Member member = memberService.findByKey(myKey);
         member.setNickname(updateMemberForm.getNickname());
-        member.setDataRange(updateMemberForm.getDataRange());
+        member.setOpenStudentId(updateMemberForm.isOpenStudentId());
+        member.setOpenDepartment(updateMemberForm.isOpenDepartment());
+
     }
 
     //회원 정보 수정이 정상적으로 이루어졌는지 테스트하는 컨트롤러
@@ -165,10 +168,12 @@ public class MemberController {
     }
 
     @PostConstruct
-    public void TestEnvironment(){
+    public void TestEnvironment() throws IOException {
 
         //member
         Member m1 = new Member("A", "Computer Science", Long.valueOf(19011901), "3", "재학");
+
+        Member validateMember = loginService.validateSejong(Long.valueOf(18011881), "19991201");
         Member m2 = new Member("B", "Computer Science", Long.valueOf(18011881), "4", "재학");
         Member m3 = new Member("C", "Computer Science", Long.valueOf(20000001), "1", "재학");
         //save

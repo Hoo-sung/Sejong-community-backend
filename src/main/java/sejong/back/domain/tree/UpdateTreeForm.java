@@ -18,4 +18,8 @@ public class UpdateTreeForm {
 
     private ArrayList<String> tags;
 
+    private boolean requestId;
+    private boolean requestDepartment;
+
+
 }

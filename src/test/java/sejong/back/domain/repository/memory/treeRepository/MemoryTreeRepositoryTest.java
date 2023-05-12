@@ -22,7 +22,7 @@ class MemoryTreeRepositoryTest {
             Long id = Long.valueOf(i);
             String title = "t"+String.valueOf(i);
             String description = title + "I want " + "t" + String.valueOf(i+1);
-            Tree tree = new Tree(id, title, description, new ArrayList<>(Arrays.asList("tag")));
+            Tree tree = new Tree(id, title, description, new ArrayList<>(Arrays.asList("tag")),true,true);
             memoryTreeRepository.save(tree);
         }
         Assertions.assertThat(memoryTreeRepository.findAll().size()).isEqualTo(40);

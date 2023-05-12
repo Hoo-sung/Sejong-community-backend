@@ -31,7 +31,9 @@ public class Member {
     private Long key;//서버에서 관리하는 키.
     private MemberGrade grade;//경험치이다.
 
-    private Map<String, Boolean> dataRange;
+    private boolean openStudentId; //공개 범위 ID
+    private boolean openDepartment; // 공개 범위 학과
+
 
 //    사용자가 바꿀 수 있는 필드.
 //    private MemberType memberType;//신/재학/휴학 여부.
@@ -50,4 +52,5 @@ public class Member {
      * 랜덤 field 변수 생성(랜덤 키);
      * final 여부 생각해보자.
      */
+
 }

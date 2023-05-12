@@ -16,5 +16,8 @@ public class UpdateMemberForm {//이게 필요가 없어진다. 아니면 공개
 //    private String sessionId; //현재 로그인한 사용자의 sessionId(클라이언트로부터 받음)
 
     private String nickname; //닉네임
-    private Map<String, Boolean> dataRange; //공개범위 설정
+
+    private boolean openStudentId; //공개 범위 ID
+
+    private boolean openDepartment; // 공개 범위 학과
 }
