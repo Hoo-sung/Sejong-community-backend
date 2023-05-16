@@ -27,7 +27,10 @@ public class DbTreeRepositoryV1 implements TreeRepository {
     }
 
     @Override
-    public Tree save(Long memberKey,AddTreeForm form) throws SQLException {//여기서 datarange까지 싹 다 tree table에 저장하고, 태그는 tree_tag테이블어 따로 저장해야 한다.
+    public Tree save(Long memberKey,AddTreeForm form) throws SQLException {
+        /**
+         * tree save부분은 datarange를 반환안한다. null이다. datarange는 공개 범위 배열로, front에서 요청할때 반환하는 것
+         */
         String sql="insert into tree(member_id,title,description,requestId, requestDepartment) values(?,?,?,?,?)";
 
         Connection con=null;
@@ -43,6 +46,8 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             pstmt.setBoolean(4, form.isRequestId());
             pstmt.setBoolean(5, form.isRequestDepartment());
 
+            Timestamp now = new Timestamp(System.currentTimeMillis());//현재 시간.
+
             pstmt.executeUpdate();
 
             rs = pstmt.getGeneratedKeys();
@@ -53,6 +58,8 @@ public class DbTreeRepositoryV1 implements TreeRepository {
                 tree.setMemberKey(memberKey);
                 tree.setTitle(form.getTitle());
                 tree.setDescription(form.getDescription());
+                tree.setCreated_at(now);
+                tree.setUpdated_at(now);
                 tree.setRequestId(form.isRequestId());
                 tree.setRequestDepartment(form.isRequestDepartment());
 
@@ -68,7 +75,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
     }
 
     @Override
-    public Tree findByTreeId(Long treeId) throws SQLException {
+    public Tree findByTreeId(Long treeId) throws SQLException {//front에 보낼때 사용. DataRange 공개 범위.
 
         String sql = "select * from tree where tree_id = ?";
         Connection con = null;
@@ -83,11 +90,17 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             if (rs.next()) {
 
                 tree.setTreeKey(rs.getLong("tree_id"));
-                tree.setMemberKey(rs.getLong("member_id"));
+                tree.setMemberKey(rs.getLong("member_id"));//보안상 이부분 안보내줘도 된긴함.
                 tree.setTitle(rs.getString("title"));
                 tree.setDescription(rs.getString("description"));
                 tree.setCreated_at(rs.getTimestamp("created_at"));
                 tree.setUpdated_at(rs.getTimestamp("updated_at"));
+                tree.setRequestId(rs.getBoolean("requestId"));
+                tree.setRequestDepartment(rs.getBoolean("requestDepartment"));
+
+                /**
+                 * tree를 생성한 member id바탕으로 공개 허용정보를 담아서 dataRange에 담아서 반환.
+                 */
 
 
             } else {

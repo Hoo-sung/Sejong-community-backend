@@ -9,7 +9,6 @@ import sejong.back.domain.repository.TreeRepository;
 import sejong.back.domain.repository.memory.memberRepository.DbMemberRepositoryV1;
 import sejong.back.domain.repository.memory.memberRepository.MemoryMemberRepository;
 import sejong.back.domain.repository.memory.stickerRepository.DbStickerRepositoryV1;
-import sejong.back.domain.repository.memory.stickerRepository.MemoryStickerRepository;
 import sejong.back.domain.repository.memory.tagRepository.DbTagRepository;
 import sejong.back.domain.repository.memory.treeRepository.DbTreeRepositoryV1;
 import sejong.back.domain.repository.memory.treeRepository.MemoryTreeRepository;
@@ -49,7 +48,7 @@ public class DatabaseV1Config {
 
     @Bean
     public TreeService treeService(){
-        return new TreeService(treeRepository(),tagRepository(),tree_tagRepository());
+        return new TreeService(treeRepository(),memberRepository(),tagRepository(),tree_tagRepository());
     }
 
     @Bean
@@ -70,7 +69,7 @@ public class DatabaseV1Config {
 
     @Bean
     public StickerService stickerService(){
-        return new StickerService(stickerRepository());
+        return new StickerService(stickerRepository(),memberRepository(),treeRepository());
     }
 
 

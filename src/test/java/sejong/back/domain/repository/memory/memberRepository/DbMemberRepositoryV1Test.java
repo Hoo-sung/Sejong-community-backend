@@ -76,13 +76,13 @@ class DbMemberRepositoryV1Test {
     public void update(){
 
         UpdateMemberForm form = new UpdateMemberForm();
-        form.setNickname("잘 바뀌었냐?");
+        form.setNickname("hwang2");
 
-        form.setOpenStudentId(true);
+        form.setOpenStudentId(false);
         form.setOpenDepartment(true);
 
         try{
-            dbMemberRepositoryV1.update(2L, form);
+            dbMemberRepositoryV1.update(8L, form);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

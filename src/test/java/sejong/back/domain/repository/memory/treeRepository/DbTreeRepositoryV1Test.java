@@ -53,7 +53,7 @@ class DbTreeRepositoryV1Test {
         dbTreeRepositoryV1 = new DbTreeRepositoryV1(dataSource);
         dbTagRepository = new DbTagRepository(dataSource);
         dbTreeTagRepository = new DbTree_TagRepository(dataSource);
-        treeService = new TreeService(dbTreeRepositoryV1, dbTagRepository, dbTreeTagRepository);
+        treeService = new TreeService(dbTreeRepositoryV1, dbMemberRepositoryV1,dbTagRepository, dbTreeTagRepository);
     }
 
     @Test
@@ -69,23 +69,37 @@ class DbTreeRepositoryV1Test {
         boolean requestDepartment=false;
 
         AddTreeForm addTreeForm = new AddTreeForm();
-        addTreeForm.setTitle("지금 몇시냐");
-        addTreeForm.setDescription("지금 10시다");
+        addTreeForm.setTitle("5/16일");
+        addTreeForm.setDescription("파싱 잘 되냐");
         addTreeForm.setTags(tags);
         addTreeForm.setRequestId(true);
         addTreeForm.setRequestDepartment(false);
 
 
-        Tree saved = treeService.save(3L,addTreeForm);
+
+
+        Tree saved = treeService.save(8L,addTreeForm);
         log.info("savedTreeKey={}", saved.getTreeKey());
+        log.info("savedtreememberid={}", saved.getMemberKey());
+        log.info("savedtime={}", saved.getCreated_at());
+        log.info("savedtime={}", saved.getUpdated_at());
+        log.info("nickname={}",saved.getDataRange().get("nickname"));//닉네임 가져오기.
+        log.info("getstudentid={}",saved.getDataRange().get("studentId"));
+        log.info("getdepartment={}",saved.getDataRange().get("department"));//없을수도 있음.
+
+
 
     }
 
 
     @Test
     void  searchByTreeId() throws SQLException {
-        Tree searchedTree = dbTreeRepositoryV1.findByTreeId(1L);
+        Tree searchedTree = treeService.findByTreeId(15L);
         log.info("searchedtree id={},created_at={},updated_at={}", searchedTree.getTreeKey(), searchedTree.getCreated_at(), searchedTree.getUpdated_at());
+        log.info("nickname={}", searchedTree.getDataRange().get("nickname"));
+        log.info("openstudentId={}", searchedTree.getDataRange().get("studentId"));
+
+        log.info("opendepartment={}", searchedTree.getDataRange().get("department"));
 
     }
 
@@ -117,18 +131,19 @@ class DbTreeRepositoryV1Test {
     @Test
     void find_myTrees() throws SQLException {
 
-        List<Tree> myTrees = dbTreeRepositoryV1.findMyTrees(3L);
+        List<Tree> myTrees = treeService.findMyTrees(4L);
         log.info(("myTrees={}"), myTrees);
         for (Tree myTree : myTrees) {
-            System.out.println(myTree.getTitle());
-
+            log.info("nickname={}",myTree.getDataRange().get("nickname"));//닉네임 가져오기.
+            log.info("getstudentid={}",myTree.getDataRange().get("studentId"));
+            log.info("getdepartment={}",myTree.getDataRange().get("department"));//없을수도 있음.
         }
     }
 
     @Test
     void findAll() throws SQLException {
 
-        List<Tree> all = dbTreeRepositoryV1.findAll();
+        List<Tree> all = treeService.findAll();
         for (Tree tree : all) {
             System.out.println(tree.getDescription());
 

@@ -29,7 +29,10 @@ public class Tree {
      * 5.고민 상담
      * 6.정보 교류
      */
-    private List<Integer> tags;
+    private List<Integer> tags;//태그들 정수로 번호 가져오기.
+
+    private Map<String,String> dataRange;//다른사람이 이 객체에 대해 볼 수 있는 정보. 즉, 이 tree만든 맴버가 member 설정에서 공개한 정보.
+
 
     private Timestamp created_at;//만든 시간
     private Timestamp updated_at;//수정 시간

@@ -13,6 +13,7 @@ import sejong.back.domain.service.MemberService;
 import sejong.back.domain.service.StickerService;
 import sejong.back.domain.service.TreeService;
 import sejong.back.domain.sticker.AddStickerForm;
+import sejong.back.domain.sticker.BackSticker;
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.sticker.UpdateStickerForm;
 import sejong.back.domain.tree.Tree;
@@ -51,7 +52,7 @@ public class StickerController {
     @GetMapping//내가 보냈던 스티커들 볼 수 있는 기능 제공.
     public ResponseResult<?> sticker(@Login Long myKey, HttpServletRequest request, Model model) throws SQLException {//자기가 보냈던 스티커들 정보 볼 수 있는 페이지.
 
-        List<Sticker> stickers = stickerService.findByMemberId(myKey);
+        List<BackSticker> stickers = stickerService.findByMemberId(myKey);
 
         //스티커에서 붙인 tree를 뽑아서 이것도 모델로 전부 보내줘야한다.
         return new ResponseResult<>("내 스티커 전체 조회 성공", stickers);
@@ -101,7 +102,12 @@ public class StickerController {
         Tree tree = treeService.findByTreeId(treeId);
         Long toMemberKey = tree.getMemberKey();
         Member frommember = memberService.findByKey(fromMemberKey);
-        Sticker savedSticker = stickerService.save(fromMemberKey,toMemberKey,treeId,frommember.getNickname(),addStickerForm);
+        /**
+         * 이 부분 바꿔야 한다.
+         * stickerService.save는 void이다. 그리고 frontsticker, backsticker중 해당하는것을 호출해 가져오도록 작성해야 한다.
+         */
+        Sticker savedSticker = stickerService.save(fromMemberKey,toMemberKey,treeId,addStickerForm);
+
         return new ResponseResult<>("스티커 작성 성공", savedSticker);
     }
 
