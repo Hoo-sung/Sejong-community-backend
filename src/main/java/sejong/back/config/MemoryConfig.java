@@ -6,7 +6,6 @@ import sejong.back.domain.repository.MemberRepository;
 import sejong.back.domain.repository.StickerRepository;
 import sejong.back.domain.repository.TreeRepository;
 import sejong.back.domain.repository.memory.memberRepository.MemoryMemberRepository;
-import sejong.back.domain.repository.memory.stickerRepository.MemoryStickerRepository;
 import sejong.back.domain.repository.memory.treeRepository.MemoryTreeRepository;
 import sejong.back.domain.repository.memory.tree_tag.DbTree_TagRepository;
 import sejong.back.domain.service.LoginService;

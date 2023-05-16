@@ -24,7 +24,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.jsoup:jsoup:1.15.4'
 
-	implementation 'mysql:mysql-connector-java:8.0.32'//mysql 커넥터 추가.
+	implementation 'mysql:mysql-connector-java:8.0.33'//mysql 커넥터 추가.
 
 	//JdbcTemplate 추가
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'

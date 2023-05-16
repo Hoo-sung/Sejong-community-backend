@@ -65,6 +65,10 @@ public class StickerService {
         return backStickers;
     }
 
+    public  Sticker findByStickerId(Long stickerKey) throws SQLException{
+        return stickerRepository.findByStickerId(stickerKey);
+    }
+
     public FrontSticker findByStickerIdFront(Long stickerKey) throws SQLException{
         FrontSticker frontSticker = stickerRepository.findByStickerIdFront(stickerKey);
 

@@ -20,6 +20,10 @@ public interface StickerRepository { //트리 key로 해당 트리 키가 가진
     public List<BackSticker> findByMemberId(Long memberKey) throws SQLException;//한 사용자가 자기가 보낸 스티커들 조회할 수 있는 기능.
     //애는 웹에서 확실히 자기만 자기 sticker들 볼 수 있게 처리하고, backsticker로 반환하자. 자기가
 
+
+
+    public Sticker findByStickerId(Long stickerKey) throws SQLException;
+
     public FrontSticker findByStickerIdFront(Long stickerKey) throws SQLException;
     public BackSticker findByStickerIdBack(Long stickerKey) throws SQLException;
 

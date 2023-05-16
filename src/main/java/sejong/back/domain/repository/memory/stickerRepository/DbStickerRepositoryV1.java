@@ -177,41 +177,41 @@ public class DbStickerRepositoryV1 implements StickerRepository {
         }
     }
 
-//    @Override
-//    public Sticker findByStickerId(Long stickerKey) throws SQLException {
-//        String sql = "select * from sticker where sticker_id = ?";
-//        Connection con = null;
-//        PreparedStatement pstmt = null;
-//        ResultSet rs = null;
-//        Sticker sticker = new Sticker();
-//        try {
-//            con = getConnection();
-//            pstmt = con.prepareStatement(sql);
-//            pstmt.setLong(1, stickerKey);
-//            rs = pstmt.executeQuery();
-//            if (rs.next()) {
-//                sticker.setStickerKey(stickerKey);
-//                sticker.setFromMemberKey(rs.getLong("frommember_id"));
-//                sticker.setToMemberKey(rs.getLong("tomember_id"));
-//                sticker.setTreeKey(rs.getLong("tree_id"));
-//                sticker.setTitle(rs.getString("title"));
-//                sticker.setMessage(rs.getString("message"));
-//                sticker.setType(rs.getInt("colortype"));
-//                sticker.setCreated_at(rs.getTimestamp("created_at"));
-//                sticker.setUpdated_at(rs.getTimestamp("updated_at"));
-//
-//
-//            } else {
-//                throw new NoSuchElementException("sticker not found treeId=" +
-//                        stickerKey);
-//            }
-//            return sticker;
-//        } catch (SQLException e) {
-//            throw e;
-//        } finally {
-//            close(con, pstmt, rs);
-//        }
-//    }
+    @Override
+    public Sticker findByStickerId(Long stickerKey) throws SQLException {
+        String sql = "select * from sticker where sticker_id = ?";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Sticker sticker = new Sticker();
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, stickerKey);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                sticker.setStickerKey(stickerKey);
+                sticker.setFromMemberKey(rs.getLong("frommember_id"));
+                sticker.setToMemberKey(rs.getLong("tomember_id"));
+                sticker.setTreeKey(rs.getLong("tree_id"));
+                sticker.setTitle(rs.getString("title"));
+                sticker.setMessage(rs.getString("message"));
+                sticker.setType(rs.getInt("colortype"));
+                sticker.setCreated_at(rs.getTimestamp("created_at"));
+                sticker.setUpdated_at(rs.getTimestamp("updated_at"));
+
+
+            } else {
+                throw new NoSuchElementException("sticker not found treeId=" +
+                        stickerKey);
+            }
+            return sticker;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
+    }
 
 
     @Override
