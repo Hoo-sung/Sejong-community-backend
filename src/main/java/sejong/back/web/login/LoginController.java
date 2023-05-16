@@ -1,5 +1,6 @@
 package sejong.back.web.login;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,12 +34,21 @@ public class LoginController {
     private final LoginService loginService;
 
     @GetMapping("/login")
-    public Boolean loginCheck(HttpServletRequest request) {
+    public LoginCheck loginCheck(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if(session==null)
-            return false;
+        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);
+        log.info("Login Member Key={}", myKey);
 
-        return true;
+        if (session == null || myKey == null) { //로그인 안 되어있거나 세션이 만료된 경우
+            log.info("not login");
+            return new LoginCheck(false, null);
+        }
+
+        log.info("login check");
+        Member member = memberService.findByKey(myKey);
+        log.info("{} {}", member.getStudentId(), member.getName());
+        log.info("alarmCount", member.getAlarmCount());
+        return new LoginCheck(true, member.getAlarmCount());
     }
 
     //로그인 성공했을 떄 기본적인 리다이렉트 경로는 /forest(트리(게시판) 검색 페이지)
@@ -89,6 +100,9 @@ public class LoginController {
     @Getter
     static class LoginCheck {
         private Boolean isLogin;
+        private List<NonReadSticker> alarmCount;
     }
+
+
 
 }

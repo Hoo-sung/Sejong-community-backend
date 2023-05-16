@@ -7,7 +7,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import sejong.back.domain.member.Member;
 import sejong.back.domain.repository.StickerRepository;
+import sejong.back.domain.service.MemberService;
 import sejong.back.domain.service.StickerService;
 import sejong.back.domain.service.TreeService;
 import sejong.back.domain.sticker.AddStickerForm;
@@ -17,6 +19,7 @@ import sejong.back.domain.tree.Tree;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
+import sejong.back.web.login.NonReadSticker;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +36,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StickerController {
 
+    private final MemberService memberService;
     private final StickerService stickerService;
     private final TreeService treeService;
 
@@ -91,8 +95,7 @@ public class StickerController {
 
     @PostMapping   //스티커 붙이기
     public ResponseResult<?> save(@Login Long fromMemberKey,
-                                  @Validated @RequestBody AddStickerForm addStickerForm,
-                                  @RequestParam Long treeId,
+                                  @Validated @RequestBody AddStickerForm addStickerForm, @RequestParam Long treeId,
                                   BindingResult result, HttpServletRequest request, Model model) throws IOException {
 
         if (result.hasErrors()) {
@@ -104,6 +107,17 @@ public class StickerController {
         Long toMemberKey = tree.getMemberKey();
         Sticker sticker = new Sticker(fromMemberKey, toMemberKey, treeId, addStickerForm.getTitle(), addStickerForm.getMessage(), addStickerForm.getType());
         Sticker savedSticker = stickerService.save(sticker);
+
+        Member member = memberService.findByKey(toMemberKey);
+        NonReadSticker stickerInfo = member.getAlarmCount().stream()
+                .filter((nonReadSticker) -> nonReadSticker.getId() == treeId)
+                .findFirst()
+                .orElse(null);
+        Integer count = null;
+        if (stickerInfo != null) count = stickerInfo.getCount();
+
+        if (count != null) stickerInfo.setCount(++count);
+        else member.getAlarmCount().add(new NonReadSticker(tree.getTitle(), treeId, 1));
 
         return new ResponseResult<>("스티커 작성 성공", savedSticker);
     }

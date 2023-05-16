@@ -3,7 +3,11 @@ package sejong.back.domain.member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import sejong.back.web.login.NonReadSticker;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,6 +38,7 @@ public class Member {
     private boolean openStudentId; //공개 범위 ID
     private boolean openDepartment; // 공개 범위 학과
 
+    private List<NonReadSticker> alarmCount;
 
 //    사용자가 바꿀 수 있는 필드.
 //    private MemberType memberType;//신/재학/휴학 여부.
@@ -46,6 +51,8 @@ public class Member {
         this.studentId = studentId;
         this.currentGrade = currentGrade;
         this.status = status;
+
+        this.alarmCount = new ArrayList<>();
     }
 
     /**
