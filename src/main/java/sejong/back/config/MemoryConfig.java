@@ -1,18 +1,18 @@
 package sejong.back.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import sejong.back.domain.repository.MemberRepository;
-import sejong.back.domain.repository.StickerRepository;
-import sejong.back.domain.repository.TreeRepository;
-import sejong.back.domain.repository.memory.memberRepository.MemoryMemberRepository;
-import sejong.back.domain.repository.memory.stickerRepository.MemoryStickerRepository;
-import sejong.back.domain.repository.memory.treeRepository.MemoryTreeRepository;
-import sejong.back.domain.repository.memory.tree_tag.DbTree_TagRepository;
-import sejong.back.domain.service.LoginService;
-import sejong.back.domain.service.MemberService;
-import sejong.back.domain.service.StickerService;
-import sejong.back.domain.service.TreeService;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import sejong.back.domain.repository.MemberRepository;
+//import sejong.back.domain.repository.StickerRepository;
+//import sejong.back.domain.repository.TreeRepository;
+//import sejong.back.domain.repository.memory.memberRepository.MemoryMemberRepository;
+//import sejong.back.domain.repository.memory.stickerRepository.MemoryStickerRepository;
+//import sejong.back.domain.repository.memory.treeRepository.MemoryTreeRepository;
+//import sejong.back.domain.repository.memory.tree_tag.DbTree_TagRepository;
+//import sejong.back.domain.service.LoginService;
+//import sejong.back.domain.service.MemberService;
+//import sejong.back.domain.service.StickerService;
+//import sejong.back.domain.service.TreeService;
 
 //@Configuration
 //public class MemoryConfig {

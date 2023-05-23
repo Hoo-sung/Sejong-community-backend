@@ -23,6 +23,10 @@ public class BackSticker {
 
     private String message;//스티커 내용.
 
+    private  String treeTitle;//스티커가 붙여진 게시글 제목.
+
+
+
 
     private Timestamp created_at;//만든 시간
     private Timestamp updated_at;//수정 시간

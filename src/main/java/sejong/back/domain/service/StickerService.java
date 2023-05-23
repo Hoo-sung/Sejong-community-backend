@@ -59,6 +59,11 @@ public class StickerService {
             String idString = String.valueOf(writer.getStudentId()).substring(0, 2);
             backSticker.getDataRange().put("studentId", idString);
             backSticker.getDataRange().put("department", writer.getDepartment());
+
+            Long treeKey = backSticker.getTreeKey();//스티커가 붙은 게시글 제목도 출력하기.
+            Tree tree = treeRepository.findByTreeId(treeKey);
+            backSticker.setTreeTitle(tree.getTitle());
+
             //강제적으로 공개 해야함.
 
         }
@@ -91,6 +96,7 @@ public class StickerService {
 
         Long treeKey = backSticker.getTreeKey();
         Tree hasSticker = treeRepository.findByTreeId(treeKey);
+        backSticker.setTreeTitle(hasSticker.getTitle());//스티커에 게시글 제목 표시.
 
         backSticker.getDataRange().put("nickname", writer.getNickname());
 

@@ -79,6 +79,13 @@ class DbStickerRepositoryV1Test {
     }
 
     @Test
+    void searchByStickerID() throws SQLException {
+        Sticker sticker = stickerService.findByStickerId(8L);
+        log.info("frontSticker.gettitle={}", sticker.getTitle());
+        log.info("frontSticker.getDataRange={}", sticker.getUpdated_at());
+    }
+
+    @Test
     void searchByStickerIDBack() throws SQLException {
         BackSticker backSticker = stickerService.findByStickerIdBack(8L);
         log.info("backSticker.getmessage={}", backSticker.getMessage());
