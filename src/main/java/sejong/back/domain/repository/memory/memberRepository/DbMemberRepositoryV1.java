@@ -87,8 +87,9 @@ public class DbMemberRepositoryV1 implements MemberRepository {
                 member.setOpenDepartment(rs.getBoolean("openDepartment"));
                 return member;
             } else {
-                throw new NoSuchElementException("member not found studentid=" +
-                        loginId);
+                return null;
+                /*throw new NoSuchElementException("member not found studentid=" +
+                        loginId);*/
             }
         } catch (SQLException e) {
             throw e;
@@ -151,7 +152,8 @@ public class DbMemberRepositoryV1 implements MemberRepository {
 
                 return member;
             } else {
-                throw new NoSuchElementException("member not found studentid=" + key);
+                return null;
+//                throw new NoSuchElementException("member not found studentid=" + key);
             }
         } catch (SQLException e) {
             throw e;
