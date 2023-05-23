@@ -47,7 +47,7 @@ class DbMemberRepositoryV1Test {
     @Test
     void search() throws SQLException {
 
-        Long l=18011825L;
+        Long l=18011834L;
         Member byLoginId = dbMemberRepositoryV1.findByLoginId(l);
         log.info("byloginid={}", byLoginId.getName());
         log.info("memberKey={}", byLoginId.getKey());

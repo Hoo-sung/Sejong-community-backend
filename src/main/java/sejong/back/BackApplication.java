@@ -17,9 +17,9 @@ public class BackApplication {
 		SpringApplication.run(BackApplication.class, args);
 	}
 
-	@Bean
-	@Profile("local")
-	public TestDataInit testDataInit(MemberService memberService, LoginService loginService) {
-		return new TestDataInit(memberService,loginService);
-	}
+//	@Bean
+//	@Profile("local")
+//	public TestDataInit testDataInit(MemberService memberService, LoginService loginService) {
+//		return new TestDataInit(memberService,loginService);
+//	}
 }
