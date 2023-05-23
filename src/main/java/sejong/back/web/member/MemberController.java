@@ -15,6 +15,7 @@ import sejong.back.domain.service.MemberService;
 import sejong.back.domain.service.TreeService;
 import sejong.back.exception.WrongSessionIdException;
 import sejong.back.web.ResponseResult;
+import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
 
 import javax.annotation.PostConstruct;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 
 //TODO rest api를 쓰는거면 로그인 안된 사용자가 접근할 떄 리다이렉트시키는 걸 서버에서 해줘야하는거 아님 클라에서 해주는거?
 //==> PRG 참고
@@ -45,21 +47,21 @@ public class MemberController {
     //TODO 멤버 검색 페이지로 다른 멤버의 정보를 볼 일은 없을 듯
     //      왜냐하면 "/forest"에서 다른 사람의 트리를 보면 되니까
     //      우선 주석 처리
-//    @GetMapping//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
-//    public ResponseResult<?> members(HttpServletRequest request, Model model) throws SQLException {
-//        List<Member> members = memberService.findAll();
-//        log.info("members={}", members);
-//
-//        HttpSession session = request.getSession(false);//세션을 가져와서 자기 member key를 뽑아야한다.
-//        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);//다운 캐스팅.
-//        Member member = memberService.findByKey(myKey);
-//
-//        HashMap<String, Object> data = new HashMap<>();
-//        data.put("members", members);
-//        data.put("member", member);
-//
-//        return new ResponseResult<>("멤버 조회 성공", data);
-//    }
+/*    @GetMapping//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
+    public ResponseResult<?> members(HttpServletRequest request, Model model) throws SQLException {
+        List<Member> members = memberService.findAll();
+        log.info("members={}", members);
+
+        HttpSession session = request.getSession(false);//세션을 가져와서 자기 member key를 뽑아야한다.
+        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);//다운 캐스팅.
+        Member member = memberService.findByKey(myKey);
+
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("members", members);
+        data.put("member", member);
+
+        return new ResponseResult<>("멤버 조회 성공", data);
+    }*/
 
     /**
      * 모든 @SessionAttribute의 required는 true
@@ -155,6 +157,7 @@ public class MemberController {
         }
 
         Member member = memberService.findByKey(myKey);
+        //TODO db업데이트 쿼리 필요
         member.setNickname(updateMemberForm.getNickname());
         member.setOpenStudentId(updateMemberForm.isOpenStudentId());
         member.setOpenDepartment(updateMemberForm.isOpenDepartment());
@@ -169,7 +172,6 @@ public class MemberController {
         HashMap<String, Object> data = new HashMap<>();
         data.put("member", member);
         data.put("treeId", treeService.findMyTrees(member.getKey()));
-
 
         return data;
     }
