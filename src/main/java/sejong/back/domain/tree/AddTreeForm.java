@@ -22,9 +22,10 @@ public class AddTreeForm {
     @NotBlank
     private String description;
 
-    private List<Integer> tags;
+    private List<Integer> tags;//정수 배열로.
 
     private boolean requestId;
     private boolean requestDepartment;
+
 
 }

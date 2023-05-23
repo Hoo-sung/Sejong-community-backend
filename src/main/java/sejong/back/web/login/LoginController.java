@@ -1,3 +1,4 @@
+
 package sejong.back.web.login;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +44,7 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseResult<Object> login(@RequestBody LoginForm form,
                                         @RequestParam(defaultValue = "/forest") String redirectURI,
-                                        HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
+                                        HttpServletRequest request, HttpServletResponse response, Model model) throws IOException, SQLException {
 
         Member validateMember = loginService.validateSejong(form.getStudentId(), form.getPassword());
         log.info("validateMember={}", validateMember);

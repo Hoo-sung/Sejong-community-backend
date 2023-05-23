@@ -11,6 +11,7 @@ import sejong.back.web.SessionConst;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.sql.SQLException;
 
 @Controller
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class HomeController {
     private final MemberService memberService;
 
     @GetMapping("/")
-    public String LoginHome(HttpServletRequest request, Model model) {
+    public String LoginHome(HttpServletRequest request, Model model) throws SQLException {
 
         //session이 없으면 홈으로.
         HttpSession session = request.getSession(false);

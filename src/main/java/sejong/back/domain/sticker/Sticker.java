@@ -7,23 +7,26 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 
-@RequiredArgsConstructor
+import java.sql.Timestamp;
+
+
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL) //Json 데이터로 반환할 떄 null인 필드는 표시하지 않음
-public class Sticker {
+public class Sticker {//이 객체는 db에 저장할떄만 사용한다. front로 보내는 객체가 아니다. front에는 frontsticker, backsticker을
+    //보낸다.
+
 
     private Long stickerKey;//PK
 
-    private final Long fromMemberKey;//스티커 붙인 당사자
-    private final Long toMemberKey;//스티커 받는이 key;
+    private  Long fromMemberKey;//스티커 붙인 당사자
+    private  Long toMemberKey;//스티커 받는이 key;
 
-    private final Long treeKey;//스티커를 붙일 트리 key
+    private  Long treeKey;//스티커를 붙일 트리 key
 
 
-
-    private String writer; //일단은 굳이 참조해서 얻어올 필요 없을 것으로 보임
-    private String title;//주제
+    //처음에는 닉네임만 보내고, 열면 트리 만든이가 강제ㅏㄴ
+    private String title;//제목
 
     private String message;
 
@@ -40,4 +43,41 @@ public class Sticker {
         this.message = message;
         this.type = type;
     }
+
+
+    public Sticker(Long stickerKey, Long fromMemberKey, Long toMemberKey, Long treeKey, String title, String message, Integer type, Timestamp created_at, Timestamp updated_at) {
+        this.stickerKey = stickerKey;
+        this.fromMemberKey = fromMemberKey;
+        this.toMemberKey = toMemberKey;
+        this.treeKey = treeKey;
+        this.title = title;
+        this.message = message;
+        this.type = type;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+    }
+
+    public Sticker(Long stickerKey, Long fromMemberKey, Long toMemberKey, Long treeKey, String title, String message, Integer type) {
+        this.stickerKey = stickerKey;
+        this.fromMemberKey = fromMemberKey;
+        this.toMemberKey = toMemberKey;
+        this.treeKey = treeKey;
+        this.title = title;
+        this.message = message;
+        this.type = type;
+    }
+    public Sticker(Long fromMemberKey, Long toMemberKey, Long treeKey, String title, String message, Integer type, Timestamp created_at, Timestamp updated_at) {
+        this.fromMemberKey = fromMemberKey;
+        this.toMemberKey = toMemberKey;
+        this.treeKey = treeKey;
+        this.title = title;
+        this.message = message;
+        this.type = type;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+    }
+
+    public Sticker() {
+    }
+
 }

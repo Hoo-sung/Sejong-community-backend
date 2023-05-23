@@ -10,16 +10,18 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class AddStickerForm {
 
-    @NotNull
-    private Integer type; // sticker 디자인 타입
+
+
 
     @NotBlank
     private String title;
 
     @NotBlank
     private String message;
-    /**
-     * TODO
-     * writer 추가?
-     */
+
+
+    @NotNull
+    private Integer type;//sticker 디자인 타입. 스티커 색깔을 저장해야한다.
+
+
 }

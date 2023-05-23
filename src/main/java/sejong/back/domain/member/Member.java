@@ -29,11 +29,10 @@ public class Member {
     private String status;//재학 휴학 여부.
 
     private Long key;//서버에서 관리하는 키.
-    private MemberGrade grade;//경험치이다.
+//    private MemberGrade grade;//경험치이다.
 
     private boolean openStudentId; //공개 범위 ID
     private boolean openDepartment; // 공개 범위 학과
-
 
 //    사용자가 바꿀 수 있는 필드.
 //    private MemberType memberType;//신/재학/휴학 여부.
@@ -46,6 +45,18 @@ public class Member {
         this.studentId = studentId;
         this.currentGrade = currentGrade;
         this.status = status;
+    }
+
+    public Member(String name, String department, Long studentId, String nickname, String currentGrade, String status, Long key, boolean openStudentId, boolean openDepartment) {
+        this.name = name;
+        this.department = department;
+        this.studentId = studentId;
+        this.nickname = nickname;
+        this.currentGrade = currentGrade;
+        this.status = status;
+        this.key = key;
+        this.openStudentId = openStudentId;
+        this.openDepartment = openDepartment;
     }
 
     /**

@@ -7,6 +7,7 @@ import sejong.back.domain.member.Member;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.repository.MemberRepository;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -65,7 +66,11 @@ public class MemoryMemberRepository implements MemberRepository {
 
         Member findMember = storeMember.get(key);
         findMember.setNickname(form.getNickname());
-//        findMember.setMemberType(updateMember.getMemberType());
-//        findMember.setTags(updateMember.getTags());
+
+    }
+
+    @Override
+    public void delete(Long key) throws SQLException {
+
     }
 }

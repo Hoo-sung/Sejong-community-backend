@@ -3,6 +3,7 @@ package sejong.back.domain.repository.memory.treeRepository;
 import org.springframework.stereotype.Repository;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.repository.TreeRepository;
+import sejong.back.domain.tree.AddTreeForm;
 import sejong.back.domain.tree.Tree;
 import sejong.back.domain.tree.TreeSearchCond;
 import sejong.back.domain.tree.UpdateTreeForm;
@@ -21,7 +22,8 @@ public class MemoryTreeRepository implements TreeRepository {
 
 
     @Override
-    public Tree save(Tree tree) {
+    public Tree save(Long memberKey,AddTreeForm form) {
+        Tree tree=new Tree();
         tree.setTreeKey(++treeSequence);
         storeTree.put(tree.getTreeKey(), tree);
         return tree;
@@ -112,8 +114,15 @@ public class MemoryTreeRepository implements TreeRepository {
         Tree updateTree = storeTree.get(treeKey);
         updateTree.setTitle(form.getTitle());
         updateTree.setDescription(form.getDescription());
+
         updateTree.setTags(form.getTags());
         updateTree.setRequestId(form.isRequestId());
         updateTree.setRequestDepartment(form.isRequestDepartment());
+
+    }
+
+    @Override
+    public void delete(Long treeKey) {
+
     }
 }
