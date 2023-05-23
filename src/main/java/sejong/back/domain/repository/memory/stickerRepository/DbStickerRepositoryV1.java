@@ -88,6 +88,36 @@ public class DbStickerRepositoryV1 implements StickerRepository {
     }
 
     @Override
+    public List<BackSticker> findByTreeId_back(Long treeKey) throws SQLException {
+        String sql = "select * from sticker where tree_id = ?";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<BackSticker> stickers = new ArrayList<>();
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, treeKey);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                stickers.add(new BackSticker(rs.getLong("frommember_id"),rs.getLong("tree_id"),rs.getString("title"),
+                        rs.getString("message"), rs.getTimestamp("created_at"), rs.getTimestamp("updated_at")));
+                //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
+            }
+            if(stickers.size()==0){
+                throw new NoSuchElementException("게시글이 아무것도 없다.");
+            }
+
+            return stickers;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
+    }
+
+    @Override
     public List<BackSticker> findByMemberId(Long memberKey) throws SQLException {//즉, 한 사람이 붙인 스티커들 볼 수 있다.
         String sql = "select * from sticker where frommember_id = ?";
         Connection con = null;
@@ -104,6 +134,8 @@ public class DbStickerRepositoryV1 implements StickerRepository {
                 stickers.add(new BackSticker(rs.getLong("frommember_id"),rs.getLong("tree_id"),rs.getString("title"),
                         rs.getString("message"), rs.getTimestamp("created_at"), rs.getTimestamp("updated_at")));
                 //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
+
+
             }
             if(stickers.size()==0){
                 throw new NoSuchElementException("게시글이 아무것도 없다.");

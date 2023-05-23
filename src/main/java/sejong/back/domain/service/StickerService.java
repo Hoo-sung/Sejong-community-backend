@@ -43,6 +43,22 @@ public class StickerService {
         return frontStickers;
     }
 
+    public List<BackSticker> findByTreeId_Back(Long treeKey) throws SQLException {//게시글에 붙여진 스티커 모두 조회.
+        //sticker에 닉네임을 주려면 sticker 생성한 애의 memberid를 알아야 한다. from memberid랑 treekey는 알아야 한다.
+        //그리고 backsticker에 게시글 요청자가 원하는 request 공개 정보를 알려면,
+        List<BackSticker> backStickers = stickerRepository.findByTreeId_back(treeKey);
+        for (BackSticker backSticker : backStickers) {
+            backSticker.setDataRange(new HashMap<>());
+            Long fromMember = backSticker.getFromMember();//sticker 붙인애의 nickname얻기 위해 필요함.
+            Member writer = memberRepository.findByKey(fromMember);
+
+            Tree byTreeId = treeRepository.findByTreeId(backSticker.getTreeKey());
+            backSticker.setTreeTitle(byTreeId.getTitle());
+            backSticker.getDataRange().put("nickname", writer.getNickname());
+        }
+        return backStickers;
+    }
+
 //    public List<BackSticker> findByTreeId(Long treeKey) throws SQLException {
 //        return stickerRepository.findByTreeId(treeKey);
 //    }

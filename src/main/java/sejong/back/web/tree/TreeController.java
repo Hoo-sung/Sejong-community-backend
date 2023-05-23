@@ -11,6 +11,8 @@ import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.StickerService;
 import sejong.back.domain.service.TreeService;
 import sejong.back.domain.sticker.AddStickerForm;
+import sejong.back.domain.sticker.BackSticker;
+import sejong.back.domain.sticker.FrontSticker;
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.tree.AddTreeForm;
 import sejong.back.domain.tree.Tree;
@@ -71,39 +73,39 @@ public class TreeController {
         return new ResponseResult<>("모든 트리 조회 성공", trees);
     }
 
-//    @GetMapping("/{treeKey}")//트리 아이디로 게시글 검색. 게시글 목록에서 열로 리다이렉트 되어서 온다.
-//    public TreeAndStickers searchTree(@Login Long myKey, @PathVariable Long treeKey) throws NullPointerException, SQLException {
-//        Tree tree = treeService.findByTreeId(treeKey);
-//        if(tree == null){
-//            log.error("트리 ID에 해당되는 트리 X");
-//            throw new NullPointerException("트리 ID에 해당되는 트리 X");
-//        }
-//        List<Sticker> stickers = stickerService.findByTreeId(treeKey);
-//
-//        //내 트리에 접근하는 경우와 다른 사람 트리에 접근하는 경우를 나눠서 로직 구현
-//        if (tree.getMemberKey() == myKey) {
-//            return new TreeAndStickers(tree, stickers, true);
-//        }
-//        else {
-//            List<ShowStickerForm> otherStickers = new ArrayList<>();
-//            stickers.stream()
-//                    .forEach((sticker) -> otherStickers.add(stickerService.register(sticker)));
-//            return new TreeAndStickers(tree, otherStickers, false);
-//        }
-//
-///*
-//        if (tree.getMemberKey() == myKey) { //트리 검색 페이지에서 클릭한 트리가 내 트리
-//            //TODO return까지 임시로 만든 것. 나중에 프론트팀과 응답 스펙 다시 맞추고 구체화
-//            //TODO 트리 게시판에서 내껄 클릭해서 my-page로 리다이렉트 시킬 때 쿼리 파리미터를 treeid=2 등으로 붙여서 보내준다.
-//            HashMap<String, String> redirectUri = new HashMap<>();
-//            redirectUri.put("redirectURI", "/forest/my-trees");
-//            return new ResponseResult<>("클릭한 트리가 내 트리", redirectUri);
-//        } else { //트리 검색 페이지에서 클릭한 트리가 내 트리가 아님
-//            return new ResponseResult<>("클릭한 트리가 내 트리가 아님", tree);
-//        }*/
-//
-//
-//    }
+    @GetMapping("/{treeKey}")//트리 아이디로 게시글 검색. 게시글 목록에서 열로 리다이렉트 되어서 온다.
+    public TreeAndStickers searchTree(@Login Long myKey, @PathVariable Long treeKey) throws NullPointerException, SQLException {
+        Tree tree = treeService.findByTreeId(treeKey);
+        if(tree == null){
+            log.error("트리 ID에 해당되는 트리 X");
+            throw new NullPointerException("트리 ID에 해당되는 트리 X");
+        }
+
+
+        //내 트리에 접근하는 경우와 다른 사람 트리에 접근하는 경우를 나눠서 로직 구현
+        if (tree.getMemberKey() == myKey) {
+
+            List<BackSticker> stickers = stickerService.findByTreeId_Back(treeKey);
+            return new TreeAndStickers(tree, stickers, true);
+        }
+        else {
+            List<FrontSticker> otherStickers = stickerService.findByTreeId(treeKey);
+            return new TreeAndStickers(tree, otherStickers, false);
+        }
+
+/*
+        if (tree.getMemberKey() == myKey) { //트리 검색 페이지에서 클릭한 트리가 내 트리
+            //TODO return까지 임시로 만든 것. 나중에 프론트팀과 응답 스펙 다시 맞추고 구체화
+            //TODO 트리 게시판에서 내껄 클릭해서 my-page로 리다이렉트 시킬 때 쿼리 파리미터를 treeid=2 등으로 붙여서 보내준다.
+            HashMap<String, String> redirectUri = new HashMap<>();
+            redirectUri.put("redirectURI", "/forest/my-trees");
+            return new ResponseResult<>("클릭한 트리가 내 트리", redirectUri);
+        } else { //트리 검색 페이지에서 클릭한 트리가 내 트리가 아님
+            return new ResponseResult<>("클릭한 트리가 내 트리가 아님", tree);
+        }*/
+
+
+    }
 
     /**
      * tree 수정

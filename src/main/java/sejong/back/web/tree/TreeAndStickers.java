@@ -2,7 +2,6 @@ package sejong.back.web.tree;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import sejong.back.domain.sticker.ShowStickerForm;
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.tree.Tree;
 
