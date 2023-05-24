@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.repository.MemberRepository;
+import sejong.back.web.login.NonReadSticker;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -72,5 +73,10 @@ public class MemoryMemberRepository implements MemberRepository {
     @Override
     public void delete(Long key) throws SQLException {
 
+    }
+
+    @Override
+    public List<NonReadSticker> getNotice(Long key) throws SQLException {
+        return null;
     }
 }

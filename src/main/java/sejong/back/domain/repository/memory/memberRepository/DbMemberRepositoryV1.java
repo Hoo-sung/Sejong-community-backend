@@ -8,9 +8,11 @@ import sejong.back.domain.member.Member;
 import sejong.back.domain.member.MemberGrade;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.repository.MemberRepository;
+import sejong.back.web.login.NonReadSticker;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -186,6 +188,34 @@ public class DbMemberRepositoryV1 implements MemberRepository {
             close(con, pstmt, null);
         }
 
+    }
+
+    public List<NonReadSticker> getNotice(Long key) throws SQLException {
+        String sql = "select * from notice where member_id=?";
+        List<NonReadSticker> alarmCount = new ArrayList<>();
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con =  getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, key);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                alarmCount.add(new NonReadSticker(
+                        rs.getString("title"),
+                        rs.getLong("tree_id"),
+                        rs.getInt("not_read_count")));
+            }
+            return alarmCount;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
     }
 
     private Connection getConnection() throws SQLException{//connection 객체 반환.
