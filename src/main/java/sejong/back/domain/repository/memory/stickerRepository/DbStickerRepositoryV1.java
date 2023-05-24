@@ -72,11 +72,11 @@ public class DbStickerRepositoryV1 implements StickerRepository {
             pstmt.setLong(1, treeKey);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                stickers.add(new FrontSticker(rs.getString("title"), rs.getLong("frommember_id")));
+                stickers.add(new FrontSticker(rs.getString("title"), rs.getLong("frommember_id"),rs.getInt("colortype")));
                 //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
             }
             if(stickers.size()==0){
-                throw new NoSuchElementException("게시글이 아무것도 없다.");
+                return null;
             }
 
             return stickers;
@@ -101,12 +101,12 @@ public class DbStickerRepositoryV1 implements StickerRepository {
             pstmt.setLong(1, treeKey);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                stickers.add(new BackSticker(rs.getLong("frommember_id"),rs.getLong("tree_id"),rs.getString("title"),
+                stickers.add(new BackSticker(rs.getLong("frommember_id"),rs.getLong("tree_id"),rs.getString("title"),rs.getInt("colortype"),
                         rs.getString("message"), rs.getTimestamp("created_at"), rs.getTimestamp("updated_at")));
                 //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
             }
             if(stickers.size()==0){
-                throw new NoSuchElementException("게시글이 아무것도 없다.");
+                return null;
             }
 
             return stickers;
@@ -131,14 +131,14 @@ public class DbStickerRepositoryV1 implements StickerRepository {
             pstmt.setLong(1, memberKey);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                stickers.add(new BackSticker(rs.getLong("frommember_id"),rs.getLong("tree_id"),rs.getString("title"),
+                stickers.add(new BackSticker(rs.getLong("frommember_id"),rs.getLong("tree_id"),rs.getString("title"),rs.getInt("colortype"),
                         rs.getString("message"), rs.getTimestamp("created_at"), rs.getTimestamp("updated_at")));
                 //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
 
 
             }
             if(stickers.size()==0){
-                throw new NoSuchElementException("게시글이 아무것도 없다.");
+                return null;//스티커가 아무것도 없으면 null 반환.
             }
 
             return stickers;
@@ -165,6 +165,7 @@ public class DbStickerRepositoryV1 implements StickerRepository {
             if (rs.next()) {
                frontSticker.setFromMember(rs.getLong("frommember_id"));
                 frontSticker.setTitle(rs.getString("title"));
+                frontSticker.setType(rs.getInt("colortype"));
 
             } else {
                 throw new NoSuchElementException("sticker not found treeId=" +
@@ -195,6 +196,7 @@ public class DbStickerRepositoryV1 implements StickerRepository {
                 backSticker.setTreeKey(rs.getLong("tree_id"));
                 backSticker.setTitle(rs.getString("title"));
                 backSticker.setMessage(rs.getString("message"));
+                backSticker.setType(rs.getInt("colortype"));
                 backSticker.setCreated_at(rs.getTimestamp("created_at"));
                 backSticker.setUpdated_at(rs.getTimestamp("updated_at"));
             } else {
@@ -227,6 +229,7 @@ public class DbStickerRepositoryV1 implements StickerRepository {
                 sticker.setToMemberKey(rs.getLong("tomember_id"));
                 sticker.setTreeKey(rs.getLong("tree_id"));
                 sticker.setTitle(rs.getString("title"));
+                sticker.setType(rs.getInt("colortype"));
                 sticker.setMessage(rs.getString("message"));
                 sticker.setType(rs.getInt("colortype"));
                 sticker.setCreated_at(rs.getTimestamp("created_at"));

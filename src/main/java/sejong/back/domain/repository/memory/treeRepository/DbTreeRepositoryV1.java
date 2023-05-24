@@ -15,6 +15,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Repository
 public class DbTreeRepositoryV1 implements TreeRepository {
@@ -104,8 +105,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
 
 
             } else {
-                throw new NoSuchElementException("member not found treeId=" +
-                        treeId);
+                return  null;
             }
             return tree;
         } catch (SQLException e) {
@@ -134,12 +134,12 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             pstmt = con.prepareStatement(sql);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                trees.add(new Tree(rs.getLong("member_id"), rs.getString("title"), rs.getString("description"),
+                trees.add(new Tree(rs.getLong("tree_id"),rs.getLong("member_id"), rs.getString("title"), rs.getString("description"),
                         rs.getBoolean("requestId"), rs.getBoolean("requestDepartment"), rs.getTimestamp("created_at"), rs.getTimestamp("updated_at")));
                 //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
             }
             if(trees.size()==0){
-                throw new NoSuchElementException("게시글이 아무것도 없다.");
+                return null;
             }
 
             return trees;
@@ -151,12 +151,43 @@ public class DbTreeRepositoryV1 implements TreeRepository {
     }
 
     @Override
-    public List<Tree> findAll(TreeSearchCond cond) {
-        /**
-         * TODO
-         * 트리 검색 로직 짜오기
-         */
-        return null;
+    public List<Tree> findAll(TreeSearchCond cond) throws SQLException {
+
+            return findAll().stream()
+                    .filter(tree->{
+                        if (cond.getTitle() != null) {
+                            return tree.getTitle().contains(cond.getTitle().strip());
+                        }
+                        return true;
+                    }) //title
+                    .filter(tree->{
+                        if (cond.getDescription() != null) {
+                            return tree.getDescription().contains(cond.getDescription().strip());
+                        }
+                        return true;
+                    }) //description
+                    .filter(tree->{
+                        Integer tag;
+                        if (cond.getTag() != null) {
+                            tag = Integer.valueOf(cond.getTag());
+                            return tree.getTags().get(0).equals(tag); //일단 테그 한개
+                        }
+                        return true;
+                    })//tag
+                    .filter(tree->{
+                        Integer page;
+                        if (cond.getPage() != null) {
+                            page = Integer.valueOf(cond.getPage());
+
+                        }
+                        else{
+                            page=1;
+                        }
+                        return tree.getTreeKey()>20*(page-1)&& tree.getTreeKey()<=20*page;
+                    })//page
+
+                    .collect(Collectors.toList());
+
     }//이거는 정민 branch
 
     @Override
@@ -174,12 +205,12 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             pstmt.setLong(1, myMemberKey);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                trees.add(new Tree(rs.getLong("member_id"), rs.getString("title"), rs.getString("description"),
+                trees.add(new Tree(rs.getLong("tree_id"),rs.getLong("member_id"), rs.getString("title"), rs.getString("description"),
                         rs.getBoolean("requestId"), rs.getBoolean("requestDepartment"), rs.getTimestamp("created_at"), rs.getTimestamp("updated_at")));
                 //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
             }
             if(trees.size()==0){
-                throw new NoSuchElementException("treetags not found tree_id=" + myMemberKey);
+                return null;
             }
             return trees;
         } catch (SQLException e) {

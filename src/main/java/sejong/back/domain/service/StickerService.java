@@ -66,6 +66,7 @@ public class StickerService {
     public List<BackSticker> findByMemberId(Long memberKey) throws SQLException {//한 사라이 붙인 스티커의 정보 싹다 뽑기.
         //애는 자기만 볼 수 있으므로 공개범위를 풀로 다 넣을거임.
         List<BackSticker> backStickers = stickerRepository.findByMemberId(memberKey);
+
         for (BackSticker backSticker : backStickers) {
             backSticker.setDataRange(new HashMap<>());
             Long fromMember = backSticker.getFromMember();//sticker 붙인애의 nickname얻기 위해 필요함.

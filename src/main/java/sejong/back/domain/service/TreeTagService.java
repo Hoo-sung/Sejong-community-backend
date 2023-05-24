@@ -23,7 +23,7 @@ public class TreeTagService {
         return dbTreeTagRepository.save(treeTag);
     }
 
-    public ArrayList<Tree_Tag> findByTree_Id(Long tree_id) throws SQLException{
+    public ArrayList<Integer> findByTree_Id(Long tree_id) throws SQLException{
         return dbTreeTagRepository.findByTree_Id(tree_id);
     }
 

@@ -21,6 +21,8 @@ public class BackSticker {
 
     private String title;//제목
 
+    private Integer type; // sticker 디자인 타입
+
     private String message;//스티커 내용.
 
     private  String treeTitle;//스티커가 붙여진 게시글 제목.
@@ -33,10 +35,12 @@ public class BackSticker {
 
     private Map<String,String> dataRange;//여기에는 닉네임은 필수, 추가적으로 게시물 사용자가 지정한 공개범위를 전부 보여준다.
 
-    public BackSticker(Long fromMember, Long treeKey, String title, String message, Timestamp created_at, Timestamp updated_at) {
+
+    public BackSticker(Long fromMember, Long treeKey, String title, Integer type, String message, Timestamp created_at, Timestamp updated_at) {
         this.fromMember = fromMember;
         this.treeKey = treeKey;
         this.title = title;
+        this.type = type;
         this.message = message;
         this.created_at = created_at;
         this.updated_at = updated_at;

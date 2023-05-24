@@ -19,7 +19,7 @@ public interface TreeRepository {
 
     public List<Tree> findAll() throws SQLException;
 
-    public List<Tree> findAll(TreeSearchCond cond);
+    public List<Tree> findAll(TreeSearchCond cond) throws SQLException;
 
     public List<Tree> findMyTrees(Long myTreeKey) throws SQLException;
 

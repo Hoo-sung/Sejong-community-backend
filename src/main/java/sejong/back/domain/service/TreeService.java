@@ -43,11 +43,12 @@ public class TreeService {
             dbTreeTagRepository.save(treeTag);
         }
 
-        Member createPerson = memberRepository.findByKey(memberKey);
 
+        Member createPerson = memberRepository.findByKey(memberKey);
         settingDataRange(saved, createPerson);
 
         return saved;
+
     }
 
     private static void settingDataRange(Tree saved, Member createPerson) {
@@ -69,10 +70,15 @@ public class TreeService {
 
     public Tree findByTreeId(Long treeId) throws SQLException {
         Tree findObject = treeRepository.findByTreeId(treeId);
+        findObject.setTreeKey(treeId);//tree id 설정.
+
         Long memberKey = findObject.getMemberKey();
 
         Member createPerson = memberRepository.findByKey(memberKey);
         //datarange설정하는 과정. 결국 memberepository를 거쳐야 하는 문제 발생.
+
+        ArrayList<Integer> tags = dbTreeTagRepository.findByTree_Id(findObject.getTreeKey());
+        findObject.setTags(tags);//태그 담기.
 
         settingDataRange(findObject,createPerson);
         return findObject;
@@ -89,6 +95,10 @@ public class TreeService {
             Long memberKey = tree.getMemberKey();
             Member createPerson = memberRepository.findByKey(memberKey);
             settingDataRange(tree, createPerson);
+
+            ArrayList<Integer> tags = dbTreeTagRepository.findByTree_Id(tree.getTreeKey());
+            tree.setTags(tags);//태그 담기.
+
         }
         return all;
     }
@@ -96,17 +106,34 @@ public class TreeService {
     public List<Tree> findMyTrees(Long myDbKey) throws SQLException {//tree중에 mydbKey값을 가진것만 출력하기.
 
         List<Tree> myTrees = treeRepository.findMyTrees(myDbKey);
-        for (Tree myTree : myTrees) {
+        for (Tree myTree : myTrees) {//트리에 태그 넣기.
+
+            ArrayList<Integer> tags = dbTreeTagRepository.findByTree_Id(myTree.getTreeKey());
+            myTree.setTags(tags);//태그 담기.
+
             myTree.setDataRange(new HashMap<>());
             Member createPerson = memberRepository.findByKey(myDbKey);
+
             settingDataRange(myTree, createPerson);
         }
 
         return myTrees;
     }
 
-    public List<Tree> findAll(TreeSearchCond cond) {//이 부분은 안건듬.
-        return treeRepository.findAll(cond);
+    public List<Tree> findAll(TreeSearchCond cond) throws SQLException {//이 부분은 안건듬.
+
+        List<Tree> all = treeRepository.findAll(cond);
+
+        for (Tree tree : all) {//tree마다 datarange 설정해야 한다.
+            Long memberKey = tree.getMemberKey();
+            Member createPerson = memberRepository.findByKey(memberKey);
+            settingDataRange(tree, createPerson);
+
+            ArrayList<Integer> tags = dbTreeTagRepository.findByTree_Id(tree.getTreeKey());
+            tree.setTags(tags);//태그 담기.
+
+        }
+        return all;
     }
 
     public void update(Long treeKey,  UpdateTreeForm form) throws SQLException {

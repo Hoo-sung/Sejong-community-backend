@@ -39,10 +39,7 @@ public class MemberController {
     private final LoginService loginService;
     private final TreeService treeService;
 
-//    @ModelAttribute("memberTypes")//모델에 통쨰로보여줘야 라디오 버튼이든 뭐든 내용물을 통쨰로 출력할 수 있다.
-//    public MemberType[] memberTypes(){
-//        return MemberType.values();//전체 다 가져오기.
-//    }
+
 
     //TODO 멤버 검색 페이지로 다른 멤버의 정보를 볼 일은 없을 듯
     //      왜냐하면 "/forest"에서 다른 사람의 트리를 보면 되니까
@@ -156,13 +153,8 @@ public class MemberController {
             throw new WrongSessionIdException("로그인 X");
         }
 
-        Member member = memberService.findByKey(myKey);
-        //TODO db업데이트 쿼리 필요
-        member.setNickname(updateMemberForm.getNickname());
-        member.setOpenStudentId(updateMemberForm.isOpenStudentId());
-        member.setOpenDepartment(updateMemberForm.isOpenDepartment());
 
-        log.info("확인용 로그 = {}", member.getName());
+        memberService.update(myKey, updateMemberForm);
     }
 
     //회원 정보 수정이 정상적으로 이루어졌는지 테스트하는 컨트롤러
@@ -176,24 +168,24 @@ public class MemberController {
         return data;
     }
 
-    @PostConstruct
-    public void TestEnvironment() throws IOException, SQLException {
-
-        //member
-        Member m1 = new Member("A", "Computer Science", Long.valueOf(19011901), "3", "재학");
-
-        Member validateMember = loginService.validateSejong(Long.valueOf(18011881), "19991201");
-        Member m2 = new Member("B", "Computer Science", Long.valueOf(18011881), "4", "재학");
-        Member m3 = new Member("C", "Computer Science", Long.valueOf(20000001), "1", "재학");
-        Member m4 = new Member("C", "Electric Communication", Long.valueOf(18010741), "3", "재학");
-
-        //save
-
-        memberService.save(m1);
-        memberService.save(m2);
-        memberService.save(m3);
-        memberService.save(m4);
-
-    }
+//    @PostConstruct
+//    public void TestEnvironment() throws IOException, SQLException {
+//
+//        //member
+//        Member m1 = new Member("A", "Computer Science", Long.valueOf(19011901), "3", "재학");
+//
+//        Member validateMember = loginService.validateSejong(Long.valueOf(18011881), "19991201");
+//        Member m2 = new Member("B", "Computer Science", Long.valueOf(18011881), "4", "재학");
+//        Member m3 = new Member("C", "Computer Science", Long.valueOf(20000001), "1", "재학");
+//        Member m4 = new Member("C", "Electric Communication", Long.valueOf(18010741), "3", "재학");
+//
+//        //save
+//
+//        memberService.save(m1);
+//        memberService.save(m2);
+//        memberService.save(m3);
+//        memberService.save(m4);
+//
+//    }
 }
 

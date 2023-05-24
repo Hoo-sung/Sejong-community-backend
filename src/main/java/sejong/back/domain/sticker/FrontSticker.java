@@ -16,11 +16,15 @@ public class FrontSticker {
 
     private Long fromMember;//스티커 붙인애의 멤버 정보.
 
+    private Integer type; // sticker 디자인 타입
+
     private Map<String,String> dataRange;//여기에는 닉네임만 담는다.
 
-    public FrontSticker(String title, Long fromMember) {
+
+    public FrontSticker(String title, Long fromMember, Integer type) {
         this.title = title;
         this.fromMember = fromMember;
+        this.type = type;
     }
 
     public FrontSticker() {

@@ -41,18 +41,10 @@ public class TreeController {
     private final TreeService treeService;
     private final StickerService stickerService;
 
-    @ModelAttribute("tagGroups")
-    public List<String> tags() {
-        List<String> tags = new ArrayList<>();
-        tags.add("#스터디");
-        tags.add("#팀플");
-        tags.add("#친목");
 
-        return tags;
-    }
 
     @GetMapping//tree 전체 찾기.
-    public ResponseResult<?> forest(HttpServletRequest request) {//멤버 검색 페이지이다. 클라이언트 요청의 경우의 수는 2가지
+    public ResponseResult<?> forest(HttpServletRequest request) throws SQLException {//멤버 검색 페이지이다. 클라이언트 요청의 경우의 수는 2가지
         /***
          * 1. query parameter 있는 경우
          * 필터링 해서 보내줄 것

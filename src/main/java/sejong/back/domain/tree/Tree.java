@@ -40,24 +40,18 @@ public class Tree {
     private boolean requestId;
     private boolean requestDepartment;
 
-    public Tree(Long memberKey, String title, String description, List<Integer> tags, boolean requestId, boolean requestDepartment) {
-        this.memberKey = memberKey;
-        this.title = title;
-        this.description = description;
-        this.tags = tags;
-        this.requestId = requestId;
-        this.requestDepartment = requestDepartment;
-    }
 
-
-    public Tree(Long memberKey, String title, String description, boolean requestId, boolean requestDepartment,Timestamp created_at, Timestamp updated_at) {
-
+    public Tree(Long treeKey,Long memberKey, String title, String description, boolean requestId, boolean requestDepartment,Timestamp created_at, Timestamp updated_at) {
+        this.treeKey = treeKey;
         this.memberKey = memberKey;
         this.title = title;
         this.description = description;
         this.requestId = requestId;
         this.requestDepartment = requestDepartment;
+        this.setCreated_at(created_at);
+        this.setUpdated_at(updated_at);
     }
+
 
     public Tree(Long memberKey) {
         this.memberKey = memberKey;

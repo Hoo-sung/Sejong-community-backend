@@ -48,24 +48,24 @@ public class DbTree_TagRepository {
         }
     }
 
-    public ArrayList<Tree_Tag> findByTree_Id(Long tree_id) throws SQLException {//하나의 tree id로 조회되는 태그들을 다 가져와야한다. (한 게시물에 걸린 태그 다.)
+    public ArrayList<Integer> findByTree_Id(Long tree_id) throws SQLException {//하나의 tree id로 조회되는 태그들을 다 가져와야한다. (한 게시물에 걸린 태그 다.)
         String sql="select * from tree_tag where tree_id=? ";
 
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-        ArrayList<Tree_Tag> tags = new ArrayList<>();
+        ArrayList<Integer> tags = new ArrayList<>();
         try {
             con = getConnection();
             pstmt = con.prepareStatement(sql);
             pstmt.setLong(1, tree_id);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                tags.add(new Tree_Tag(rs.getLong("tree_id"), rs.getInt("tag_id")));
+                tags.add(rs.getInt("tag_id"));
             }
             if(tags.size()==0){
-                throw new NoSuchElementException("treetags not found tree_id=" + tree_id);
+                return null;
             }
             return tags;
         } catch (SQLException e) {

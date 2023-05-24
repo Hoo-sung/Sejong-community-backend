@@ -49,10 +49,10 @@ class DbTree_TagRepositoryTest {
     @Test
     void searchByTree_id() throws SQLException//해당 트리 아이디에 해당하는 태그 싹다 가져와야함.
     {
-        ArrayList<Tree_Tag> byTreeId = dbTreeTagRepository.findByTree_Id(14L);
-        for (Tree_Tag treeTag : byTreeId) {
-            System.out.println(treeTag.getTag_id());
-        }
+        ArrayList<Integer> byTreeId = dbTreeTagRepository.findByTree_Id(14L);
+//        for (Tree_Tag treeTag : byTreeId) {
+//            System.out.println(treeTag.getTag_id());
+//        }
 
     }
 
