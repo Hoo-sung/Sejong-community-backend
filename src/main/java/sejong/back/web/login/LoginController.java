@@ -9,8 +9,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sejong.back.domain.login.LoginForm;
 import sejong.back.domain.member.Member;
+import sejong.back.domain.repository.NoticeRepository;
 import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.MemberService;
+import sejong.back.domain.service.NoticeService;
 import sejong.back.exception.WrongLogoutException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
@@ -30,6 +32,7 @@ public class LoginController {
 
     private final MemberService memberService;
     private final LoginService loginService;
+    private final NoticeService noticeService;
 
     @GetMapping("/login")
     public LoginCheck loginCheck(HttpServletRequest request) throws SQLException {
@@ -40,7 +43,7 @@ public class LoginController {
         }
 
         Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);
-        List<NonReadSticker> alarmCount = memberService.getNotice(myKey);
+        List<NonReadSticker> alarmCount = noticeService.getNotice(myKey);
         log.info("[LoginCheck] login O: {}, alarmCount={}", myKey, alarmCount);
         return new LoginCheck(true, alarmCount);
     }

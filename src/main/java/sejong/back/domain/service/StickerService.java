@@ -158,12 +158,4 @@ public class StickerService {
         return stickerRepository.findByMemberKeyAndTreeKey(memberKey, treeKey);
     }
 
-    public void updateNotice(Long toMemberKey, Long treeId, String title) throws SQLException {
-        stickerRepository.updateNotice(toMemberKey, treeId, title);
-    }
-
-    public void deleteNotice(Long memberKey, Long treeId) throws SQLException {
-        stickerRepository.deleteNotice(memberKey, treeId);
-    }
-
 }

@@ -22,7 +22,4 @@ public interface MemberRepository {
 
     public void delete(Long key) throws SQLException;
 
-    public List<NonReadSticker> getNotice(Long key) throws SQLException;
-
-
 }

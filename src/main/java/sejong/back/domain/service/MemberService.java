@@ -35,8 +35,4 @@ public class MemberService {
     public void update(Long key, UpdateMemberForm updateMember) throws SQLException {
         memberRepository.update(key, updateMember);
     }
-
-    public List<NonReadSticker> getNotice(Long key) throws SQLException {
-        return memberRepository.getNotice(key);
-    }
 }

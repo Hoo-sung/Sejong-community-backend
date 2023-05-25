@@ -74,9 +74,4 @@ public class MemoryMemberRepository implements MemberRepository {
     public void delete(Long key) throws SQLException {
 
     }
-
-    @Override
-    public List<NonReadSticker> getNotice(Long key) throws SQLException {
-        return null;
-    }
 }
