@@ -34,6 +34,9 @@ public class StickerService {
         //sticker에 닉네임을 주려면 sticker 생성한 애의 memberid를 알아야 한다. from memberid랑 treekey는 알아야 한다.
         //그리고 backsticker에 게시글 요청자가 원하는 request 공개 정보를 알려면,
         List<FrontSticker> frontStickers = stickerRepository.findByTreeId(treeKey);
+        if(frontStickers==null)// 스티커가 없는경우 null 반환.
+            return null;
+
         for (FrontSticker frontSticker : frontStickers) {
             frontSticker.setDataRange(new HashMap<>());
             Long fromMember = frontSticker.getFromMember();//sticker 붙인애의 nickname얻기 위해 필요함.
@@ -47,6 +50,9 @@ public class StickerService {
         //sticker에 닉네임을 주려면 sticker 생성한 애의 memberid를 알아야 한다. from memberid랑 treekey는 알아야 한다.
         //그리고 backsticker에 게시글 요청자가 원하는 request 공개 정보를 알려면,
         List<BackSticker> backStickers = stickerRepository.findByTreeId_back(treeKey);
+
+        if(backStickers==null)
+            return null;
         for (BackSticker backSticker : backStickers) {
             backSticker.setDataRange(new HashMap<>());
             Long fromMember = backSticker.getFromMember();//sticker 붙인애의 nickname얻기 위해 필요함.
@@ -66,6 +72,9 @@ public class StickerService {
     public List<BackSticker> findByMemberId(Long memberKey) throws SQLException {//한 사라이 붙인 스티커의 정보 싹다 뽑기.
         //애는 자기만 볼 수 있으므로 공개범위를 풀로 다 넣을거임.
         List<BackSticker> backStickers = stickerRepository.findByMemberId(memberKey);
+
+        if(backStickers==null)
+                return null;
 
         for (BackSticker backSticker : backStickers) {
             backSticker.setDataRange(new HashMap<>());

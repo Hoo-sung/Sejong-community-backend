@@ -68,6 +68,7 @@ public class TreeService {
         }
     }
 
+
     public Tree findByTreeId(Long treeId) throws SQLException {
         Tree findObject = treeRepository.findByTreeId(treeId);
         findObject.setTreeKey(treeId);//tree id 설정.

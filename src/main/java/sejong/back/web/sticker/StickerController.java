@@ -64,7 +64,6 @@ public class StickerController {
     public ResponseResult<?> searchSticker(@Login Long myKey, @PathVariable Long stickerKey,
                                            Model model, HttpServletRequest request) throws SQLException {
 
-
         //TODO 다른 사람 스티커 조회는 상관없음.
         BackSticker backSticker = stickerService.findByStickerIdBack(stickerKey);
         if (backSticker == null) {
@@ -81,27 +80,48 @@ public class StickerController {
 
 
         if (myKey == backSticker.getFromMember() //자신이 쓴 스티커
-                || myKey == stickerOnThisTree.getMemberKey()) { //자신의 트리에 붙은 스티커
+                || myKey == stickerOnThisTree.getMemberKey()) { //자신이 트리의 주인이면, 스티커 상세정보를 준다.
             return new ResponseResult<>("스티커 열람", backSticker);
         } else {//자신의 트리에 붙은 스티커
 
             ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.");
             responseResult.setErrorCode(-120);
-            log.info("열람 불가능 message");
-            return responseResult;
+            return new ResponseResult<>("스티커 열람 불가능");
+
         }
+
+
+//        BackSticker backSticker = stickerService.findByStickerIdBack(stickerKey);
+//        Long treeKey = backSticker.getTreeKey();
+//        Tree stickerOnThisTree = treeService.findByTreeId(treeKey);
+//
+//
+//        Map<String, Object> data = new HashMap<>();
+//
+//        if (myKey == backSticker.getFromMember() //자신이 쓴 스티커
+//        ) { //자신의 트리에 붙은 스티커
+//            data.put("backSticker", backSticker);
+//            data.put("stickerAuth", 2); //자신이 쓴 스티커 경우 del 가능
+//            return new ResponseResult<>("스티커 열람", data);
+//        } else if ( myKey == stickerOnThisTree.getMemberKey()) {
+//            data.put("backSticker", backSticker);
+//            data.put("stickerAuth", 1); //자신이 쓴 스티커 경우 del 가능
+//            log.info("열람가능 message = {}", data.get("message"));
+//            return new ResponseResult<>("스티커 열람", data);
+//
+//        } else{//자신의 트리에 붙은 스티커
+//            data.put("stickerAuth", 3); //남의 스티커 경우 모두 불가능
+//            ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.",data);
+//            responseResult.setErrorCode(-120);
+//            log.info("열람 불가능 message");
+//            return responseResult;
+//        }
     }
 
     @PostMapping   //스티커 붙이기
     public ResponseResult<?> save(@Login Long fromMemberKey,
-                                  @Validated @ModelAttribute AddStickerForm addStickerForm, @RequestParam Long treeId,
-                                  BindingResult result, HttpServletRequest request, Model model) throws IOException, SQLException {
-
-
-        if (result.hasErrors()) {
-            //TODO 예외 처리
-            throw new IllegalArgumentException("빈 값이 들어있음");
-        }
+                                   @Validated @RequestBody AddStickerForm addStickerForm, @RequestParam Long treeId,
+                                   HttpServletRequest request, Model model) throws IOException, SQLException {
 
         Tree tree = treeService.findByTreeId(treeId);
         Long toMemberKey = tree.getMemberKey();

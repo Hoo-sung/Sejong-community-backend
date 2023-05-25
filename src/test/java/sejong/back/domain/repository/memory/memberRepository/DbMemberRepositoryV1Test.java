@@ -62,7 +62,7 @@ class DbMemberRepositoryV1Test {
         Member member = null;
         try {
             member = loginService.validateSejong(studentId, "fa484869");
-            member.setNickname("난 범안");
+            member.setNickname("난 범안");안
             member.setOpenStudentId(false);
             member.setOpenDepartment(false);
             Member save = dbMemberRepositoryV1.save(member);

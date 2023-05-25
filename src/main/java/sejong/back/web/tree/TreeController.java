@@ -65,7 +65,7 @@ public class TreeController {
         return new ResponseResult<>("모든 트리 조회 성공", trees);
     }
 
-    @GetMapping("/{treeKey}")//트리 아이디로 게시글 검색. 게시글 목록에서 열로 리다이렉트 되어서 온다.
+    @GetMapping("/{treeKey}")//트리 아이디로 게시글 검색. 게시글 목록에서 열로 리다이렉트 되어서 온다. 여기서는 스티커 앞면을 보여준다.
     public TreeAndStickers searchTree(@Login Long myKey, @PathVariable Long treeKey) throws NullPointerException, SQLException {
         Tree tree = treeService.findByTreeId(treeKey);
         if(tree == null){
@@ -76,11 +76,19 @@ public class TreeController {
 
         //내 트리에 접근하는 경우와 다른 사람 트리에 접근하는 경우를 나눠서 로직 구현
         if (tree.getMemberKey() == myKey) {
+
             List<BackSticker> stickers = stickerService.findByTreeId_Back(treeKey);
+
+            if(stickers==null)
+                    return new  TreeAndStickers(tree, Collections.emptyList(), true);
+
             return new TreeAndStickers(tree, stickers, true);
         }
         else {
             List<FrontSticker> otherStickers = stickerService.findByTreeId(treeKey);
+            if(otherStickers==null)
+                return new TreeAndStickers(tree, Collections.emptyList(), false);
+
             return new TreeAndStickers(tree, otherStickers, false);
         }
 

@@ -44,21 +44,20 @@ public class MemberController {
     //TODO 멤버 검색 페이지로 다른 멤버의 정보를 볼 일은 없을 듯
     //      왜냐하면 "/forest"에서 다른 사람의 트리를 보면 되니까
     //      우선 주석 처리
-/*    @GetMapping//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
-    public ResponseResult<?> members(HttpServletRequest request, Model model) throws SQLException {
-        List<Member> members = memberService.findAll();
-        log.info("members={}", members);
-
-        HttpSession session = request.getSession(false);//세션을 가져와서 자기 member key를 뽑아야한다.
-        Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);//다운 캐스팅.
-        Member member = memberService.findByKey(myKey);
-
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("members", members);
-        data.put("member", member);
-
-        return new ResponseResult<>("멤버 조회 성공", data);
-    }*/
+//    @GetMapping// 자기 멤버를 보는 페이지이다. 자기 정보랑, 게시글들을 보내야 한다.
+//    public ResponseResult<?> members(@Login Long myKey,HttpServletRequest request, Model model) throws SQLException {
+//        List<Member> members = memberService.findAll();
+//        log.info("members={}", members);
+//
+//
+//        Member member = memberService.findByKey(myKey);
+//
+//        HashMap<String, Object> data = new HashMap<>();
+//       data.put("members", members);
+//        data.put("member", member);
+//
+//        return new ResponseResult<>("멤버 조회 성공", data);
+//    }
 
     /**
      * 모든 @SessionAttribute의 required는 true
@@ -73,6 +72,16 @@ public class MemberController {
         return new ResponseResult<>("내 정보 조회 성공", member);
     }
 
+
+    @GetMapping//멤버 객체와 애의 트리들을 전부 줘야 한다.
+    public HashMap<String, Object> showMember(@Login Member member) throws SQLException {
+        log.info("정보 열람 = {}", member.getKey());
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("member", member);
+        data.put("treeId", treeService.findMyTrees(member.getKey()));
+
+        return data;
+    }
     /**
      * @TODO 우리 서비스에서 회원가입할 때 입력한 이름과 세종대 계정에 등록된 이름이 다른 경우엔 어떻게 처리?
      * ==> 우선은 회원가입 시 이름이 아니라 닉네임을 작성하도록 변경해봤음.
@@ -158,15 +167,7 @@ public class MemberController {
     }
 
     //회원 정보 수정이 정상적으로 이루어졌는지 테스트하는 컨트롤러
-    @GetMapping
-    public HashMap<String, Object> showMember(@Login Member member) throws SQLException {
-        log.info("정보 열람 = {}", member.getKey());
-        HashMap<String, Object> data = new HashMap<>();
-        data.put("member", member);
-        data.put("treeId", treeService.findMyTrees(member.getKey()));
 
-        return data;
-    }
 
 //    @PostConstruct
 //    public void TestEnvironment() throws IOException, SQLException {
