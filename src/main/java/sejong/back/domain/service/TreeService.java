@@ -15,6 +15,7 @@ import sejong.back.domain.tree_tag.Tree_Tag;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,6 +93,8 @@ public class TreeService {
     public List<Tree> findAll() throws SQLException {
         List<Tree> all = treeRepository.findAll();
 
+        if(all==null)
+            return null;
         for (Tree tree : all) {//tree마다 datarange 설정해야 한다.
             Long memberKey = tree.getMemberKey();
             Member createPerson = memberRepository.findByKey(memberKey);
@@ -107,6 +110,9 @@ public class TreeService {
     public List<Tree> findMyTrees(Long myDbKey) throws SQLException {//tree중에 mydbKey값을 가진것만 출력하기.
 
         List<Tree> myTrees = treeRepository.findMyTrees(myDbKey);
+
+        if(myTrees==null)
+            return null;
         for (Tree myTree : myTrees) {//트리에 태그 넣기.
 
             ArrayList<Integer> tags = dbTreeTagRepository.findByTree_Id(myTree.getTreeKey());
@@ -124,7 +130,8 @@ public class TreeService {
     public List<Tree> findAll(TreeSearchCond cond) throws SQLException {//이 부분은 안건듬.
 
         List<Tree> all = treeRepository.findAll(cond);
-
+        if(all==null)
+            return null;
         for (Tree tree : all) {//tree마다 datarange 설정해야 한다.
             Long memberKey = tree.getMemberKey();
             Member createPerson = memberRepository.findByKey(memberKey);

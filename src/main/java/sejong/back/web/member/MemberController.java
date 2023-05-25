@@ -13,6 +13,7 @@ import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.MemberService;
 import sejong.back.domain.service.TreeService;
+import sejong.back.domain.tree.Tree;
 import sejong.back.exception.WrongSessionIdException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -78,7 +80,12 @@ public class MemberController {
         log.info("정보 열람 = {}", member.getKey());
         HashMap<String, Object> data = new HashMap<>();
         data.put("member", member);
-        data.put("treeId", treeService.findMyTrees(member.getKey()));
+
+        List<Tree> myTrees = treeService.findMyTrees(member.getKey());
+        if(myTrees==null)
+            data.put("treeId", Collections.emptyList());//비어 있으면,
+        else
+            data.put("treeId", myTrees);
 
         return data;
     }

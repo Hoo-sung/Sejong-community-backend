@@ -62,6 +62,8 @@ public class TreeController {
         List<Tree> trees = treeService.findAll(treeSearchCond);
         log.info("forest={}", trees);
 
+        if(trees==null)
+            return new ResponseResult<>("트리가 1도 없음.", Collections.emptyList());
         return new ResponseResult<>("모든 트리 조회 성공", trees);
     }
 

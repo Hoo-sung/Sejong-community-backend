@@ -64,58 +64,55 @@ public class StickerController {
     public ResponseResult<?> searchSticker(@Login Long myKey, @PathVariable Long stickerKey,
                                            Model model, HttpServletRequest request) throws SQLException {
 
-        //TODO 다른 사람 스티커 조회는 상관없음.
-        BackSticker backSticker = stickerService.findByStickerIdBack(stickerKey);
-        if (backSticker == null) {
-            //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
-            throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
-        }
-
-        Long treeKey = backSticker.getTreeKey();
-        Tree stickerOnThisTree = treeService.findByTreeId(treeKey);
-
-        /**
-         * 스티커 붙이는 게시물도 모델로 가져오자. 스티커 상세 정보에서 어떤 게시물에 보내는건지도 간략해 정보 보여줘야 하므로.
-         */
-
-
-        if (myKey == backSticker.getFromMember() //자신이 쓴 스티커
-                || myKey == stickerOnThisTree.getMemberKey()) { //자신이 트리의 주인이면, 스티커 상세정보를 준다.
-            return new ResponseResult<>("스티커 열람", backSticker);
-        } else {//자신의 트리에 붙은 스티커
-
-            ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.");
-            responseResult.setErrorCode(-120);
-            return new ResponseResult<>("스티커 열람 불가능");
-
-        }
-
-
+//        //TODO 다른 사람 스티커 조회는 상관없음.
 //        BackSticker backSticker = stickerService.findByStickerIdBack(stickerKey);
+//        if (backSticker == null) {
+//            //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
+//            throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
+//        }
+//
 //        Long treeKey = backSticker.getTreeKey();
 //        Tree stickerOnThisTree = treeService.findByTreeId(treeKey);
 //
+//        /**
+//         * 스티커 붙이는 게시물도 모델로 가져오자. 스티커 상세 정보에서 어떤 게시물에 보내는건지도 간략해 정보 보여줘야 하므로.
+//         */
 //
-//        Map<String, Object> data = new HashMap<>();
 //
 //        if (myKey == backSticker.getFromMember() //자신이 쓴 스티커
-//        ) { //자신의 트리에 붙은 스티커
-//            data.put("backSticker", backSticker);
-//            data.put("stickerAuth", 2); //자신이 쓴 스티커 경우 del 가능
-//            return new ResponseResult<>("스티커 열람", data);
-//        } else if ( myKey == stickerOnThisTree.getMemberKey()) {
-//            data.put("backSticker", backSticker);
-//            data.put("stickerAuth", 1); //자신이 쓴 스티커 경우 del 가능
-//            log.info("열람가능 message = {}", data.get("message"));
-//            return new ResponseResult<>("스티커 열람", data);
+//                || myKey == stickerOnThisTree.getMemberKey()) { //자신이 트리의 주인이면, 스티커 상세정보를 준다.
+//            return new ResponseResult<>("스티커 열람", backSticker);
+//        } else {//자신의 트리에 붙은 스티커
 //
-//        } else{//자신의 트리에 붙은 스티커
-//            data.put("stickerAuth", 3); //남의 스티커 경우 모두 불가능
-//            ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.",data);
+//            ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.");
 //            responseResult.setErrorCode(-120);
-//            log.info("열람 불가능 message");
-//            return responseResult;
+//            return new ResponseResult<>("스티커 열람 불가능");
+//
 //        }
+        BackSticker backSticker = stickerService.findByStickerIdBack(stickerKey);
+        Long treeKey = backSticker.getTreeKey();
+        Tree stickerOnThisTree = treeService.findByTreeId(treeKey);
+
+        Map<String, Object> data = new HashMap<>();
+
+        if (myKey == backSticker.getFromMember() //자신이 쓴 스티커
+        ) { //자신의 트리에 붙은 스티커
+            data.put("backSticker", backSticker);
+            data.put("stickerAuth", 2); //자신이 쓴 스티커 경우 del 가능
+            return new ResponseResult<>("스티커 열람", data);
+        } else if ( myKey == stickerOnThisTree.getMemberKey()) {
+            data.put("backSticker", backSticker);
+            data.put("stickerAuth", 1); //자신이 쓴 스티커 경우 del 가능
+            log.info("열람가능 message = {}", data.get("message"));
+            return new ResponseResult<>("스티커 열람", data);
+
+        } else{//자신의 트리에 붙은 스티커
+            data.put("stickerAuth", 3); //남의 스티커 경우 모두 불가능
+            ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.",data);
+            responseResult.setErrorCode(-120);
+            log.info("열람 불가능 message");
+            return responseResult;
+        }
     }
 
     @PostMapping   //스티커 붙이기

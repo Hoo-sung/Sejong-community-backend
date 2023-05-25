@@ -138,9 +138,6 @@ public class DbTreeRepositoryV1 implements TreeRepository {
                         rs.getBoolean("requestId"), rs.getBoolean("requestDepartment"), rs.getTimestamp("created_at"), rs.getTimestamp("updated_at")));
                 //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
             }
-            if(trees.size()==0){
-                return null;
-            }
 
             return trees;
         } catch (SQLException e) {
