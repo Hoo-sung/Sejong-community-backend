@@ -105,7 +105,7 @@ public class StickerController {
 
     @PostMapping   //스티커 붙이기
     public ResponseResult<?> save(@Login Long fromMemberKey,
-                                  @Validated @ModelAttribute AddStickerForm addStickerForm, @RequestParam Long treeId,
+                                  @Validated @RequestBody AddStickerForm addStickerForm, @RequestParam Long treeId,
                                   BindingResult result, HttpServletRequest request, Model model) throws IOException, SQLException {
 
 

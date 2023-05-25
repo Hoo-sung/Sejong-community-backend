@@ -77,7 +77,8 @@ public class DbStickerRepositoryV1 implements StickerRepository {
                 //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
             }
             if(stickers.size()==0){
-                throw new NoSuchElementException("게시글이 아무것도 없다.");
+                return null;
+//                throw new NoSuchElementException("게시글이 아무것도 없다.");
             }
 
             return stickers;
@@ -107,7 +108,8 @@ public class DbStickerRepositoryV1 implements StickerRepository {
                 //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
             }
             if(stickers.size()==0){
-                throw new NoSuchElementException("게시글이 아무것도 없다.");
+                return null;
+//                throw new NoSuchElementException("게시글이 아무것도 없다.");
             }
 
             return stickers;
