@@ -83,7 +83,8 @@ public class TreeController {
 
 
         //내 트리에 접근하는 경우와 다른 사람 트리에 접근하는 경우를 나눠서 로직 구현
-        if (tree.getMemberKey() == myKey) {
+        if (tree.getMemberKey() == myKey) { //내 트리일 떄 -> notice에서 해당 칼럼 삭제
+            stickerService.deleteNotice(myKey, treeKey);
             List<BackSticker> stickers = stickerService.findByTreeId_Back(treeKey);
             return new TreeAndStickers(tree, stickers, true);
         }

@@ -162,4 +162,8 @@ public class StickerService {
         stickerRepository.updateNotice(toMemberKey, treeId, title);
     }
 
+    public void deleteNotice(Long memberKey, Long treeId) throws SQLException {
+        stickerRepository.deleteNotice(memberKey, treeId);
+    }
+
 }

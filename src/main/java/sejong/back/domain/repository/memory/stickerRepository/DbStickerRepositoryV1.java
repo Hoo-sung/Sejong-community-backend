@@ -325,6 +325,25 @@ public class DbStickerRepositoryV1 implements StickerRepository {
         }
     }
 
+    @Override
+    public void deleteNotice(Long memberKey, Long treeId) throws SQLException {
+        String sql = "delete from notice where member_id=? and tree_id=?";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, memberKey);
+            pstmt.setLong(2, treeId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, null);
+        }
+
+    }
+
     private void noticeCountUp(Long toMemberKey, Long treeId, Integer count) throws SQLException {
         String sql = "update notice set not_read_count=? where member_id=? and tree_id=?";
         Connection con = null;
