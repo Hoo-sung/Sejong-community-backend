@@ -39,4 +39,6 @@ public interface StickerRepository { //트리 key로 해당 트리 키가 가진
     public void delete(Long stickerKey) throws SQLException;
 
     public Sticker findByMemberKeyAndTreeKey(Long memberKey,Long treeKey);
+
+    public void updateNotice(Long toMemberKey, Long treeId, String title) throws SQLException;
 }

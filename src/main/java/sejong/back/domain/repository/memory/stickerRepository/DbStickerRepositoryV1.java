@@ -1,5 +1,6 @@
 package sejong.back.domain.repository.memory.stickerRepository;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
@@ -298,6 +299,67 @@ public class DbStickerRepositoryV1 implements StickerRepository {
     @Override
     public Sticker findByMemberKeyAndTreeKey(Long memberKey, Long treeKey){
             return null;
+    }
+
+    @Override
+    public void updateNotice(Long toMemberKey, Long treeId, String title) throws SQLException {
+        String sql = "select * from notice where member_id=? and tree_id=?";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, toMemberKey);
+            pstmt.setLong(2, treeId);
+            rs = pstmt.executeQuery();
+            if (rs.next()) { //아직 그 트리에 안 읽은 스티커가 있는 경우 -> 해당 칼럼의 not_read_count +1
+                noticeCountUp(toMemberKey, treeId, rs.getInt("not_read_count"));
+            } else { //그 트리에 있는 모든 스티커를 이미 읽은 경우 -> 새로운 칼럼 생성
+                createNotice(toMemberKey, treeId, title);
+            }
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
+    }
+
+    private void noticeCountUp(Long toMemberKey, Long treeId, Integer count) throws SQLException {
+        String sql = "update notice set not_read_count=? where member_id=? and tree_id=?";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, ++count);
+            pstmt.setLong(2, toMemberKey);
+            pstmt.setLong(3, treeId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, null);
+        }
+    }
+
+    private void createNotice(Long toMemberKey, Long treeId, String title) throws SQLException {
+        String sql = "insert into notice(member_id, tree_id, title, not_read_count) values(?,?,?,?)";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, toMemberKey);
+            pstmt.setLong(2, treeId);
+            pstmt.setString(3, title);
+            pstmt.setInt(4, 1);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, null);
+        }
     }
 
     private Connection getConnection() throws SQLException {//connection 객체 반환.

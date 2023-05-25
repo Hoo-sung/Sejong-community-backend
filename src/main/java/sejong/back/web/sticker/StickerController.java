@@ -119,6 +119,7 @@ public class StickerController {
          * stickerService.save는 void이다. 그리고 frontsticker, backsticker중 해당하는것을 호출해 가져오도록 작성해야 한다.
          */
         stickerService.save(fromMemberKey,toMemberKey,treeId,addStickerForm);
+        stickerService.updateNotice(toMemberKey, treeId, tree.getTitle());
 
         return new ResponseResult<>("스티커 작성 성공");
 
