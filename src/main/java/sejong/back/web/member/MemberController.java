@@ -176,24 +176,5 @@ public class MemberController {
         return data;
     }
 
-    @PostConstruct
-    public void TestEnvironment() throws IOException, SQLException {
-
-        //member
-        Member m1 = new Member("A", "Computer Science", Long.valueOf(19011901), "3", "재학");
-
-        Member validateMember = loginService.validateSejong(Long.valueOf(18011881), "19991201");
-        Member m2 = new Member("B", "Computer Science", Long.valueOf(18011881), "4", "재학");
-        Member m3 = new Member("C", "Computer Science", Long.valueOf(20000001), "1", "재학");
-        Member m4 = new Member("C", "Electric Communication", Long.valueOf(18010741), "3", "재학");
-
-        //save
-
-        memberService.save(m1);
-        memberService.save(m2);
-        memberService.save(m3);
-        memberService.save(m4);
-
-    }
 }
 

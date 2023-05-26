@@ -57,6 +57,8 @@ public class Tree {
         this.description = description;
         this.requestId = requestId;
         this.requestDepartment = requestDepartment;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
     public Tree(Long memberKey) {

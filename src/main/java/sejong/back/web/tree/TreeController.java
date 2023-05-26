@@ -59,13 +59,21 @@ public class TreeController {
          * 2. query parameter 없는 경우
          * 최신 데이터 20개 보내줄 것
          */
+        String name = request.getParameter("nickname");
         String title = request.getParameter("title");
         String description = request.getParameter("description");
+        String titdesc = request.getParameter("titdesc"); //title description 동시 검색
         String tag = request.getParameter("tag");
         String page = request.getParameter("page"); //받아올때는 int로 불가능함 filtering logic에서 변환해서 사용
 
-        TreeSearchCond treeSearchCond = new TreeSearchCond(title, description, tag, page);
-        log.info("search condition = {}", treeSearchCond);
+
+        TreeSearchCond treeSearchCond = new TreeSearchCond(name,title, description, titdesc,tag, page);
+        log.info("search getName = {}", treeSearchCond.getName());
+        log.info("search getDescription = {}", treeSearchCond.getDescription());
+        log.info("search titDesc = {}", treeSearchCond.getTitDesc());
+        log.info("search getTitle = {}", treeSearchCond.getTitle());
+        log.info("search getTag = {}", treeSearchCond.getTag());
+        log.info("search getPage = {}", treeSearchCond.getPage());
 
         List<Tree> trees = treeService.findAll(treeSearchCond);
         log.info("forest={}", trees);
