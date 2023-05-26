@@ -180,7 +180,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
 
 
         String sql="SELECT tree.member_id,tree.tree_id, nickname, studentid, department, " +
-                "TRIM(title) as title, TRIM(description) as description, " +
+                "replace(title,' ') as title, replace(description,' ') as description, " +
                 "created_at, updated_at, requestId, requestDepartment,tree_tag.tag_id, " +
                 "OPENSTUDENTID, OPENDEPARTMENT\n" +
                 "FROM tree\n" +
