@@ -1,5 +1,6 @@
 package sejong.back.domain.repository.memory.treeRepository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
@@ -16,8 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
+@Slf4j
 public class DbTreeRepositoryV1 implements TreeRepository {
 
 
@@ -148,43 +152,157 @@ public class DbTreeRepositoryV1 implements TreeRepository {
     }
 
     @Override
-    public List<Tree> findAll(TreeSearchCond cond) throws SQLException {
+    public List<Tree> findAll(TreeSearchCond cond) {
+        ArrayList<String> cond_sql = new ArrayList<>();
+        Integer page;
 
-            return findAll().stream()
-                    .filter(tree->{
-                        if (cond.getTitle() != null) {
-                            return tree.getTitle().contains(cond.getTitle().strip());
-                        }
-                        return true;
-                    }) //title
-                    .filter(tree->{
-                        if (cond.getDescription() != null) {
-                            return tree.getDescription().contains(cond.getDescription().strip());
-                        }
-                        return true;
-                    }) //description
-                    .filter(tree->{
-                        Integer tag;
-                        if (cond.getTag() != null) {
-                            tag = Integer.valueOf(cond.getTag());
-                            return tree.getTags().get(0).equals(tag); //일단 테그 한개
-                        }
-                        return true;
-                    })//tag
-                    .filter(tree->{
-                        Integer page;
-                        if (cond.getPage() != null) {
-                            page = Integer.valueOf(cond.getPage());
+        ArrayList<Tree> trees = new ArrayList<>(); //보내는 trees 배열
+        ArrayList<Long> treeIds = new ArrayList<>(); //저장되는 treeId
+        Map<String,String> dataRange =new HashMap<>();//다른사람이 이 객체에 대해 볼 수 있는 정보. 즉, 이 tree만든 맴버가 member 설정에서 공개한 정보.
+        List<Integer> tags; //테그 배열 temp
 
-                        }
-                        else{
-                            page=1;
-                        }
-                        return tree.getTreeKey()>20*(page-1)&& tree.getTreeKey()<=20*page;
-                    })//page
+        if(cond.getName()!=null) {
+            cond_sql.add("nickname like '%" + cond.getName()+"%'");
+        }
+        if(cond.getTitle()!=null) {
+            cond_sql.add("title like '%" + cond.getTitle()+"%'");
+        }
+        if(cond.getDescription()!=null) {
+            cond_sql.add("description like '%" + cond.getDescription()+"%'");
+        }
+        if(cond.getTitDesc()!=null){ //title description 동시 검색
+            cond_sql.add("title like '%" + cond.getTitDesc()+"%'" +" or " +
+                    "description like '%" + cond.getTitDesc()+"%'");
+        }
+        if(cond.getTag()!=null) {
+            cond_sql.add("tree_tag.tag_id = " + cond.getTag());
+        }
 
-                    .collect(Collectors.toList());
+        //page 처리
+        if(cond.getPage()==null)
+            page=1;
+        else
+            page= Integer.valueOf(cond.getPage());
 
+
+        String sql="SELECT tree.member_id,tree.tree_id, nickname, studentid, department, " +
+                "TRIM(title) as title, TRIM(description) as description, " +
+                "created_at, updated_at, requestId, requestDepartment,tree_tag.tag_id, " +
+                "OPENSTUDENTID, OPENDEPARTMENT\n" +
+                "FROM tree\n" +
+                "JOIN member ON tree.member_id = member.member_id\n" +
+                "JOIN tree_tag ON tree_tag.tree_id = tree.tree_id\n" +
+                "JOIN tag ON tag.tag_id = tree_tag.tag_id ";
+
+        if(cond_sql.size()>0){ //조건이 있는 경우에만
+            String condition = String.join(" and ", cond_sql); //검색하는 sql들을 and로 묶고
+            sql = sql + " where " + condition; //sql에 where 조건부 추가
+        }
+
+        sql= sql + " order by tree.tree_id " //이건 걍 혹시 몰라서 해둠
+                + " LIMIT ? OFFSET ?"; //페이지 부분 처리
+        log.info("SQl is = {}",sql);
+
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+
+
+        int last;
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, 5);
+            pstmt.setLong(2, 5*(page-1));
+            /**
+             * 5를 20으로 바꾸기
+             */
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) { //구문이 끝나면
+
+
+                Tree tree = new Tree(rs.getLong("member_id"), rs.getString("title"), rs.getString("description"),
+                        rs.getBoolean("requestId"), rs.getBoolean("requestDepartment"), rs.getTimestamp("created_at"), rs.getTimestamp("updated_at"));
+
+
+
+                //treeId 처리
+                tree.setTreeKey( rs.getLong("tree_id"));
+
+                //tag 처리
+                tree.setTags(new ArrayList<>(Arrays.asList(rs.getInt("tag_id"))));
+
+                //공개범위 처리
+
+                //nickname
+                dataRange.put("nickname", rs.getString("nickname"));
+
+                //학번
+                if(rs.getInt("OPENSTUDENTID")==1)
+                    dataRange.put("studentId", String.valueOf(rs.getLong("studentId")));
+
+                //학과
+                if(rs.getInt("OPENDEPARTMENT")==1)
+                    dataRange.put("department", (rs.getString("department")));
+
+                tree.setDataRange(dataRange);
+                trees.add(tree);
+                //게시글 당 태그 1개 로직 끝
+
+//여기서부터는 게시글 당 태그 2개 이상 로직임
+//                long treeId = rs.getLong("tree_id");
+//                tree.setTreeKey(treeId); //PK인지라 검색에 필요해서 어쩔 수 없이 사용할듯
+//
+//                if (treeIds.contains(treeId)){ //중복되는 트리에 테그만 추가하는 경우임
+//                    Optional<Tree> treeFound = trees.stream().filter(tree1 ->
+//                            tree1.getTreeKey().equals(treeId)).findFirst();
+//                    tags = treeFound.get().getTags();
+//                    tags.add(rs.getInt("tag_id"));
+//                    tree.setTags(tags);
+//                } else{ //처음 추가하는 트리 + 그 전까지 트리에 대한 테그 검사를 먼저 하고
+//                    //tree tag 검색 시 로직 수행
+//                    if(!treeIds.isEmpty()&&cond.getTag()!=null){
+//                        //treeId 안 비어있고 tag 검색 한 경우
+//                        last = trees.size() - 1;
+//                        if(!(trees.get(last).getTags().contains(Integer.valueOf(cond.getTag())))){
+//                            //테그가 포함 안되어 있으면 제거
+//                            trees.remove(last);
+//                    }
+//                    }
+//
+//                    if(trees.size()>2) //보낼 데이터 개수 20개
+//                        break;
+//                    /**
+//                     * 2개인거 20개로 바꾸기
+//                     */
+//
+//                    //새로운 트리 추가
+//                    treeIds.add(treeId);
+//                    tags = new ArrayList<>();
+//                    tags.add(rs.getInt("tag_id"));
+//                    tree.setTags(tags);
+//                    trees.add(tree);
+//                    log.info("Adding tree = {}", tree.getTreeKey());
+//                }
+
+
+            }
+            if(trees.size()==0){
+                return null;
+            }
+
+
+            return trees;
+        } catch (SQLException e) {
+            log.error("exception = {}", e.getMessage());
+            // 이 부분 exception으로 바꾸면 도메인 왕창 수정되길래 잠시 보류
+            return null;
+        } finally {
+            close(con, pstmt, rs);
+        }
     }//이거는 정민 branch
 
     @Override

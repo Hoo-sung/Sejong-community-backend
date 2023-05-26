@@ -53,6 +53,17 @@ public class Tree {
     }
 
 
+    public Tree(Long memberKey, String title, String description, boolean requestId, boolean requestDepartment,Timestamp created_at, Timestamp updated_at) {
+
+        this.memberKey = memberKey;
+        this.title = title;
+        this.description = description;
+        this.requestId = requestId;
+        this.requestDepartment = requestDepartment;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+    }
+
     public Tree(Long memberKey) {
         this.memberKey = memberKey;
     }
