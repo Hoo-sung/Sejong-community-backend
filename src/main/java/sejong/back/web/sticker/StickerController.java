@@ -27,10 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 @Slf4j
@@ -42,83 +42,29 @@ public class StickerController {
     private final StickerService stickerService;
     private final TreeService treeService;
 
-    private final MemberService memberService;
 
     /**
      * 이부분 더 수정해야한다.
      *
-     * @param request
-     * @param model
      * @return
      */
+
     @GetMapping//내가 보냈던 스티커들 볼 수 있는 기능 제공.
-    public ResponseResult<?> sticker(@Login Long myKey, HttpServletRequest request, Model model) throws SQLException {//자기가 보냈던 스티커들 정보 볼 수 있는 페이지.
+    public ResponseResult<?> sticker(@Login Long myKey) throws SQLException {//자기가 보냈던 스티커들 정보 볼 수 있는 페이지.
 
         List<BackSticker> stickers = stickerService.findByMemberId(myKey);
+
+        if(stickers==null)
+            return new ResponseResult<>("내가 보냈던 스티커가 하나도 없지롱~", Collections.emptyList());//빈 배열 보낻나.
 
         //스티커에서 붙인 tree를 뽑아서 이것도 모델로 전부 보내줘야한다.
         return new ResponseResult<>("내 스티커 전체 조회 성공", stickers);
     }
 
-    @GetMapping("/{stickerKey}")//스티커 뒷면 보는 페이지.
-    public ResponseResult<?> searchSticker(@Login Long myKey, @PathVariable Long stickerKey,
-                                           Model model, HttpServletRequest request) throws SQLException {
-
-//        //TODO 다른 사람 스티커 조회는 상관없음.
-//        BackSticker backSticker = stickerService.findByStickerIdBack(stickerKey);
-//        if (backSticker == null) {
-//            //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
-//            throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
-//        }
-//
-//        Long treeKey = backSticker.getTreeKey();
-//        Tree stickerOnThisTree = treeService.findByTreeId(treeKey);
-//
-//        /**
-//         * 스티커 붙이는 게시물도 모델로 가져오자. 스티커 상세 정보에서 어떤 게시물에 보내는건지도 간략해 정보 보여줘야 하므로.
-//         */
-//
-//
-//        if (myKey == backSticker.getFromMember() //자신이 쓴 스티커
-//                || myKey == stickerOnThisTree.getMemberKey()) { //자신이 트리의 주인이면, 스티커 상세정보를 준다.
-//            return new ResponseResult<>("스티커 열람", backSticker);
-//        } else {//자신의 트리에 붙은 스티커
-//
-//            ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.");
-//            responseResult.setErrorCode(-120);
-//            return new ResponseResult<>("스티커 열람 불가능");
-//
-//        }
-        BackSticker backSticker = stickerService.findByStickerIdBack(stickerKey);
-        Long treeKey = backSticker.getTreeKey();
-        Tree stickerOnThisTree = treeService.findByTreeId(treeKey);
-
-        Map<String, Object> data = new HashMap<>();
-
-        if (myKey == backSticker.getFromMember() //자신이 쓴 스티커
-        ) { //자신의 트리에 붙은 스티커
-            data.put("backSticker", backSticker);
-            data.put("stickerAuth", 2); //자신이 쓴 스티커 경우 del 가능
-            return new ResponseResult<>("스티커 열람", data);
-        } else if ( myKey == stickerOnThisTree.getMemberKey()) {
-            data.put("backSticker", backSticker);
-            data.put("stickerAuth", 1); //자신이 쓴 스티커 경우 del 가능
-            log.info("열람가능 message = {}", data.get("message"));
-            return new ResponseResult<>("스티커 열람", data);
-
-        } else{//자신의 트리에 붙은 스티커
-            data.put("stickerAuth", 3); //남의 스티커 경우 모두 불가능
-            ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.",data);
-            responseResult.setErrorCode(-120);
-            log.info("열람 불가능 message");
-            return responseResult;
-        }
-    }
-
     @PostMapping   //스티커 붙이기
-    public ResponseResult<?> save(@Login Long fromMemberKey,
-                                   @Validated @RequestBody AddStickerForm addStickerForm, @RequestParam Long treeId,
-                                   HttpServletRequest request, Model model) throws IOException, SQLException {
+    public ResponseResult<?> save(@Login Long fromMemberKey, @Validated @RequestBody AddStickerForm addStickerForm,
+                                  @RequestParam Long treeId) throws IOException, SQLException {
+
 
         Tree tree = treeService.findByTreeId(treeId);
         Long toMemberKey = tree.getMemberKey();
@@ -134,36 +80,42 @@ public class StickerController {
     }
 
 
-////    @PatchMapping("/{treeKey}")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
-//    public String editForm(@Login Long myKey, @PathVariable Long stickerKey,
-//                           Model model, HttpServletRequest request) throws SQLException {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
-//
-//        Sticker sticker = stickerService.findByStickerId(myKey, stickerKey);
-//        if (sticker==null) {
-//            //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
-//            throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
-//        }
-//
-//        Long treeMemberKey = findSticker.getFromMemberKey();//스티커에 붙어있는 발신자 멤버 key값을 가져온다.
-//
-//        if (myKey == treeMemberKey) {//스티커의 주인이 자기이면
-//            Long treeKey = findSticker.getTreeKey();
-//            Tree stickerOnThisTree = treeService.findByTreeId(treeKey);
-//
-//            //TODO 뷰 렌더링
-//            model.addAttribute("sticker", findSticker);
-//            model.addAttribute("tree", stickerOnThisTree);
-//            return "sticker/editForm";
-//        } else {//남의 스티커를 자기가 수정하려고 하는거면 괴씸하니까 홈으로 리다이렉트 시킬까?
-//            return "redirect:/sticker/{stickerKey}";
-//        }
-//
-//    }
+
+    @GetMapping("/{stickerKey}")//스티커 뒷면 보는 페이지.
+    public ResponseResult<?> searchSticker(@Login Long myKey, @PathVariable Long stickerKey) throws SQLException {
+
+        BackSticker backSticker = stickerService.findByStickerIdBack(stickerKey);
+        Long treeKey = backSticker.getTreeKey();
+        Tree stickerOnThisTree = treeService.findByTreeId(treeKey);
+
+        Map<String, Object> data = new HashMap<>();
+
+        if (myKey == backSticker.getFromMember() //자신이 쓴 스티커
+        ) { //자신의 트리에 붙은 스티커
+            data.put("backSticker", backSticker);
+            data.put("stickerAuth", 2); //자신이 쓴 스티커 경우 del 가능
+            return new ResponseResult<>("스티커 열람", data);
+        } else if ( myKey == stickerOnThisTree.getMemberKey()) {
+            data.put("backSticker", backSticker);
+            data.put("stickerAuth", 1); // 게시글 주인(수정 x)
+            log.info("열람가능 message = {}", data.get("message"));
+            return new ResponseResult<>("스티커 열람", data);
+
+        } else{
+            data.put("stickerAuth", 3); //남의 스티커 경우 모두 불가능
+            ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.",data);
+            responseResult.setErrorCode(-120);
+            log.info("열람 불가능 message");
+            return responseResult;
+
+
+        }
+    }
+
 
     @PatchMapping("/{stickerKey}")//스티커 수정(스티커 붙인 당사자만 가능하도록 확인해야함.)
-    public ResponseResult<?> edit(@Login Long myKey,
-                                  HttpServletRequest request, @PathVariable Long stickerKey,
-                                  @Validated @ModelAttribute("updateStickerForm") UpdateStickerForm form,
+    public ResponseResult<?> edit(@Login Long myKey, @PathVariable Long stickerKey,
+                                  @Validated @RequestBody UpdateStickerForm form,
                                   BindingResult bindingResult) throws SQLException {
 
         log.info("스티커 수정 ");
@@ -189,11 +141,27 @@ public class StickerController {
         return new ResponseResult<>("내 스티커가 아닙니다.");
     }
 
+    @DeleteMapping("/{stickerKey}")//스티커 수정(스티커 붙인 당사자만 가능하도록 확인해야함.)
+    public ResponseResult<?> delete(@Login Long myKey, @PathVariable Long stickerKey) throws SQLException {
 
-    /**
-     * TODO delete sticker 구현해야함.
-     */
+        log.info("스티커 삭제");
 
+
+        Sticker sticker = stickerService.findByStickerId(stickerKey);
+        if (sticker == null) {
+            //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
+
+            throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
+        }
+
+
+        if (myKey == sticker.getFromMemberKey()) { //자신의 트리에 붙은 스티커
+            stickerService.delete(stickerKey);
+            return new ResponseResult<>("스티커 삭제 성공");
+        }
+
+        return new ResponseResult<>("내 스티커가 아닙니다.");
+    }
 
 
 

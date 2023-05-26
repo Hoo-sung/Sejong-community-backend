@@ -30,8 +30,6 @@ public class DbStickerRepositoryV1 implements StickerRepository {
 
         Connection con = null;
         PreparedStatement pstmt = null;
-//        ResultSet rs = null;
-//        Sticker sticker = new Sticker(fromMemberId, toMemberId, tree_id, form.getTitle(), form.getMessage(),form.getType());
         try {
             con = getConnection();
             pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);//auto increment로 생성된 키.
@@ -72,7 +70,7 @@ public class DbStickerRepositoryV1 implements StickerRepository {
             pstmt.setLong(1, treeKey);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                stickers.add(new FrontSticker(rs.getString("title"), rs.getLong("frommember_id"),rs.getInt("colortype")));
+                stickers.add(new FrontSticker(rs.getString("title"), rs.getLong("frommember_id"),rs.getInt("colortype"),rs.getLong("sticker_id")));
                 //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
             }
             if(stickers.size()==0){
@@ -166,6 +164,7 @@ public class DbStickerRepositoryV1 implements StickerRepository {
                frontSticker.setFromMember(rs.getLong("frommember_id"));
                 frontSticker.setTitle(rs.getString("title"));
                 frontSticker.setType(rs.getInt("colortype"));
+                frontSticker.setStickerKey(rs.getLong("sticker_id"));
 
             } else {
                 throw new NoSuchElementException("sticker not found treeId=" +

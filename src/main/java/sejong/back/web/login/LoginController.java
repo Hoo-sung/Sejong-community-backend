@@ -43,8 +43,7 @@ public class LoginController {
     //로그인 성공했을 떄 기본적인 리다이렉트 경로는 /forest(트리(게시판) 검색 페이지)
     @PostMapping("/login")
     public ResponseResult<Object> login(@RequestBody LoginForm form,
-                                        @RequestParam(defaultValue = "/forest") String redirectURI,
-                                        HttpServletRequest request, HttpServletResponse response, Model model) throws IOException, SQLException {
+                                        HttpServletRequest request) throws IOException, SQLException {
 
         Member validateMember = loginService.validateSejong(form.getStudentId(), form.getPassword());
         log.info("validateMember={}", validateMember);
@@ -69,8 +68,7 @@ public class LoginController {
         session.setAttribute(SessionConst.DB_KEY, loginMember.getKey());
 
         return new ResponseResult<>("로그인 성공");
-        //ResponseResult 대신 ResponseEntity
-        // 데이터 안에 데이터가 불편해서
+
     }
 
     @PostMapping("/logout")

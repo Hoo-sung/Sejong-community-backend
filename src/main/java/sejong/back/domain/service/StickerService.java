@@ -34,6 +34,8 @@ public class StickerService {
         //sticker에 닉네임을 주려면 sticker 생성한 애의 memberid를 알아야 한다. from memberid랑 treekey는 알아야 한다.
         //그리고 backsticker에 게시글 요청자가 원하는 request 공개 정보를 알려면,
         List<FrontSticker> frontStickers = stickerRepository.findByTreeId(treeKey);
+
+        Tree tree = treeRepository.findByTreeId(treeKey);
         if(frontStickers==null)// 스티커가 없는경우 null 반환.
             return null;
 
@@ -42,6 +44,13 @@ public class StickerService {
             Long fromMember = frontSticker.getFromMember();//sticker 붙인애의 nickname얻기 위해 필요함.
             Member writer = memberRepository.findByKey(fromMember);
             frontSticker.getDataRange().put("nickname", writer.getNickname());
+
+            frontSticker.setTreeKey(treeKey);//새롭게 추가된 frontsticker의 필드.
+            frontSticker.setTreeTitle(tree.getTitle());
+
+            /**
+             * frontSticker의 stickerKey를 줘야 한다.
+             */
         }
         return frontStickers;
     }

@@ -34,4 +34,8 @@ public class MemberService {
     public void update(Long key, UpdateMemberForm updateMember) throws SQLException {
         memberRepository.update(key, updateMember);
     }
+
+    public void delete(Long key) throws SQLException {
+        memberRepository.delete(key);
+    }
 }

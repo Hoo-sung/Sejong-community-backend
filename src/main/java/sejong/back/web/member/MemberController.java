@@ -145,17 +145,7 @@ public class MemberController {
         return new ResponseResult<>();
     }
 
-    @GetMapping("/my-page/edit")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
-    public String editForm(@Login Member member, Model model, HttpServletRequest request) {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
 
-        if (member == null) {
-            //TODO 예외 처리
-            throw new NullPointerException("내 정보를 찾을 수 없음");
-        }
-        //TODO 뷰 렌더링
-        model.addAttribute("member", member);
-        return "members/editForm";
-    }
 
     @PatchMapping//여기를 공개 정보 수정이라고 하자.
     public void edit(@Login Long myKey, @RequestBody UpdateMemberForm updateMemberForm,
@@ -173,27 +163,25 @@ public class MemberController {
         memberService.update(myKey, updateMemberForm);
     }
 
-    //회원 정보 수정이 정상적으로 이루어졌는지 테스트하는 컨트롤러
+
+    @DeleteMapping//여기를 공개 정보 수정이라고 하자.
+    public void delete(@Login Long myKey,
+                     HttpServletRequest request) throws Exception {
+
+        HttpSession session = request.getSession(false);
+        String sessionId = session.getId();
+        log.info("Delete Session = {}", sessionId);
+
+        if (sessionId==null) { //클라이언트로부터 받은 sessionId와 api 서버에 저장된 sessionId가 다를 때
+            throw new WrongSessionIdException("로그인 X");
+        }
 
 
-//    @PostConstruct
-//    public void TestEnvironment() throws IOException, SQLException {
-//
-//        //member
-//        Member m1 = new Member("A", "Computer Science", Long.valueOf(19011901), "3", "재학");
-//
-//        Member validateMember = loginService.validateSejong(Long.valueOf(18011881), "19991201");
-//        Member m2 = new Member("B", "Computer Science", Long.valueOf(18011881), "4", "재학");
-//        Member m3 = new Member("C", "Computer Science", Long.valueOf(20000001), "1", "재학");
-//        Member m4 = new Member("C", "Electric Communication", Long.valueOf(18010741), "3", "재학");
-//
-//        //save
-//
-//        memberService.save(m1);
-//        memberService.save(m2);
-//        memberService.save(m3);
-//        memberService.save(m4);
-//
-//    }
+        memberService.delete(myKey);
+
+    }
+
+
+
 }
 

@@ -91,7 +91,7 @@ public class DbTree_TagRepository {
                 tags.add(new Tree_Tag(rs.getLong("tree_id"), rs.getInt("tag_id")));
             }
             if(tags.size()==0){
-                throw new NoSuchElementException("treetags not found tree_id=" + tag_id);
+                return null;
             }
             return tags;
         } catch (SQLException e) {
@@ -100,28 +100,6 @@ public class DbTree_TagRepository {
             close(con, pstmt, rs);
         }
     }
-
-//    public void update(Long tree_Id, int tag_id, String updateContext) throws SQLException {//바꾸자 하는 태그 내용. primary key가 tree_id, tag_id 두개로 판단한다.
-//        //태그가 3개였다가 2개로 다시 정정하면, update기능을 못이용한다. tree_tag에서 해당 tree_id를 싹 다 삭제하고, 새롭게 만드는게 맞다.
-//        String sql="update tag set =? where tag_id=?";
-//
-//
-//        Connection con = null;
-//        PreparedStatement pstmt = null;
-//        try {
-//            con = getConnection();
-//            pstmt = con.prepareStatement(sql);
-//            pstmt.setString(1, updateContext);
-//            pstmt.setInt(2,tag_id);
-//            pstmt.executeUpdate();
-//        } catch (SQLException e) {
-//            throw e;
-//        } finally {
-//            close(con, pstmt, null);
-//        }
-//
-//    }
-
 
     public void delete(Long tree_id,int tag_id) throws SQLException {
         String sql = "delete from tree_tag where tree_id=? and tag_id=?";

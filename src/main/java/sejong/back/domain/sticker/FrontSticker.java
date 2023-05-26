@@ -20,12 +20,26 @@ public class FrontSticker {
 
     private Map<String,String> dataRange;//여기에는 닉네임만 담는다.
 
+    private Long stickerKey;//front에서 이걸 바탕으로  stickers/stickerKey get으로 스티커 눌렀을때 이동하는데 필요하다.
+    private Long treeKey;
 
-    public FrontSticker(String title, Long fromMember, Integer type) {
+    private String treeTitle;//스티커가 붙여진 게시글 제목.
+
+
+//    public FrontSticker(String title, Long fromMember, Integer type) {
+//        this.title = title;
+//        this.fromMember = fromMember;
+//        this.type = type;
+//    }
+
+    public FrontSticker(String title, Long fromMember, Integer type,Long stickerKey) {
         this.title = title;
         this.fromMember = fromMember;
         this.type = type;
+        this.stickerKey = stickerKey;
     }
+
+
 
     public FrontSticker() {
     }

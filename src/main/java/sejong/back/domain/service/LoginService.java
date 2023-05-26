@@ -33,18 +33,7 @@ public class LoginService {
 
     private final MemberRepository memberRepository;
 
-/*    public Member login(String studentId, String password) {
-        Member findMember = memberRepository.findByLoginId(studentId);
 
-        if (findMember == null) { //db에 studentId에 맞는 회원이 없을 때
-            return null;
-        }
-        if (findMember.getPassword().equals(password)) {
-            return findMember;
-        } else { //studentId는 맞지만 password를 잘못 입력했을 때
-            return null;
-        }
-    }*/
 
     /**
      * 파리미터로 받은 학번, 비밀번호로 세종대 사이트에 로그인해 필요한 정보를 가져옴

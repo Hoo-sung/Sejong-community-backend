@@ -39,6 +39,14 @@ public class TreeService {
         Tree saved = treeRepository.save(memberKey, form);//tree저장.
 
         List<Integer> tags = form.getTags();
+
+        if(tags==null)//태그 없으면 바로 return;
+        {
+            Member createPerson = memberRepository.findByKey(memberKey);
+            settingDataRange(saved, createPerson);
+            return saved;
+        }
+
         for (Integer tag : tags) {
             Tree_Tag treeTag = new Tree_Tag(saved.getTreeKey(), dbTagRepository.findByTagId(tag).getTag_Id());
             dbTreeTagRepository.save(treeTag);
@@ -72,6 +80,10 @@ public class TreeService {
 
     public Tree findByTreeId(Long treeId) throws SQLException {
         Tree findObject = treeRepository.findByTreeId(treeId);
+
+        if(findObject==null)
+            return null;
+
         findObject.setTreeKey(treeId);//tree id 설정.
 
         Long memberKey = findObject.getMemberKey();
@@ -86,9 +98,6 @@ public class TreeService {
         return findObject;
     }
 
-    public List<Tree> findAllExcludeMe(Long memberKey) {
-        return treeRepository.findAllExcludeMe(memberKey);
-    }
 
     public List<Tree> findAll() throws SQLException {
         List<Tree> all = treeRepository.findAll();
