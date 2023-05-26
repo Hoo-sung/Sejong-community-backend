@@ -193,7 +193,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             sql = sql + " where " + condition; //sql에 where 조건부 추가
         }
 
-        sql= sql + " order by tree.tree_id " //이건 걍 혹시 몰라서 해둠
+        sql= sql + " order by tree.tree_id desc" //이건 걍 혹시 몰라서 해둠
                 + " LIMIT ? OFFSET ?"; //페이지 부분 처리
         log.info("SQl is = {}",sql);
 
