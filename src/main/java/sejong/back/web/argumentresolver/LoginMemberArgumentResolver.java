@@ -10,6 +10,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.service.MemberService;
+import sejong.back.exception.WrongSessionIdException;
 import sejong.back.web.SessionConst;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,8 +29,6 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         log.info("supportsParameter 실행");
 
         boolean hasLoginAnnotation = parameter.hasParameterAnnotation(Login.class);
-        //@Login이 붙은 파리미터 타입이 Member이거나 Long일 때만 동작
-        //TODO 이거보다 더 좋은 방법 없나?
         boolean hasCorrectType = (Member.class.isAssignableFrom(parameter.getParameterType())
                 || Long.class.isAssignableFrom(parameter.getParameterType()));
 
@@ -44,8 +43,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         HttpSession session = request.getSession(false);
         if (session == null) {
-            //TODO 예외 처리. 근데 인터셉터가 있어서 여기서 굳이 세션이 null인지 확인할 필요가 있을까?
-            throw new IllegalArgumentException("로그인하지 않은 사용자가 접근");
+            throw new WrongSessionIdException("로그인하지 않은 사용자가 접근");
         }
 
         Long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);

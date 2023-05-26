@@ -3,14 +3,10 @@ package sejong.back.web.sticker;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.DefaultLifecycleProcessor;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import sejong.back.domain.member.Member;
-import sejong.back.domain.repository.NoticeRepository;
-import sejong.back.domain.repository.StickerRepository;
+
 import sejong.back.domain.service.MemberService;
 import sejong.back.domain.service.NoticeService;
 import sejong.back.domain.service.StickerService;
@@ -21,12 +17,8 @@ import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.sticker.UpdateStickerForm;
 import sejong.back.domain.tree.Tree;
 import sejong.back.web.ResponseResult;
-import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -44,14 +36,8 @@ public class StickerController {
     private final StickerService stickerService;
     private final TreeService treeService;
 
-    private final MemberService memberService;
     private final NoticeService noticeService;
 
-    /**
-     * 이부분 더 수정해야한다.
-     *
-     * @return
-     */
 
     @GetMapping//내가 보냈던 스티커들 볼 수 있는 기능 제공.
     public ResponseResult<?> sticker(@Login Long myKey) throws SQLException {//자기가 보냈던 스티커들 정보 볼 수 있는 페이지.
@@ -69,21 +55,15 @@ public class StickerController {
     public ResponseResult<?> save(@Login Long fromMemberKey, @Validated @RequestBody AddStickerForm addStickerForm,
                                   @RequestParam Long treeId) throws IOException, SQLException {
 
-
         Tree tree = treeService.findByTreeId(treeId);
         Long toMemberKey = tree.getMemberKey();
 
-        /**
-         * 이 부분 바꿔야 한다.
-         * stickerService.save는 void이다. 그리고 frontsticker, backsticker중 해당하는것을 호출해 가져오도록 작성해야 한다.
-         */
         stickerService.save(fromMemberKey,toMemberKey,treeId,addStickerForm);
         noticeService.updateNotice(toMemberKey, treeId, tree.getTitle());
 
         return new ResponseResult<>("스티커 작성 성공");
 
     }
-
 
 
     @GetMapping("/{stickerKey}")//스티커 뒷면 보는 페이지.
@@ -131,8 +111,6 @@ public class StickerController {
 
         Sticker sticker = stickerService.findByStickerId(stickerKey);
         if (sticker == null) {
-            //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
-
             throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
         }
 
@@ -150,15 +128,10 @@ public class StickerController {
     public ResponseResult<?> delete(@Login Long myKey, @PathVariable Long stickerKey) throws SQLException {
 
         log.info("스티커 삭제");
-
-
         Sticker sticker = stickerService.findByStickerId(stickerKey);
         if (sticker == null) {
-            //TODO 예외 처리. Optional은 NPE를 방지하기 위해 사용하는 건데 직접 NPE를 던지는 건 좀 오바임
-
             throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
         }
-
 
         if (myKey == sticker.getFromMemberKey()) { //자신의 트리에 붙은 스티커
             stickerService.delete(stickerKey);
@@ -167,9 +140,6 @@ public class StickerController {
 
         return new ResponseResult<>("내 스티커가 아닙니다.");
     }
-
-
-
 
 }
 

@@ -5,11 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import sejong.back.domain.login.LoginForm;
 import sejong.back.domain.member.Member;
-import sejong.back.domain.repository.NoticeRepository;
 import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.MemberService;
 import sejong.back.domain.service.NoticeService;
@@ -22,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

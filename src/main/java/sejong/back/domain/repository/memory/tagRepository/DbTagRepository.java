@@ -65,8 +65,6 @@ public class DbTagRepository {
                 return tag;
             } else {
                 return null;
-/*                throw new NoSuchElementException("tag not found tag_id=" +
-                        tag_Id);*/
             }
         } catch (SQLException e) {
             throw e;
@@ -94,8 +92,6 @@ public class DbTagRepository {
                 return tag;
             } else {
                 return null;
-                /*throw new NoSuchElementException("tag not found tag_description=" +
-                        description);*/
             }
         } catch (SQLException e) {
             throw e;

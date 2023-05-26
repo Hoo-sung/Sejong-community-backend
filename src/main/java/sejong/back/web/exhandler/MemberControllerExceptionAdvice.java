@@ -30,8 +30,10 @@ public class MemberControllerExceptionAdvice {
         } else if (e instanceof WrongSessionIdException) {
             status = HttpStatus.BAD_REQUEST;
             responseResult.setErrorCode(-199);
-        } else {
+        }
+        else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseResult.setErrorCode(-123);
         }
 
         return new ResponseEntity(responseResult, status);

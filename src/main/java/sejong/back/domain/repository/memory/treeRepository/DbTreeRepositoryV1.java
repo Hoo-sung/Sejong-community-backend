@@ -9,13 +9,10 @@ import sejong.back.domain.tree.AddTreeForm;
 import sejong.back.domain.tree.Tree;
 import sejong.back.domain.tree.TreeSearchCond;
 import sejong.back.domain.tree.UpdateTreeForm;
-import sejong.back.domain.tree_tag.Tree_Tag;
-
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -103,9 +100,6 @@ public class DbTreeRepositoryV1 implements TreeRepository {
                 tree.setRequestId(rs.getBoolean("requestId"));
                 tree.setRequestDepartment(rs.getBoolean("requestDepartment"));
 
-                /**
-                 * tree를 생성한 member id바탕으로 공개 허용정보를 담아서 dataRange에 담아서 반환.
-                 */
 
 
             } else {

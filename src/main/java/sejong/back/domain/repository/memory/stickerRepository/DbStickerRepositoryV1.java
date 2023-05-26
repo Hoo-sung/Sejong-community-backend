@@ -43,13 +43,6 @@ public class DbStickerRepositoryV1 implements StickerRepository {
 
             pstmt.executeUpdate();
 
-//            rs = pstmt.getGeneratedKeys();
-//            if (rs.next()) {
-//                Long id = rs.getLong(1);
-//                sticker.setStickerKey(id);
-//            }
-//
-//            return sticker;
         } catch (SQLException e) {
             throw e;
         } finally {

@@ -3,19 +3,15 @@ package sejong.back.web.tree;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ui.Model;
+
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import sejong.back.domain.repository.NoticeRepository;
 import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.NoticeService;
 import sejong.back.domain.service.StickerService;
 import sejong.back.domain.service.TreeService;
-import sejong.back.domain.sticker.AddStickerForm;
-import sejong.back.domain.sticker.BackSticker;
 import sejong.back.domain.sticker.FrontSticker;
-import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.tree.AddTreeForm;
 import sejong.back.domain.tree.Tree;
 import sejong.back.domain.tree.TreeSearchCond;
@@ -23,11 +19,9 @@ import sejong.back.domain.tree.UpdateTreeForm;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.argumentresolver.Login;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,14 +110,7 @@ public class TreeController {
         return responseData;
     }
 
-    /**
-     * tree 수정
-     * @param myKey //로그인 값
-     * @param treeKey //트리 주소
-     * @param updateTreeForm //수정 내용
-     * @param result //오류 값 저장
-     * @return
-     */
+
     @PatchMapping("/{treeKey}")
     public  ResponseResult edit(@Login Long myKey,@PathVariable Long treeKey,
                                 @Validated @RequestBody UpdateTreeForm updateTreeForm, BindingResult result) throws SQLException {
@@ -146,7 +133,6 @@ public class TreeController {
 
     @DeleteMapping("/{treeKey}")
     public  ResponseResult delete(@Login Long myKey,@PathVariable Long treeKey) throws SQLException {
-
 
 
         log.info("트리 삭제");

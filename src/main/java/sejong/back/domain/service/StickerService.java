@@ -74,9 +74,6 @@ public class StickerService {
         return backStickers;
     }
 
-//    public List<BackSticker> findByTreeId(Long treeKey) throws SQLException {
-//        return stickerRepository.findByTreeId(treeKey);
-//    }
 
     public List<BackSticker> findByMemberId(Long memberKey) throws SQLException {//한 사라이 붙인 스티커의 정보 싹다 뽑기.
         //애는 자기만 볼 수 있으므로 공개범위를 풀로 다 넣을거임.
@@ -147,14 +144,6 @@ public class StickerService {
 
         return backSticker;// service에서는 공개 범위를 설정해서 반환.
     }
-//    public Optional<Sticker> findByStickerId(Long myKey, Long stickerKey) throws SQLException {
-//        List<Sticker> stickers = stickerRepository.findByMemberId(myKey);
-//
-//        return stickers.stream()
-//                .filter(sticker -> (sticker.getStickerKey() == stickerKey))
-//                .findFirst();
-//    }
-
 
     public List<Sticker> findAll() {
         return stickerRepository.findAll();
