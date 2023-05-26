@@ -7,7 +7,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import sejong.back.domain.repository.NoticeRepository;
 import sejong.back.domain.service.LoginService;
+import sejong.back.domain.service.NoticeService;
 import sejong.back.domain.service.StickerService;
 import sejong.back.domain.service.TreeService;
 import sejong.back.domain.sticker.AddStickerForm;
@@ -40,6 +42,7 @@ public class TreeController {
     private final LoginService loginService;
     private final TreeService treeService;
     private final StickerService stickerService;
+    private final NoticeService noticeService;
 
 
 
@@ -75,12 +78,14 @@ public class TreeController {
             throw new NullPointerException("트리 ID에 해당되는 트리 X");
         }
 
-
         List<FrontSticker> stickers = stickerService.findByTreeId(treeKey);
-        if(stickers==null)
-            return new TreeAndStickers(tree, Collections.emptyList(), false);
+        if(stickers == null) stickers = Collections.emptyList(); //트리에 붙어있는 스티커가 없으면 빈 비열 반환
 
-            return new TreeAndStickers(tree, stickers, false);
+        if (tree.getMemberKey() == myKey) {//내 트리일 때 -> notice에서 해당 칼럼 삭제
+            noticeService.deleteNotice(myKey, treeKey);
+            return new TreeAndStickers(tree, stickers, true);
+        }
+        return new TreeAndStickers(tree, stickers, false);
 
     }
 
@@ -97,7 +102,7 @@ public class TreeController {
 
         Map<String, String> responseData = new HashMap<>();
         responseData.put("message", "success");
-        responseData.put("redirectURL", "forest/" + savedTree.getTreeKey());
+        responseData.put("redirectURL", "tree/" + savedTree.getTreeKey());
 
         log.info("Add tree Success");
         return responseData;

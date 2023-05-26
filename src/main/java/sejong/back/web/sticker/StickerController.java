@@ -9,8 +9,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import sejong.back.domain.member.Member;
+import sejong.back.domain.repository.NoticeRepository;
 import sejong.back.domain.repository.StickerRepository;
 import sejong.back.domain.service.MemberService;
+import sejong.back.domain.service.NoticeService;
 import sejong.back.domain.service.StickerService;
 import sejong.back.domain.service.TreeService;
 import sejong.back.domain.sticker.AddStickerForm;
@@ -42,6 +44,8 @@ public class StickerController {
     private final StickerService stickerService;
     private final TreeService treeService;
 
+    private final MemberService memberService;
+    private final NoticeService noticeService;
 
     /**
      * 이부분 더 수정해야한다.
@@ -73,7 +77,8 @@ public class StickerController {
          * 이 부분 바꿔야 한다.
          * stickerService.save는 void이다. 그리고 frontsticker, backsticker중 해당하는것을 호출해 가져오도록 작성해야 한다.
          */
-        stickerService.save(fromMemberKey, toMemberKey, treeId, addStickerForm);
+        stickerService.save(fromMemberKey,toMemberKey,treeId,addStickerForm);
+        noticeService.updateNotice(toMemberKey, treeId, tree.getTitle());
 
         return new ResponseResult<>("스티커 작성 성공");
 

@@ -1,5 +1,6 @@
 package sejong.back.domain.repository.memory.stickerRepository;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;

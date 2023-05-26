@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.repository.MemberRepository;
+import sejong.back.web.login.NonReadSticker;
 
 import java.sql.SQLException;
 import java.util.List;

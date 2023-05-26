@@ -177,5 +177,4 @@ public class StickerService {
         return stickerRepository.findByMemberKeyAndTreeKey(memberKey, treeKey);
     }
 
-
 }

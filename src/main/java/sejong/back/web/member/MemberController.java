@@ -163,7 +163,6 @@ public class MemberController {
         memberService.update(myKey, updateMemberForm);
     }
 
-
     @DeleteMapping//여기를 공개 정보 수정이라고 하자.
     public void delete(@Login Long myKey,
                      HttpServletRequest request) throws Exception {
@@ -180,8 +179,5 @@ public class MemberController {
         memberService.delete(myKey);
 
     }
-
-
-
 }
 

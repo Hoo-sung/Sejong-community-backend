@@ -7,6 +7,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -15,11 +17,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.member.MemberGrade;
 import sejong.back.domain.repository.MemberRepository;
+import sejong.back.web.login.NonReadSticker;
 
+import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
 
 /**
  * Member login : Repository랑 비교  후로그인

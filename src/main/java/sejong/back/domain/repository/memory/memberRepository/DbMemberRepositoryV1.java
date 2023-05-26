@@ -8,9 +8,11 @@ import sejong.back.domain.member.Member;
 import sejong.back.domain.member.MemberGrade;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.repository.MemberRepository;
+import sejong.back.web.login.NonReadSticker;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 

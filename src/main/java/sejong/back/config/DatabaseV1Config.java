@@ -3,15 +3,11 @@ package sejong.back.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import sejong.back.domain.repository.MemberRepository;
-import sejong.back.domain.repository.StickerRepository;
-import sejong.back.domain.repository.TreeRepository;
 import sejong.back.domain.repository.memory.memberRepository.DbMemberRepositoryV1;
-import sejong.back.domain.repository.memory.memberRepository.MemoryMemberRepository;
+import sejong.back.domain.repository.memory.noticeRepository.DbNoticeRepository;
 import sejong.back.domain.repository.memory.stickerRepository.DbStickerRepositoryV1;
 import sejong.back.domain.repository.memory.tagRepository.DbTagRepository;
 import sejong.back.domain.repository.memory.treeRepository.DbTreeRepositoryV1;
-import sejong.back.domain.repository.memory.treeRepository.MemoryTreeRepository;
 import sejong.back.domain.repository.memory.tree_tag.DbTree_TagRepository;
 import sejong.back.domain.service.*;
 
@@ -45,6 +41,10 @@ public class DatabaseV1Config {
         return new DbStickerRepositoryV1(dataSource);
     }
 
+    @Bean
+    public DbNoticeRepository noticeRepository() {
+        return new DbNoticeRepository(dataSource);
+    }
 
     @Bean
     public TreeService treeService(){
@@ -70,6 +70,11 @@ public class DatabaseV1Config {
     @Bean
     public StickerService stickerService(){
         return new StickerService(stickerRepository(),memberRepository(),treeRepository());
+    }
+
+    @Bean
+    public NoticeService noticeService() {
+        return new NoticeService(noticeRepository());
     }
 
 
