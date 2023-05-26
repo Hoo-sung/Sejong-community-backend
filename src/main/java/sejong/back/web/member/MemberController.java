@@ -12,12 +12,14 @@ import sejong.back.domain.member.Member;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.MemberService;
+import sejong.back.domain.service.NoticeService;
 import sejong.back.domain.service.TreeService;
 import sejong.back.domain.tree.Tree;
 import sejong.back.exception.WrongSessionIdException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
+import sejong.back.web.login.NonReadSticker;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +42,7 @@ public class MemberController {
     private final MemberService memberService;
     private final LoginService loginService;
     private final TreeService treeService;
-
+    private final NoticeService noticeService;
 
     @GetMapping//멤버 객체와 애의 트리들을 전부 줘야 한다.
     public HashMap<String, Object> showMember(@Login Member member) throws SQLException {
@@ -53,6 +55,9 @@ public class MemberController {
             data.put("treeId", Collections.emptyList());//비어 있으면,
         else
             data.put("treeId", myTrees);
+
+        List<NonReadSticker> notices = noticeService.getNotice(member.getKey());
+        data.put("alarmCount", notices);
 
         return data;
     }
