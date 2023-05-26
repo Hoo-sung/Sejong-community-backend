@@ -159,14 +159,14 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             cond_sql.add("nickname like '%" + cond.getName()+"%'");
         }
         if(cond.getTitle()!=null) {
-            cond_sql.add("title like '%" + cond.getTitle()+"%'");
+            cond_sql.add("REPLACE(title, ' ') like '%" + cond.getTitle()+"%'");
         }
         if(cond.getDescription()!=null) {
-            cond_sql.add("description like '%" + cond.getDescription()+"%'");
+            cond_sql.add("REPLACE(description, ' ') like '%" + cond.getDescription()+"%'");
         }
         if(cond.getTitDesc()!=null){ //title description 동시 검색
-            cond_sql.add("title like '%" + cond.getTitDesc()+"%'" +" or " +
-                    "description like '%" + cond.getTitDesc()+"%'");
+            cond_sql.add("REPLACE(title, ' ') like '%" + cond.getTitDesc()+"%'" +" or " +
+                    "REPLACE(description, ' ') like '%" + cond.getTitDesc()+"%'");
         }
         if(cond.getTag()!=null) {
             cond_sql.add("tree_tag.tag_id = " + cond.getTag());
@@ -180,7 +180,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
 
 
         String sql="SELECT tree.member_id,tree.tree_id, nickname, studentid, department, " +
-                "replace(title,' ') as title, replace(description,' ') as description, " +
+                "title, description, " + //보내줄때 사용할 값
                 "created_at, updated_at, requestId, requestDepartment,tree_tag.tag_id, " +
                 "OPENSTUDENTID, OPENDEPARTMENT\n" +
                 "FROM tree\n" +
