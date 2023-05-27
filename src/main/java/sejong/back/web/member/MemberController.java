@@ -100,22 +100,31 @@ public class MemberController {
         validateMember.setOpenDepartment(addMemberForm.isOpenDepartment());
         memberService.save(validateMember);//db에 저장.
         log.info("validateMember={} {}", validateMember.getStudentId(), validateMember.getName());
-        return new ResponseResult<>();
+
+        responseResult.setMessage("저장 되었습니다.");
+        return responseResult;
     }
 
 
 
     @PatchMapping//여기를 공개 정보 수정이라고 하자.
-    public void edit(@Login Long myKey, @RequestBody UpdateMemberForm updateMemberForm,
-                     HttpServletRequest request) throws Exception {
+    public ResponseResult<?> edit(@Login Long myKey, @RequestBody UpdateMemberForm updateMemberForm) throws Exception {
+
+        //Login에서 예외처리 하고,
         memberService.update(myKey, updateMemberForm);
+
+        ResponseResult<Object> responseResult = new ResponseResult<>();
+        responseResult.setMessage("회원 정보 수정됨.");
+        return responseResult;
     }
 
     @DeleteMapping//여기를 공개 정보 수정이라고 하자.
-    public void delete(@Login Long myKey,
-                     HttpServletRequest request) throws Exception {
+    public ResponseResult<?> delete(@Login Long myKey) throws Exception {
         memberService.delete(myKey);
 
+        ResponseResult<Object> responseResult = new ResponseResult<>();
+        responseResult.setMessage("회원 탈퇴 됨.");
+        return responseResult;
     }
 }
 
