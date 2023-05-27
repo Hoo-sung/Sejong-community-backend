@@ -7,7 +7,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import sejong.back.domain.service.MemberService;
 import sejong.back.domain.service.NoticeService;
 import sejong.back.domain.service.StickerService;
 import sejong.back.domain.service.TreeService;
@@ -140,7 +139,12 @@ public class StickerController {
             throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
         }
 
-        if (myKey == sticker.getFromMemberKey()) { //자신의 트리에 붙은 스티커
+        if (myKey == sticker.getFromMemberKey()) { //내가 스티커의 주인이면, 삭제 가능.
+            stickerService.delete(stickerKey);
+            return new ResponseResult<>("스티커 삭제 성공");
+        }
+
+        if (myKey == sticker.getTreeKey()) {//내가 스티커가 게시된 트리의 주인이면, 삭제 가능
             stickerService.delete(stickerKey);
             return new ResponseResult<>("스티커 삭제 성공");
         }

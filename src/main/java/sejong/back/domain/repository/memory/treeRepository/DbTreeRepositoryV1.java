@@ -119,7 +119,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
     }
 
     @Override
-    public List<Tree> findAll() throws SQLException {//이것만 하면 됨.
+    public List<Tree> findAll() throws SQLException {
 
         String sql="select * from tree";
 
