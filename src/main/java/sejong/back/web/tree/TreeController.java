@@ -91,6 +91,31 @@ public class TreeController {
 
     }
 
+    @GetMapping("random-tree")//개별 트리 보여주는 페이지.
+    public TreeAndStickers randomTree(@Login Long myKey) throws NullPointerException, SQLException {
+
+        //현재 DB에 저장된 갯수 출력.
+        Long numTree = treeService.SavedNumTree();
+        Random random = new Random();
+        Long randomNumber=random.nextLong(numTree);
+
+        if(numTree == null){
+            log.error("트리 ID에 해당되는 트리 X");
+            throw new NullPointerException("트리 ID에 해당되는 트리 X");
+        }
+
+        Tree tree = treeService.findByTuple(randomNumber);
+        List<FrontSticker> stickers = stickerService.findByTreeId(randomNumber);
+        if(stickers == null) stickers = Collections.emptyList(); //트리에 붙어있는 스티커가 없으면 빈 비열 반환
+
+        if (tree.getMemberKey() == myKey) {//내 트리일 때 -> notice에서 해당 칼럼 삭제
+            noticeService.deleteNotice(myKey, tree.getTreeKey());
+            return new TreeAndStickers(tree, stickers, true);
+        }
+        return new TreeAndStickers(tree, stickers, false);
+
+    }
+
     @PostMapping  //새로운 트리 생성
     public Map<String, String> save(@Login Long myKey,
                                     @Validated @RequestBody AddTreeForm addTreeForm, BindingResult result) throws IOException, SQLException {

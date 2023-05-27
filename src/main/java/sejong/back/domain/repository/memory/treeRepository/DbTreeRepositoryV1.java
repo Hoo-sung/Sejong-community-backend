@@ -371,6 +371,69 @@ public class DbTreeRepositoryV1 implements TreeRepository {
         }
     }
 
+    @Override
+    public Long SavedNumTree() throws SQLException {
+
+        String sql="select COUNT(*) FROM tree";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Long number=0L;
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                number=rs.getLong(1);
+            } else {
+                return  0L;
+            }
+            return number;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
+
+    }
+
+    @Override
+    public Tree findByTuple(Long index) throws SQLException {//index번째 tuple tree반환하기.
+
+        String sql = "select * from tree LIMIT ? OFFSET ?";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        Tree tree = new Tree();
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, 1);
+            pstmt.setLong(2,index);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+
+                tree.setTreeKey(rs.getLong("tree_id"));
+                tree.setMemberKey(rs.getLong("member_id"));//보안상 이부분 안보내줘도 된긴함.
+                tree.setTitle(rs.getString("title"));
+                tree.setDescription(rs.getString("description"));
+                tree.setCreated_at(rs.getTimestamp("created_at"));
+                tree.setUpdated_at(rs.getTimestamp("updated_at"));
+                tree.setRequestId(rs.getBoolean("requestId"));
+                tree.setRequestDepartment(rs.getBoolean("requestDepartment"));
+
+            } else {
+                return  null;
+            }
+            return tree;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
+
+    }
+
     private Connection getConnection() throws SQLException {//connection 객체 반환.
 
         Connection con = DataSourceUtils.getConnection(dataSource);

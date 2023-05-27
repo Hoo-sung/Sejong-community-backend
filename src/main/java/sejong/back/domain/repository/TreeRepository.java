@@ -23,8 +23,13 @@ public interface TreeRepository {
 
     public List<Tree> findMyTrees(Long myTreeKey) throws SQLException;
 
+    public Long SavedNumTree() throws SQLException;
+
+    public Tree findByTuple(Long index) throws SQLException;
+
     public void update(Long treeKey, UpdateTreeForm form) throws SQLException;
 
     public void delete(Long treeKey) throws SQLException;
+
 
 }

@@ -164,4 +164,13 @@ public class TreeService {
     public void delete(Long treeKey) throws SQLException {
         treeRepository.delete(treeKey);
     }
+
+
+    public Long SavedNumTree() throws SQLException{
+        return treeRepository.SavedNumTree();
+    }
+
+    public Tree findByTuple(Long index) throws SQLException{
+        return treeRepository.findByTuple(index);
+    }
 }

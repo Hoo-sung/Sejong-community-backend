@@ -8,6 +8,7 @@ import sejong.back.domain.tree.Tree;
 import sejong.back.domain.tree.TreeSearchCond;
 import sejong.back.domain.tree.UpdateTreeForm;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +62,11 @@ public class MemoryTreeRepository implements TreeRepository {
     }
 
 
+    @Override
+    public Long SavedNumTree() throws SQLException {
+        return null;
+    }
+
     /**
      * todo 해야할 부분이다. TreeSearchCond을 정해야한다.
      * @param cond
@@ -102,6 +108,11 @@ public class MemoryTreeRepository implements TreeRepository {
                 })//page
 
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Tree findByTuple(Long index) throws SQLException {
+        return null;
     }
 
     public void clearStore(){
