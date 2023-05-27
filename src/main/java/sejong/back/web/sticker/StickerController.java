@@ -135,6 +135,9 @@ public class StickerController {
 
         log.info("스티커 삭제");
         Sticker sticker = stickerService.findByStickerId(stickerKey);
+
+        Tree stickerOnTree = treeService.findByTreeId(sticker.getTreeKey());//스티커가 붙은 스티커.
+
         if (sticker == null) {
             throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
         }
@@ -144,7 +147,7 @@ public class StickerController {
             return new ResponseResult<>("스티커 삭제 성공");
         }
 
-        if (myKey == sticker.getTreeKey()) {//내가 스티커가 게시된 트리의 주인이면, 삭제 가능
+        if (myKey == stickerOnTree.getMemberKey()) {//내가 스티커가 게시된 트리의 주인이면, 삭제 가능
             stickerService.delete(stickerKey);
             return new ResponseResult<>("스티커 삭제 성공");
         }
