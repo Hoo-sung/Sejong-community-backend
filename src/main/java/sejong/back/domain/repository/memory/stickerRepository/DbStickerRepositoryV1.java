@@ -292,8 +292,28 @@ public class DbStickerRepositoryV1 implements StickerRepository {
     }
 
     @Override
-    public Sticker findByMemberKeyAndTreeKey(Long memberKey, Long treeKey){
-            return null;
+    public Boolean findByMemberKeyAndTreeKey(Long memberKey, Long treeKey) throws SQLException{
+
+        String sql = "select * from sticker where  frommember_id=? and tree_id=?";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try{
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setLong(1, memberKey);
+            pstmt.setLong(2, treeKey);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return true;
+            }
+            return false;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
     }
 
     private Connection getConnection() throws SQLException {//connection 객체 반환.

@@ -162,7 +162,7 @@ public class StickerService {
 
     }
 
-    public Sticker findByMemberKeyAndTreeKey(Long memberKey, Long treeKey) {
+    public Boolean findByMemberKeyAndTreeKey(Long memberKey, Long treeKey) throws SQLException {
         return stickerRepository.findByMemberKeyAndTreeKey(memberKey, treeKey);
     }
 

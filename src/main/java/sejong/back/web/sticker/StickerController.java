@@ -58,11 +58,18 @@ public class StickerController {
         Tree tree = treeService.findByTreeId(treeId);
         Long toMemberKey = tree.getMemberKey();
 
+        if (tree.getMemberKey() == fromMemberKey) { //스티커를 붙이려는 트리가 내 트리일 때
+            return new ResponseResult<>(-200, "내 트리에는 스티커를 붙일 수 없습니다.");
+        }
+
+        if (stickerService.findByMemberKeyAndTreeKey(fromMemberKey, treeId)) { //해당 트리에 이미 스티커를 붙였을 때
+            return new ResponseResult<>(-201, "한 트리에 스티커 하나만 붙일 수 있습니다.");
+        }
+
         stickerService.save(fromMemberKey,toMemberKey,treeId,addStickerForm);
         noticeService.updateNotice(toMemberKey, treeId, tree.getTitle());
 
         return new ResponseResult<>("스티커 작성 성공");
-
     }
 
 
