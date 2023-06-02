@@ -94,14 +94,14 @@ public class TreeController {
     @GetMapping("random-tree")//개별 트리 보여주는 페이지.
     public TreeAndStickers randomTree(@Login Long myKey) throws NullPointerException, SQLException {
 
-        //현재 DB에 저장된 갯수 출력.
-        Long numTree = treeService.SavedNumTree();
+
+        Long numTree = treeService.SavedNumTree();//db index수.
         Random random = new Random();
         Long randomNumber=random.nextLong(numTree);
 
-        if(numTree == null){
+        if(numTree == 0L){
             log.error("트리 ID에 해당되는 트리 X");
-            throw new NullPointerException("트리 ID에 해당되는 트리 X");
+            throw new NullPointerException("게시물이 아예 없습니다.");
         }
 
         Tree tree = treeService.findByTuple(randomNumber);
