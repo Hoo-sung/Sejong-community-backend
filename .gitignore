@@ -5,6 +5,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+#테스트 제거
+src/test/**/
+
 ### STS ###
 .apt_generated
 .classpath
