@@ -33,7 +33,7 @@ public class TreeService {
 
     private final DbTree_TagRepository dbTreeTagRepository;
 
-    public Tree save(Long memberKey, AddTreeForm form) throws SQLException {
+    public Tree save(Long memberKey, AddTreeForm form){
         Tree saved = treeRepository.save(memberKey, form);//tree저장.
 
         List<Integer> tags = form.getTags();
@@ -76,7 +76,7 @@ public class TreeService {
     }
 
 
-    public Tree findByTreeId(Long treeId) throws SQLException {
+    public Tree findByTreeId(Long treeId) {
         Tree findObject = treeRepository.findByTreeId(treeId);
 
         if(findObject==null)
@@ -97,7 +97,7 @@ public class TreeService {
     }
 
 
-    public List<Tree> findAll() throws SQLException {
+    public List<Tree> findAll(){
         List<Tree> all = treeRepository.findAll();
 
         if(all==null)
@@ -114,7 +114,7 @@ public class TreeService {
         return all;
     }
 
-    public List<Tree> findMyTrees(Long myDbKey) throws SQLException {//tree중에 mydbKey값을 가진것만 출력하기.
+    public List<Tree> findMyTrees(Long myDbKey){//tree중에 mydbKey값을 가진것만 출력하기.
 
         List<Tree> myTrees = treeRepository.findMyTrees(myDbKey);
 
@@ -134,7 +134,7 @@ public class TreeService {
         return myTrees;
     }
 
-    public List<Tree> findAll(TreeSearchCond cond) throws SQLException {//이 부분은 안건듬.
+    public List<Tree> findAll(TreeSearchCond cond){//이 부분은 안건듬.
 
         List<Tree> all = treeRepository.findAll(cond);
         if(all==null)
@@ -151,7 +151,7 @@ public class TreeService {
         return all;
     }
 
-    public void update(Long treeKey,  UpdateTreeForm form) throws SQLException {
+    public void update(Long treeKey,  UpdateTreeForm form){
         treeRepository.update(treeKey, form);
         dbTreeTagRepository.deleteByTreeId(treeKey);
 
@@ -161,16 +161,16 @@ public class TreeService {
             dbTreeTagRepository.save(treeTag);
         }
     }
-    public void delete(Long treeKey) throws SQLException {
+    public void delete(Long treeKey) {
         treeRepository.delete(treeKey);
     }
 
 
-    public Long SavedNumTree() throws SQLException{
+    public Long SavedNumTree() {
         return treeRepository.SavedNumTree();
     }
 
-    public Tree findByTuple(Long index) throws SQLException{
+    public Tree findByTuple(Long index){
         return treeRepository.findByTuple(index);
     }
 }

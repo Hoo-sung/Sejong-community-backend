@@ -1,6 +1,6 @@
 package sejong.back.exception;
 
-public class WrongSessionIdException extends IllegalAccessException{
+public class WrongSessionIdException extends RuntimeException{
 
     public WrongSessionIdException() {
         super();

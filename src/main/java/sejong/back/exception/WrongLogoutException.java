@@ -1,6 +1,6 @@
 package sejong.back.exception;
 
-public class WrongLogoutException extends IllegalArgumentException{
+public class WrongLogoutException extends RuntimeException{
 
     public WrongLogoutException() {
         super();

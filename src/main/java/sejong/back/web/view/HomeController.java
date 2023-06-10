@@ -20,7 +20,7 @@ public class HomeController {
     private final MemberService memberService;
 
     @GetMapping("/")
-    public String LoginHome(HttpServletRequest request, Model model) throws SQLException {
+    public String LoginHome(HttpServletRequest request, Model model) {
 
         //session이 없으면 홈으로.
         HttpSession session = request.getSession(false);

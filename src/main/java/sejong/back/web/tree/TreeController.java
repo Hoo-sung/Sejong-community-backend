@@ -41,7 +41,7 @@ public class TreeController {
 
 
     @GetMapping//tree 전체 찾기.
-    public ResponseResult<?> forest(HttpServletRequest request) throws SQLException {//멤버 검색 페이지이다. 클라이언트 요청의 경우의 수는 2가지
+    public ResponseResult<?> forest(HttpServletRequest request){//멤버 검색 페이지이다. 클라이언트 요청의 경우의 수는 2가지
         /***
          * 1. query parameter 있는 경우
          * 필터링 해서 보내줄 것
@@ -73,13 +73,9 @@ public class TreeController {
     }
 
     @GetMapping("/{treeKey}")//개별 트리 보여주는 페이지.
-    public TreeAndStickers searchTree(@Login Long myKey, @PathVariable Long treeKey) throws NullPointerException, SQLException {
-        Tree tree = treeService.findByTreeId(treeKey);
-        if(tree == null){
-            log.error("트리 ID에 해당되는 트리 X");
-            throw new NullPointerException("트리 ID에 해당되는 트리 X");
-        }
+    public TreeAndStickers searchTree(@Login Long myKey, @PathVariable Long treeKey) {
 
+        Tree tree = treeService.findByTreeId(treeKey);
         List<FrontSticker> stickers = stickerService.findByTreeId(treeKey);
         if(stickers == null) stickers = Collections.emptyList(); //트리에 붙어있는 스티커가 없으면 빈 비열 반환
 
@@ -92,7 +88,7 @@ public class TreeController {
     }
 
     @GetMapping("random-tree")//개별 트리 보여주는 페이지.
-    public TreeAndStickers randomTree(@Login Long myKey) throws NullPointerException, SQLException {
+    public TreeAndStickers randomTree(@Login Long myKey) throws NullPointerException {
 
 
         Long numTree = treeService.SavedNumTree();//db index수.
@@ -118,7 +114,7 @@ public class TreeController {
 
     @PostMapping  //새로운 트리 생성
     public Map<String, String> save(@Login Long myKey,
-                                    @Validated @RequestBody AddTreeForm addTreeForm, BindingResult result) throws IOException, SQLException {
+                                    @Validated @RequestBody AddTreeForm addTreeForm, BindingResult result) throws IOException {
 
         if (result.hasErrors()) {
             throw new IllegalArgumentException("빈 값이 있음");
@@ -138,7 +134,7 @@ public class TreeController {
 
     @PatchMapping("/{treeKey}")
     public  ResponseResult edit(@Login Long myKey,@PathVariable Long treeKey,
-                                @Validated @RequestBody UpdateTreeForm updateTreeForm, BindingResult result) throws SQLException {
+                                @Validated @RequestBody UpdateTreeForm updateTreeForm, BindingResult result){
         if (result.hasErrors()) {
             throw new IllegalArgumentException("오류 있음");
         }
@@ -157,7 +153,7 @@ public class TreeController {
     }
 
     @DeleteMapping("/{treeKey}")
-    public  ResponseResult delete(@Login Long myKey,@PathVariable Long treeKey) throws SQLException {
+    public  ResponseResult delete(@Login Long myKey,@PathVariable Long treeKey) {
 
 
         log.info("트리 삭제");

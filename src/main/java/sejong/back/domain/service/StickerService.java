@@ -26,11 +26,11 @@ public class StickerService {
     private final TreeRepository treeRepository;
 
 
-    public void save(Long fromMemberId,Long toMemberId, Long tree_id, AddStickerForm form) throws SQLException {
+    public void save(Long fromMemberId,Long toMemberId, Long tree_id, AddStickerForm form){
         stickerRepository.save(fromMemberId, toMemberId, tree_id,form);
     }
 
-    public List<FrontSticker> findByTreeId(Long treeKey) throws SQLException {//게시글에 붙여진 스티커 모두 조회.
+    public List<FrontSticker> findByTreeId(Long treeKey) {//게시글에 붙여진 스티커 모두 조회.
         //sticker에 닉네임을 주려면 sticker 생성한 애의 memberid를 알아야 한다. from memberid랑 treekey는 알아야 한다.
         //그리고 backsticker에 게시글 요청자가 원하는 request 공개 정보를 알려면,
         List<FrontSticker> frontStickers = stickerRepository.findByTreeId(treeKey);
@@ -55,7 +55,7 @@ public class StickerService {
         return frontStickers;
     }
 
-    public List<BackSticker> findByTreeId_Back(Long treeKey) throws SQLException {//게시글에 붙여진 스티커 모두 조회.
+    public List<BackSticker> findByTreeId_Back(Long treeKey){//게시글에 붙여진 스티커 모두 조회.
         //sticker에 닉네임을 주려면 sticker 생성한 애의 memberid를 알아야 한다. from memberid랑 treekey는 알아야 한다.
         //그리고 backsticker에 게시글 요청자가 원하는 request 공개 정보를 알려면,
         List<BackSticker> backStickers = stickerRepository.findByTreeId_back(treeKey);
@@ -75,7 +75,7 @@ public class StickerService {
     }
 
 
-    public List<BackSticker> findByMemberId(Long memberKey) throws SQLException {//한 사라이 붙인 스티커의 정보 싹다 뽑기.
+    public List<BackSticker> findByMemberId(Long memberKey){//한 사라이 붙인 스티커의 정보 싹다 뽑기.
         //애는 자기만 볼 수 있으므로 공개범위를 풀로 다 넣을거임.
         List<BackSticker> backStickers = stickerRepository.findByMemberId(memberKey);
 
@@ -102,12 +102,12 @@ public class StickerService {
         return backStickers;
     }
 
-    public  Sticker findByStickerId(Long stickerKey) throws SQLException{
+    public  Sticker findByStickerId(Long stickerKey){
         return stickerRepository.findByStickerId(stickerKey);
 
     }
 
-    public FrontSticker findByStickerIdFront(Long stickerKey) throws SQLException{
+    public FrontSticker findByStickerIdFront(Long stickerKey){
         FrontSticker frontSticker = stickerRepository.findByStickerIdFront(stickerKey);
 
         frontSticker.setDataRange(new HashMap<>());
@@ -118,7 +118,7 @@ public class StickerService {
         return  frontSticker;
     }
 
-    public BackSticker findByStickerIdBack(Long stickerKey) throws SQLException {
+    public BackSticker findByStickerIdBack(Long stickerKey){
         //back정보 같은 경우, 게시자가 설정한 requestid,requestdepartment를 보고 해당하는 값을 줘야한다.
 
         BackSticker backSticker = stickerRepository.findByStickerIdBack(stickerKey);
@@ -153,16 +153,16 @@ public class StickerService {
         return stickerRepository.search(treeKey, cond);
     }
 
-    public void update(Long stickerKey, UpdateStickerForm form) throws SQLException {
+    public void update(Long stickerKey, UpdateStickerForm form){
         stickerRepository.update(stickerKey, form);
     }
 
-    public void delete(Long stickerKey) throws SQLException {
+    public void delete(Long stickerKey){
         stickerRepository.delete(stickerKey);
 
     }
 
-    public Boolean findByMemberKeyAndTreeKey(Long memberKey, Long treeKey) throws SQLException {
+    public Boolean findByMemberKeyAndTreeKey(Long memberKey, Long treeKey){
         return stickerRepository.findByMemberKeyAndTreeKey(memberKey, treeKey);
     }
 

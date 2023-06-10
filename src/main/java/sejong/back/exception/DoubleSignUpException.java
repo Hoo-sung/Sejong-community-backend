@@ -1,6 +1,6 @@
 package sejong.back.exception;
 
-public class DoubleSignUpException extends IllegalArgumentException {
+public class DoubleSignUpException extends RuntimeException {
 
     public DoubleSignUpException() {
         super();

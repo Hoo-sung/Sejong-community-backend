@@ -19,20 +19,20 @@ public class TreeTagService {
 
     private final DbTree_TagRepository dbTreeTagRepository;
 
-    public Tree_Tag save(Tree_Tag treeTag) throws SQLException {
+    public Tree_Tag save(Tree_Tag treeTag) {
         return dbTreeTagRepository.save(treeTag);
     }
 
-    public ArrayList<Integer> findByTree_Id(Long tree_id) throws SQLException{
+    public ArrayList<Integer> findByTree_Id(Long tree_id) {
         return dbTreeTagRepository.findByTree_Id(tree_id);
     }
 
 
-    public ArrayList<Tree_Tag> findByTag_Id(int tag_id) throws SQLException{
+    public ArrayList<Tree_Tag> findByTag_Id(int tag_id) {
         return dbTreeTagRepository.findByTag_Id(tag_id);
     }
 
-    public void delete(Long tree_id,int tag_id) throws SQLException{
+    public void delete(Long tree_id,int tag_id) {
         dbTreeTagRepository.delete(tree_id, tag_id);
     }
 

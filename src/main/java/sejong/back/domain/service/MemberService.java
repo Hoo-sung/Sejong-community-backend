@@ -16,15 +16,15 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    public Member save(Member member) throws SQLException {
+    public Member save(Member member)  {
         return memberRepository.save(member);
     }
 
-    public Member findByKey(Long key) throws SQLException {
+    public Member findByKey(Long key) {
         return memberRepository.findByKey(key);
     }
 
-    public Member findByLoginId(Long loginId) throws SQLException {//string으로 일치하는것 있나 찾기.
+    public Member findByLoginId(Long loginId) {//string으로 일치하는것 있나 찾기.
         return memberRepository.findByLoginId(loginId);
     }
 
@@ -32,11 +32,11 @@ public class MemberService {
         return memberRepository.findAll();
     }
 
-    public void update(Long key, UpdateMemberForm updateMember) throws SQLException {
+    public void update(Long key, UpdateMemberForm updateMember) {
         memberRepository.update(key, updateMember);
     }
 
-    public void delete(Long key) throws SQLException {
+    public void delete(Long key)  {
         memberRepository.delete(key);
     }
 }

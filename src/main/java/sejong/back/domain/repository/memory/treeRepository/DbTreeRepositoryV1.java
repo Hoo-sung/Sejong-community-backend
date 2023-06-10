@@ -1,6 +1,8 @@
 package sejong.back.domain.repository.memory.treeRepository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
@@ -29,7 +31,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
     }
 
     @Override
-    public Tree save(Long memberKey,AddTreeForm form) throws SQLException {
+    public Tree save(Long memberKey,AddTreeForm form) {
         /**
          * tree save부분은 datarange를 반환안한다. null이다. datarange는 공개 범위 배열로, front에서 요청할때 반환하는 것
          */
@@ -68,7 +70,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             }
             return tree;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to save tree(Data integrity violation",e);
         }
 
         finally{
@@ -77,7 +79,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
     }
 
     @Override
-    public Tree findByTreeId(Long treeId) throws SQLException {//front에 보낼때 사용. DataRange 공개 범위.
+    public Tree findByTreeId(Long treeId) {//front에 보낼때 사용. DataRange 공개 범위.
 
         String sql = "select * from tree where tree_id = ?";
         Connection con = null;
@@ -107,7 +109,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             }
             return tree;
         } catch (SQLException e) {
-            throw e;
+            throw new EmptyResultDataAccessException("Failed to findTree_id tree(Data integrity violation",1,e);
         } finally {
             close(con, pstmt, rs);
         }
@@ -119,7 +121,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
     }
 
     @Override
-    public List<Tree> findAll() throws SQLException {
+    public List<Tree> findAll(){
 
         String sql="select * from tree";
 
@@ -139,7 +141,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
 
             return trees;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to findALL tree(Data integrity violation",e);
         } finally {
             close(con, pstmt, rs);
         }
@@ -293,14 +295,14 @@ public class DbTreeRepositoryV1 implements TreeRepository {
         } catch (SQLException e) {
             log.error("exception = {}", e.getMessage());
             // 이 부분 exception으로 바꾸면 도메인 왕창 수정되길래 잠시 보류
-            return null;
+            throw new DataIntegrityViolationException("Failed to findall(searchCond) tree(Data integrity violation",e);
         } finally {
             close(con, pstmt, rs);
         }
-    }//이거는 정민 branch
+    }
 
     @Override
-    public List<Tree> findMyTrees(Long myMemberKey) throws SQLException {
+    public List<Tree> findMyTrees(Long myMemberKey){
 
         String sql="select * from tree where member_id=? ";
 
@@ -323,7 +325,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             }
             return trees;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to findMyTrees tree(Data integrity violation",e);
         } finally {
             close(con, pstmt, rs);
         }
@@ -332,7 +334,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
     }
 
     @Override
-    public void update(Long treeKey, UpdateTreeForm form) throws SQLException {
+    public void update(Long treeKey, UpdateTreeForm form) {
 
         String sql = "update tree set title=?, description=?, requestId=?,requestDepartment=? where tree_id=?";
         Connection con = null;
@@ -347,14 +349,14 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             pstmt.setLong(5, treeKey);
             pstmt.executeUpdate();
         } catch (SQLException e){
-            throw e;
+            throw new DataIntegrityViolationException("Failed to update tree(Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
     }
 
     @Override
-    public void delete(Long treeKey) throws SQLException {
+    public void delete(Long treeKey){
 
         String sql = "delete from tree where tree_id=?";
         Connection con = null;
@@ -365,14 +367,14 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             pstmt.setLong(1, treeKey);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to delete tree(Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
     }
 
     @Override
-    public Long SavedNumTree() throws SQLException {
+    public Long SavedNumTree(){
 
         String sql="select COUNT(*) FROM tree";
         Connection con = null;
@@ -390,7 +392,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             }
             return number;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to sumtree tree(Data integrity violation",e);
         } finally {
             close(con, pstmt, rs);
         }
@@ -398,7 +400,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
     }
 
     @Override
-    public Tree findByTuple(Long index) throws SQLException {//index번째 tuple tree반환하기.
+    public Tree findByTuple(Long index) {//index번째 tuple tree반환하기.
 
         String sql = "select * from tree LIMIT ? OFFSET ?";
         Connection con = null;
@@ -427,14 +429,14 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             }
             return tree;
         } catch (SQLException e) {
-            throw e;
+            throw new EmptyResultDataAccessException("Failed to findbyTuple tree(Data integrity violation",1,e);
         } finally {
             close(con, pstmt, rs);
         }
 
     }
 
-    private Connection getConnection() throws SQLException {//connection 객체 반환.
+    private Connection getConnection(){//connection 객체 반환.
 
         Connection con = DataSourceUtils.getConnection(dataSource);
         return con;

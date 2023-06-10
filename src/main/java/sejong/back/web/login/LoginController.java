@@ -11,12 +11,13 @@ import sejong.back.domain.member.Member;
 import sejong.back.domain.service.LoginService;
 import sejong.back.domain.service.MemberService;
 import sejong.back.domain.service.NoticeService;
+import sejong.back.exception.SignUpRequiredException;
+import sejong.back.exception.WrongLoginException;
 import sejong.back.exception.WrongLogoutException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -32,7 +33,7 @@ public class LoginController {
     private final NoticeService noticeService;
 
     @GetMapping("/login")
-    public LoginCheck loginCheck(HttpServletRequest request) throws SQLException {
+    public LoginCheck loginCheck(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute(SessionConst.DB_KEY) == null) { //로그인이 안 되어있거나 세션이 만료된 경우
             log.info("[loginCheck] login X");
@@ -54,9 +55,7 @@ public class LoginController {
         log.info("validateMember={}", validateMember);
         if (validateMember == null) { //로그인 정보가 세종대 계정정보와 다를 때
             log.error("아이디 또는 비밀번호가 맞지 않음");
-            ResponseResult<Object> responseResult = new ResponseResult<>("아이디 또는 비밀번호가 맞지 않음");
-            responseResult.setErrorCode(-111);
-            return responseResult;
+            throw new WrongLoginException("아이디 또는 비밀번호가 맞지 않음");
         }
 
         Member loginMember = memberService.findByLoginId(form.getStudentId());
@@ -64,20 +63,21 @@ public class LoginController {
         if (loginMember == null) { //로그인 정보가 세종대 계정과 일치하지만 우리 서비스에 회원가입이 안 돼있을때
 
             log.error("회원가입 필요");
-            ResponseResult<Object> responseResult = new ResponseResult<>("회원가입 필요");
-            responseResult.setErrorCode(-112);
-            return responseResult;
+            throw new SignUpRequiredException("회원가입 필요");
         }
 
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.DB_KEY, loginMember.getKey());
 
         return new ResponseResult<>("로그인 성공");
+        /**
+         * 이부분을을 리다이렉트할 주소가 있으면,
+         */
 
     }
 
     @PostMapping("/logout")
-    public ResponseResult<?> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseResult<?> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();

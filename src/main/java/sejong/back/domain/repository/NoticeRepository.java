@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface NoticeRepository {
 
-    public List<NonReadSticker> getNotice(Long key) throws SQLException;
+    public List<NonReadSticker> getNotice(Long key);
 
-    public void updateNotice(Long toMemberKey, Long treeId, String title) throws SQLException;
+    public void updateNotice(Long toMemberKey, Long treeId, String title);
 
-    public void deleteNotice(Long memberKey, Long treeId) throws SQLException;
+    public void deleteNotice(Long memberKey, Long treeId);
 }

@@ -10,16 +10,16 @@ import java.util.List;
 
 public interface MemberRepository {
 
-    public Member save(Member member) throws SQLException;
+    public Member save(Member member);
 
-    public Member findByLoginId(Long loginId) throws SQLException;
+    public Member findByLoginId(Long loginId);
 
     public List<Member> findAll();
 
-    public Member findByKey(Long key) throws SQLException;
+    public Member findByKey(Long key);
 
-    public void update(Long key, UpdateMemberForm form) throws SQLException;
+    public void update(Long key, UpdateMemberForm form);
 
-    public void delete(Long key) throws SQLException;
+    public void delete(Long key);
 
 }

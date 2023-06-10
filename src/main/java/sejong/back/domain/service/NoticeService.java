@@ -14,15 +14,15 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
 
-    public List<NonReadSticker> getNotice(Long key) throws SQLException {
+    public List<NonReadSticker> getNotice(Long key){
         return noticeRepository.getNotice(key);
     }
 
-    public void updateNotice(Long toMemberKey, Long treeId, String title) throws SQLException {
+    public void updateNotice(Long toMemberKey, Long treeId, String title){
         noticeRepository.updateNotice(toMemberKey, treeId, title);
     }
 
-    public void deleteNotice(Long memberKey, Long treeId) throws SQLException {
+    public void deleteNotice(Long memberKey, Long treeId){
         noticeRepository.deleteNotice(memberKey, treeId);
     }
 

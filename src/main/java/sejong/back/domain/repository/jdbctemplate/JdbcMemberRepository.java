@@ -39,7 +39,7 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
-    public void delete(Long key) throws SQLException {
+    public void delete(Long key) {
 
     }
 }

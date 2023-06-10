@@ -1,6 +1,8 @@
 package sejong.back.domain.repository.memory.tagRepository;
 
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
@@ -21,7 +23,7 @@ public class DbTagRepository {
         this.dataSource = dataSource;
     }
 
-    public Tag save(Tag tag) throws SQLException {
+    public Tag save(Tag tag){
 
         String sql="insert into tag(tag_description) values(?)";
 
@@ -37,7 +39,7 @@ public class DbTagRepository {
 
             return tag;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to save tag(Data integrity violation)",e);
         }
 
         finally{
@@ -46,7 +48,7 @@ public class DbTagRepository {
     }
 
 
-    public Tag findByTagId(int tag_Id) throws SQLException {
+    public Tag findByTagId(int tag_Id) {
         String sql="select * from tag where tag_id=? ";
 
         Connection con = null;
@@ -67,13 +69,13 @@ public class DbTagRepository {
                 return null;
             }
         } catch (SQLException e) {
-            throw e;
+            throw new EmptyResultDataAccessException("Failed to find tag",1,e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
-    public Tag findByDescription(String description) throws SQLException {
+    public Tag findByDescription(String description) {
         String sql="select * from tag where tag_description=? ";
 
         Connection con = null;
@@ -94,13 +96,13 @@ public class DbTagRepository {
                 return null;
             }
         } catch (SQLException e) {
-            throw e;
+            throw new EmptyResultDataAccessException("Failed to find Description tag",1,e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
-    public void update(int tag_id, String updateContext) throws SQLException {//바꾸자 하는 태그 내용.
+    public void update(int tag_id, String updateContext) {//바꾸자 하는 태그 내용.
 
         String sql="update tag set tag_description=? where tag_id=?";
 
@@ -114,7 +116,7 @@ public class DbTagRepository {
             pstmt.setInt(2,tag_id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to update tag(Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
@@ -122,7 +124,7 @@ public class DbTagRepository {
     }
 
 
-    public void delete(int tag_id) throws SQLException {
+    public void delete(int tag_id) {
         String sql = "delete from tag where tag_id=?";
 
         Connection con = null;
@@ -133,14 +135,14 @@ public class DbTagRepository {
             pstmt.setLong(1, tag_id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to delete tag(Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
 
     }
 
-    private Connection getConnection() throws SQLException {//connection 객체 반환.
+    private Connection getConnection()  {//connection 객체 반환.
 
         Connection con = DataSourceUtils.getConnection(dataSource);
         return con;

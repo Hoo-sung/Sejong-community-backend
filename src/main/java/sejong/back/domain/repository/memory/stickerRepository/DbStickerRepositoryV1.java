@@ -1,6 +1,9 @@
 package sejong.back.domain.repository.memory.stickerRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
@@ -25,7 +28,7 @@ public class DbStickerRepositoryV1 implements StickerRepository {
 
 
     @Override
-    public void save(Long fromMemberId,Long toMemberId, Long tree_id, AddStickerForm form) throws SQLException {//애는 timestamp안가짐.
+    public void save(Long fromMemberId,Long toMemberId, Long tree_id, AddStickerForm form){//애는 timestamp안가짐.
 
         String sql = "insert into sticker(frommember_id,tomember_id,tree_id,title, message,colortype) values(?,?,?,?,?,?)";
 
@@ -44,14 +47,14 @@ public class DbStickerRepositoryV1 implements StickerRepository {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to save sticker(Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
     }
 
     @Override
-    public List<FrontSticker> findByTreeId(Long treeKey) throws SQLException {
+    public List<FrontSticker> findByTreeId(Long treeKey) {
         String sql = "select * from sticker where tree_id = ?";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -73,14 +76,14 @@ public class DbStickerRepositoryV1 implements StickerRepository {
 
             return stickers;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to findTreeId sticker(Data integrity violation",e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
     @Override
-    public List<BackSticker> findByTreeId_back(Long treeKey) throws SQLException {
+    public List<BackSticker> findByTreeId_back(Long treeKey) {
         String sql = "select * from sticker where tree_id = ?";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -103,14 +106,14 @@ public class DbStickerRepositoryV1 implements StickerRepository {
 
             return stickers;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to findTreeId_back sticker(Data integrity violation",e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
     @Override
-    public List<BackSticker> findByMemberId(Long memberKey) throws SQLException {//즉, 한 사람이 붙인 스티커들 볼 수 있다.
+    public List<BackSticker> findByMemberId(Long memberKey) {//즉, 한 사람이 붙인 스티커들 볼 수 있다.
         String sql = "select * from sticker where frommember_id = ?";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -135,7 +138,7 @@ public class DbStickerRepositoryV1 implements StickerRepository {
 
             return stickers;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to findMemberID sticker(Data integrity violation",e);
         } finally {
             close(con, pstmt, rs);
         }
@@ -143,7 +146,7 @@ public class DbStickerRepositoryV1 implements StickerRepository {
 
 
     @Override
-    public FrontSticker findByStickerIdFront(Long stickerKey) throws SQLException {
+    public FrontSticker findByStickerIdFront(Long stickerKey) {
         String sql = "select * from sticker where sticker_id = ?";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -166,14 +169,14 @@ public class DbStickerRepositoryV1 implements StickerRepository {
             }
             return frontSticker;
         } catch (SQLException e) {
-            throw e;
+            throw new EmptyResultDataAccessException("Failed to findStickerIdFront sticker",1,e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
     @Override
-    public BackSticker findByStickerIdBack(Long stickerKey) throws SQLException {
+    public BackSticker findByStickerIdBack(Long stickerKey) {
         String sql = "select * from sticker where sticker_id = ?";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -198,14 +201,14 @@ public class DbStickerRepositoryV1 implements StickerRepository {
             }
             return backSticker;
         } catch (SQLException e) {
-            throw e;
+            throw new EmptyResultDataAccessException("Failed to findStickerIDBack sticker(Data integrity violation",1,e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
     @Override
-    public Sticker findByStickerId(Long stickerKey) throws SQLException {
+    public Sticker findByStickerId(Long stickerKey)  {
         String sql = "select * from sticker where sticker_id = ?";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -235,7 +238,7 @@ public class DbStickerRepositoryV1 implements StickerRepository {
             }
             return sticker;
         } catch (SQLException e) {
-            throw e;
+            throw new EmptyResultDataAccessException("Failed to findStickerId sticker",1,e);
         } finally {
             close(con, pstmt, rs);
         }
@@ -253,7 +256,7 @@ public class DbStickerRepositoryV1 implements StickerRepository {
     }
 
     @Override
-    public void update(Long stickerKey, UpdateStickerForm form) throws SQLException {
+    public void update(Long stickerKey, UpdateStickerForm form) {
 
         String sql = "update sticker set title=?, message=?, colortype=?  where sticker_id=?";
         Connection con = null;
@@ -267,14 +270,14 @@ public class DbStickerRepositoryV1 implements StickerRepository {
             pstmt.setLong(4, stickerKey);
             pstmt.executeUpdate();
         } catch (SQLException e){
-            throw e;
+            throw new DataIntegrityViolationException("Failed to update sticker(Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
     }
 
     @Override
-    public void delete(Long stickerKey) throws SQLException {
+    public void delete(Long stickerKey)  {
 
         String sql = "delete from sticker where sticker_id=?";
         Connection con = null;
@@ -285,14 +288,14 @@ public class DbStickerRepositoryV1 implements StickerRepository {
             pstmt.setLong(1, stickerKey);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to delete sticker(Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
     }
 
     @Override
-    public Boolean findByMemberKeyAndTreeKey(Long memberKey, Long treeKey) throws SQLException{
+    public Boolean findByMemberKeyAndTreeKey(Long memberKey, Long treeKey){
 
         String sql = "select * from sticker where  frommember_id=? and tree_id=?";
         Connection con = null;
@@ -310,13 +313,13 @@ public class DbStickerRepositoryV1 implements StickerRepository {
             }
             return false;
         } catch (SQLException e) {
-            throw e;
+            throw new EmptyResultDataAccessException("Failed to findMemTreeKey sticker(Data integrity violation",1,e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
-    private Connection getConnection() throws SQLException {//connection 객체 반환.
+    private Connection getConnection() {//connection 객체 반환.
 
         Connection con = DataSourceUtils.getConnection(dataSource);
         return con;

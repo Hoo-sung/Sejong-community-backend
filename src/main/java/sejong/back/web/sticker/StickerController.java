@@ -15,11 +15,11 @@ import sejong.back.domain.sticker.BackSticker;
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.sticker.UpdateStickerForm;
 import sejong.back.domain.tree.Tree;
+import sejong.back.exception.OneStickerPerBoardException;
+import sejong.back.exception.PutMyStickerOnMyBoardException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.argumentresolver.Login;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +39,7 @@ public class StickerController {
 
 
     @GetMapping//내가 보냈던 스티커들 볼 수 있는 기능 제공.
-    public ResponseResult<?> sticker(@Login Long myKey) throws SQLException {//자기가 보냈던 스티커들 정보 볼 수 있는 페이지.
+    public ResponseResult<?> sticker(@Login Long myKey){//자기가 보냈던 스티커들 정보 볼 수 있는 페이지.
 
         List<BackSticker> stickers = stickerService.findByMemberId(myKey);
 
@@ -52,18 +52,19 @@ public class StickerController {
 
     @PostMapping   //스티커 붙이기
     public ResponseResult<?> save(@Login Long fromMemberKey, @Validated @RequestBody AddStickerForm addStickerForm,
-                                  @RequestParam Long treeId) throws IOException, SQLException {
+                                  @RequestParam Long treeId) {
 
         Tree tree = treeService.findByTreeId(treeId);
         Long toMemberKey = tree.getMemberKey();
 
         if (tree.getMemberKey() == fromMemberKey) { //스티커를 붙이려는 트리가 내 트리일 때
-            return new ResponseResult<>(-200, "내 트리에는 스티커를 붙일 수 없습니다.");
+            throw new PutMyStickerOnMyBoardException("내 트리에는 스티커를 붙일 수 없습니다.");
         }
 
         if (stickerService.findByMemberKeyAndTreeKey(fromMemberKey, treeId)) { //해당 트리에 이미 스티커를 붙였을 때
-            return new ResponseResult<>(-201, "한 트리에 스티커 하나만 붙일 수 있습니다.");
+            throw new OneStickerPerBoardException("한 트리에 스티커 하나만 붙일 수 있습니다. ");
         }
+
 
         stickerService.save(fromMemberKey,toMemberKey,treeId,addStickerForm);
         noticeService.updateNotice(toMemberKey, treeId, tree.getTitle());
@@ -73,7 +74,7 @@ public class StickerController {
 
 
     @GetMapping("/{stickerKey}")//스티커 뒷면 보는 페이지.
-    public ResponseResult<?> searchSticker(@Login Long myKey, @PathVariable Long stickerKey) throws SQLException {
+    public ResponseResult<?> searchSticker(@Login Long myKey, @PathVariable Long stickerKey){
 
         BackSticker backSticker = stickerService.findByStickerIdBack(stickerKey);
         Long treeKey = backSticker.getTreeKey();
@@ -99,21 +100,15 @@ public class StickerController {
             log.info("열람 불가능 message");
             return responseResult;
 
-
         }
     }
 
 
     @PatchMapping("/{stickerKey}")//스티커 수정(스티커 붙인 당사자만 가능하도록 확인해야함.)
     public ResponseResult<?> edit(@Login Long myKey, @PathVariable Long stickerKey,
-                                  @Validated @RequestBody UpdateStickerForm form,
-                                  BindingResult bindingResult) throws SQLException {
+                                  @Validated @RequestBody UpdateStickerForm form) {
 
         log.info("스티커 수정 ");
-        if (bindingResult.hasErrors()) {
-            log.info("errors={}", bindingResult);
-            throw new IllegalArgumentException("빈 값이 있음");
-        }
 
         Sticker sticker = stickerService.findByStickerId(stickerKey);
         if (sticker == null) {
@@ -131,7 +126,7 @@ public class StickerController {
     }
 
     @DeleteMapping("/{stickerKey}")//스티커 수정(스티커 붙인 당사자만 가능하도록 확인해야함.)
-    public ResponseResult<?> delete(@Login Long myKey, @PathVariable Long stickerKey) throws SQLException {
+    public ResponseResult<?> delete(@Login Long myKey, @PathVariable Long stickerKey) {
 
         log.info("스티커 삭제");
         Sticker sticker = stickerService.findByStickerId(stickerKey);

@@ -30,7 +30,7 @@ public class TestDataInit {
             member = loginService.validateSejong(studentId, "fa484869");
             member.setNickname("호호호");
             memberService.save(member);
-        } catch (IOException | SQLException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

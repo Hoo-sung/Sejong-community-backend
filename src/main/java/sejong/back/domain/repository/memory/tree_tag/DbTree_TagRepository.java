@@ -2,6 +2,7 @@ package sejong.back.domain.repository.memory.tree_tag;
 
 
 import org.springframework.boot.jta.atomikos.AtomikosDependsOnBeanFactoryPostProcessor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
@@ -22,7 +23,7 @@ public class DbTree_TagRepository {
         this.dataSource = dataSource;
     }
 
-    public Tree_Tag save(Tree_Tag treeTag) throws SQLException {
+    public Tree_Tag save(Tree_Tag treeTag){
 
         String sql="insert into tree_tag(tree_id,tag_id) values(?,?)";
 
@@ -40,7 +41,7 @@ public class DbTree_TagRepository {
 
             return treeTag;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to save tree_tag(Data integrity violation",e);
         }
 
         finally{
@@ -48,7 +49,7 @@ public class DbTree_TagRepository {
         }
     }
 
-    public ArrayList<Integer> findByTree_Id(Long tree_id) throws SQLException {//하나의 tree id로 조회되는 태그들을 다 가져와야한다. (한 게시물에 걸린 태그 다.)
+    public ArrayList<Integer> findByTree_Id(Long tree_id) {//하나의 tree id로 조회되는 태그들을 다 가져와야한다. (한 게시물에 걸린 태그 다.)
         String sql="select * from tree_tag where tree_id=? ";
 
         Connection con = null;
@@ -69,13 +70,13 @@ public class DbTree_TagRepository {
             }
             return tags;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to findByTree_Id tree_tag(Data integrity violation",e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
-    public ArrayList<Tree_Tag> findByTag_Id(int tag_id) throws SQLException {//태그별로 검색 기능 마련할때 사용.
+    public ArrayList<Tree_Tag> findByTag_Id(int tag_id){//태그별로 검색 기능 마련할때 사용.
         String sql="select * from tree_tag where tag_id=? ";
 
         Connection con = null;
@@ -95,13 +96,13 @@ public class DbTree_TagRepository {
             }
             return tags;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to findByTag_id tree_tag(Data integrity violation",e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
-    public void delete(Long tree_id,int tag_id) throws SQLException {
+    public void delete(Long tree_id,int tag_id) {
         String sql = "delete from tree_tag where tree_id=? and tag_id=?";
 
         Connection con = null;
@@ -113,14 +114,14 @@ public class DbTree_TagRepository {
             pstmt.setLong(2, tag_id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to delete tree_tag (Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
 
     }
 
-    public void deleteByTreeId(Long tree_id) throws SQLException {//해당 tree_id를 가진 tree_Tag를 싹 다 제거.
+    public void deleteByTreeId(Long tree_id){//해당 tree_id를 가진 tree_Tag를 싹 다 제거.
         String sql = "delete from tree_tag where tree_id=?";
 
         Connection con = null;
@@ -131,14 +132,14 @@ public class DbTree_TagRepository {
             pstmt.setLong(1, tree_id);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to deletebyTree+id TREE_tag(Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
 
     }
 
-    private Connection getConnection() throws SQLException {//connection 객체 반환.
+    private Connection getConnection(){//connection 객체 반환.
 
         Connection con = DataSourceUtils.getConnection(dataSource);
         return con;

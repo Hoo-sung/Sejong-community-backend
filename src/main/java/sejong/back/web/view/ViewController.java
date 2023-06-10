@@ -62,7 +62,7 @@ public class ViewController {
 
     //forest 페이지
     @GetMapping("/forest")
-    public String members(HttpServletRequest request, Model model) throws SQLException {//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
+    public String members(HttpServletRequest request, Model model) {//멤버 검색 페이지이다. 여기서 자기 정보 수정 버튼 누르면 이동할 수 있도록 자기의 멤버도 model로 보내자.
         List<Member> members = memberRepository.findAll();
         log.info("members={}", members.stream().findFirst());
 
@@ -76,7 +76,7 @@ public class ViewController {
 
     @GetMapping("/forest/{memberKey}")//멤버 상세 페이지이다.
     public String member(@PathVariable long memberKey, HttpServletRequest request,
-                         Model model) throws SQLException {
+                         Model model)  {
 
         log.info("Forest page {}", memberKey);
         HttpSession session = request.getSession(false);
@@ -104,7 +104,7 @@ public class ViewController {
      * mytree로 redirect 해줘서 여기로 올 예정
      */
     @GetMapping("/forest/mytree")//자시 자신만 수정 할 수 있도록 해야한다. 다른애 꺼 수정 못하게 해야 한다.
-    public String myTree(Model model, HttpServletRequest request) throws SQLException {//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
+    public String myTree(Model model, HttpServletRequest request){//세션에 있는 db key를 보고, 자시 key일때만 자기 페이지 수정을 할 수있도록, 다른 사용자 정보 수정 시도시, 내정보 수정으로 redirect시.
         log.info("Connecting MyTree");
         HttpSession session = request.getSession(false);//세션을 가져와서 자기 member key를 뽑아야한다.
         long myKey = (Long) session.getAttribute(SessionConst.DB_KEY);//다운 캐스팅.
@@ -130,7 +130,7 @@ public class ViewController {
 
 
     @PostConstruct
-    public void setting() throws IOException, SQLException {
+    public void setting() throws IOException {
         Member validateMember = loginService.validateSejong(18011881L, "19991201");
         memberRepository.save(validateMember);//db에 저장.
     }

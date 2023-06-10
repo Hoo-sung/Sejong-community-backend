@@ -1,6 +1,10 @@
 package sejong.back.domain.repository.memory.memberRepository;
 
 import com.mysql.cj.protocol.Resultset;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
@@ -28,7 +32,7 @@ public class DbMemberRepositoryV1 implements MemberRepository {
     }
 
     @Override
-    public Member save(Member member) throws SQLException {
+    public Member save(Member member)  {
         String sql="insert into member(name,department,studentid,nickname,currentgrade,status, openStudentId,openDepartment) values(?,?,?,?,?,?,?,?)";
 
         Connection con=null;
@@ -55,7 +59,7 @@ public class DbMemberRepositoryV1 implements MemberRepository {
             }
             return member;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to save member(Data integrity violation",e);
         }
 
         finally{
@@ -65,7 +69,7 @@ public class DbMemberRepositoryV1 implements MemberRepository {
     }
 
     @Override
-    public Member findByLoginId(Long loginId) throws SQLException {
+    public Member findByLoginId(Long loginId) {
         String sql="select * from member where studentid=? ";
 
         Connection con = null;
@@ -90,11 +94,9 @@ public class DbMemberRepositoryV1 implements MemberRepository {
                 return member;
             } else {
                 return null;
-                /*throw new NoSuchElementException("member not found studentid=" +
-                        loginId);*/
             }
         } catch (SQLException e) {
-            throw e;
+            throw new EmptyResultDataAccessException("Member not found for loginId: "+loginId,1,e);
         } finally {
             close(con, pstmt, rs);
         }
@@ -107,7 +109,7 @@ public class DbMemberRepositoryV1 implements MemberRepository {
     }
 
     @Override
-    public void delete(Long key) throws SQLException {//db 저장된 키로 삭제해야 한다.
+    public void delete(Long key) {//db 저장된 키로 삭제해야 한다.
 
         String sql = "delete from member where member_id=?";
 
@@ -119,7 +121,7 @@ public class DbMemberRepositoryV1 implements MemberRepository {
             pstmt.setLong(1, key);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to delete(Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
@@ -128,7 +130,7 @@ public class DbMemberRepositoryV1 implements MemberRepository {
 
 
     @Override
-    public Member findByKey(Long key) throws SQLException {
+    public Member findByKey(Long key) {
 
         String sql="select * from member where member_id=? ";
 
@@ -155,10 +157,9 @@ public class DbMemberRepositoryV1 implements MemberRepository {
                 return member;
             } else {
                 return null;
-//                throw new NoSuchElementException("member not found studentid=" + key);
             }
         } catch (SQLException e) {
-            throw e;
+            throw new EmptyResultDataAccessException("Failed to find member with key: " + key, 1, e);
         } finally {
             close(con, pstmt, rs);
         }
@@ -166,7 +167,7 @@ public class DbMemberRepositoryV1 implements MemberRepository {
     }
 
     @Override
-    public void update(Long key, UpdateMemberForm form) throws SQLException {
+    public void update(Long key, UpdateMemberForm form){
 
         String sql="update member set nickname=?,openStudentId=?, openDepartment=? where member_id=?";
 
@@ -183,14 +184,14 @@ public class DbMemberRepositoryV1 implements MemberRepository {
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to update member due to data integrity violation", e);
         } finally {
             close(con, pstmt, null);
         }
 
     }
 
-    private Connection getConnection() throws SQLException{//connection 객체 반환.
+    private Connection getConnection(){//connection 객체 반환.
 
         Connection con = DataSourceUtils.getConnection(dataSource);
         return con;

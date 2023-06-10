@@ -11,25 +11,25 @@ import java.util.List;
 
 public interface TreeRepository {
 
-    public Tree save(Long memberKey,AddTreeForm form) throws SQLException;
+    public Tree save(Long memberKey,AddTreeForm form);
 
-    public Tree findByTreeId(Long TreeId) throws SQLException;
+    public Tree findByTreeId(Long TreeId);
 
     public List<Tree> findAllExcludeMe(Long memberKey);
 
-    public List<Tree> findAll() throws SQLException;
+    public List<Tree> findAll();
 
-    public List<Tree> findAll(TreeSearchCond cond) throws SQLException;
+    public List<Tree> findAll(TreeSearchCond cond);
 
-    public List<Tree> findMyTrees(Long myTreeKey) throws SQLException;
+    public List<Tree> findMyTrees(Long myTreeKey);
 
-    public Long SavedNumTree() throws SQLException;
+    public Long SavedNumTree();
 
-    public Tree findByTuple(Long index) throws SQLException;
+    public Tree findByTuple(Long index);
 
-    public void update(Long treeKey, UpdateTreeForm form) throws SQLException;
+    public void update(Long treeKey, UpdateTreeForm form);
 
-    public void delete(Long treeKey) throws SQLException;
+    public void delete(Long treeKey);
 
 
 }

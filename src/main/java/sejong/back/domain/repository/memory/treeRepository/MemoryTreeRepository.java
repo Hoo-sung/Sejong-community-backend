@@ -63,7 +63,7 @@ public class MemoryTreeRepository implements TreeRepository {
 
 
     @Override
-    public Long SavedNumTree() throws SQLException {
+    public Long SavedNumTree() {
         return null;
     }
 
@@ -111,7 +111,7 @@ public class MemoryTreeRepository implements TreeRepository {
     }
 
     @Override
-    public Tree findByTuple(Long index) throws SQLException {
+    public Tree findByTuple(Long index)  {
         return null;
     }
 

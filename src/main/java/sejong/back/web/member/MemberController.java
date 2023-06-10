@@ -15,7 +15,9 @@ import sejong.back.domain.service.MemberService;
 import sejong.back.domain.service.NoticeService;
 import sejong.back.domain.service.TreeService;
 import sejong.back.domain.tree.Tree;
+import sejong.back.exception.DoubleSignUpException;
 import sejong.back.exception.WrongSessionIdException;
+import sejong.back.exception.WrongSignUpException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
@@ -45,7 +47,7 @@ public class MemberController {
     private final NoticeService noticeService;
 
     @GetMapping//멤버 객체와 애의 트리들을 전부 줘야 한다.
-    public HashMap<String, Object> showMember(@Login Member member) throws SQLException {
+    public HashMap<String, Object> showMember(@Login Member member) {
         log.info("정보 열람 = {}", member.getKey());
         HashMap<String, Object> data = new HashMap<>();
         data.put("member", member);
@@ -63,7 +65,7 @@ public class MemberController {
     }
 
     @PostMapping
-    public ResponseResult<?> save(@Validated @RequestBody AddMemberForm addMemberForm, BindingResult bindingResult) throws IOException, SQLException {
+    public ResponseResult<?> save(@Validated @RequestBody AddMemberForm addMemberForm) throws IOException{
 
         log.info("studentId={}", addMemberForm.getStudentId());
         log.info("password={}", addMemberForm.getPassword());
@@ -71,26 +73,17 @@ public class MemberController {
 
         ResponseResult<Object> responseResult = new ResponseResult();
 
-        if (bindingResult.hasErrors()) { //닉네임, 학번, 비번 중 빈 값이 있을 경우
-            responseResult.setMessage("비어있는 값이 있음");
-            responseResult.setErrorCode(-101);
-            return responseResult;
-        }
 
         Member validateMember = loginService.validateSejong(addMemberForm.getStudentId(), addMemberForm.getPassword());
         if (validateMember == null) { //잘못된 계정으로 회원가입 시도한 경우
-            responseResult.setMessage("잘못된 계정으로 회원가입 시도");
-            responseResult.setErrorCode(-102);
-            return responseResult;
+            throw new WrongSignUpException("회원가입 정보가 올바르지 않습니다.");
         }
 
         //학사 시스템 회원 조회 성공.
         Member searchMember = memberService.findByLoginId(validateMember.getStudentId());//db에 회원 조회.
         if (searchMember != null) { //해당 계정으로 회원가입한 적이 있으면
             log.info("회원 가입된 사용자입니다={} {}", searchMember.getStudentId(), searchMember.getName());
-            responseResult.setMessage("이미 회원가입된 사용자");
-            responseResult.setErrorCode(-103);
-            return responseResult;
+            throw new DoubleSignUpException("이미 회원가입된 사용자입니다. ");
         }
 
         //db에 없으면, 회원 가입 절차 정상적으로 진행해야 한다.
@@ -108,7 +101,7 @@ public class MemberController {
 
 
     @PatchMapping//여기를 공개 정보 수정이라고 하자.
-    public ResponseResult<?> edit(@Login Long myKey, @RequestBody UpdateMemberForm updateMemberForm) throws Exception {
+    public ResponseResult<?> edit(@Login Long myKey, @RequestBody UpdateMemberForm updateMemberForm){
 
         //Login에서 예외처리 하고,
         memberService.update(myKey, updateMemberForm);
@@ -119,7 +112,7 @@ public class MemberController {
     }
 
     @DeleteMapping//여기를 공개 정보 수정이라고 하자.
-    public ResponseResult<?> delete(@Login Long myKey) throws Exception {
+    public ResponseResult<?> delete(@Login Long myKey) {
         memberService.delete(myKey);
 
         ResponseResult<Object> responseResult = new ResponseResult<>();

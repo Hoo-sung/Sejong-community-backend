@@ -1,5 +1,8 @@
 package sejong.back.domain.repository.memory.noticeRepository;
 
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Repository;
@@ -21,7 +24,7 @@ public class DbNoticeRepository implements NoticeRepository {
     }
 
     @Override
-    public List<NonReadSticker> getNotice(Long key) throws SQLException {
+    public List<NonReadSticker> getNotice(Long key)  {
         String sql = "select * from notice where member_id=?";
         List<NonReadSticker> alarmCount = new ArrayList<>();
 
@@ -43,14 +46,14 @@ public class DbNoticeRepository implements NoticeRepository {
             }
             return alarmCount;
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to getNotice notice(Data integrity violation",e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
     @Override
-    public void updateNotice(Long toMemberKey, Long treeId, String title) throws SQLException {
+    public void updateNotice(Long toMemberKey, Long treeId, String title){
         String sql = "select * from notice where member_id=? and tree_id=?";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -67,14 +70,14 @@ public class DbNoticeRepository implements NoticeRepository {
                 createNotice(toMemberKey, treeId, title);
             }
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to updateNotice notice(Data integrity violation",e);
         } finally {
             close(con, pstmt, rs);
         }
     }
 
     @Override
-    public void deleteNotice(Long memberKey, Long treeId) throws SQLException {
+    public void deleteNotice(Long memberKey, Long treeId){
         String sql = "delete from notice where member_id=? and tree_id=?";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -85,14 +88,14 @@ public class DbNoticeRepository implements NoticeRepository {
             pstmt.setLong(2, treeId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to deleteNotice notice(Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
 
     }
 
-    private void noticeCountUp(Long toMemberKey, Long treeId, Integer count) throws SQLException {
+    private void noticeCountUp(Long toMemberKey, Long treeId, Integer count){
         String sql = "update notice set not_read_count=? where member_id=? and tree_id=?";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -104,13 +107,13 @@ public class DbNoticeRepository implements NoticeRepository {
             pstmt.setLong(3, treeId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to countUp notice(Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
     }
 
-    private void createNotice(Long toMemberKey, Long treeId, String title) throws SQLException {
+    private void createNotice(Long toMemberKey, Long treeId, String title) {
         String sql = "insert into notice(member_id, tree_id, title, not_read_count) values(?,?,?,?)";
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -123,14 +126,14 @@ public class DbNoticeRepository implements NoticeRepository {
             pstmt.setInt(4, 1);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw e;
+            throw new DataIntegrityViolationException("Failed to createNotice notice(Data integrity violation",e);
         } finally {
             close(con, pstmt, null);
         }
     }
 
 
-    private Connection getConnection() throws SQLException {//connection 객체 반환.
+    private Connection getConnection() {//connection 객체 반환.
 
         Connection con = DataSourceUtils.getConnection(dataSource);
         return con;
