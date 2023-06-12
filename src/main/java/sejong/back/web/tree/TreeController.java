@@ -16,12 +16,13 @@ import sejong.back.domain.tree.AddTreeForm;
 import sejong.back.domain.tree.Tree;
 import sejong.back.domain.tree.TreeSearchCond;
 import sejong.back.domain.tree.UpdateTreeForm;
+import sejong.back.exception.UnSupportedDeleteTreeException;
+import sejong.back.exception.UnSupportedUpdateTreeException;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.argumentresolver.Login;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TreeController {
 
-    private final LoginService loginService;
     private final TreeService treeService;
     private final StickerService stickerService;
     private final NoticeService noticeService;
@@ -88,7 +88,7 @@ public class TreeController {
     }
 
     @GetMapping("random-tree")//개별 트리 보여주는 페이지.
-    public TreeAndStickers randomTree(@Login Long myKey) throws NullPointerException {
+    public TreeAndStickers randomTree(@Login Long myKey) {
 
 
         Long numTree = treeService.SavedNumTree();//db index수.
@@ -142,9 +142,7 @@ public class TreeController {
         Tree tree = treeService.findByTreeId(treeKey);
 
         if(tree.getMemberKey()!=myKey){
-            ResponseResult responseResult = new ResponseResult<>("나의 트리가 아닙니다.");
-            responseResult.setErrorCode(-333);
-            return responseResult;
+                throw new UnSupportedUpdateTreeException("게시글을 수정 할수 있는 권한이 없습니다.!");
         }
         treeService.update(treeKey, updateTreeForm);
         log.info("트리 수정 완료 제목 ={}", treeService.findByTreeId(treeKey).getTitle());
@@ -159,9 +157,7 @@ public class TreeController {
         log.info("트리 삭제");
         Tree tree = treeService.findByTreeId(treeKey);
         if(tree.getMemberKey()!=myKey){
-            ResponseResult responseResult = new ResponseResult<>("나의 트리가 아닙니다.");
-            responseResult.setErrorCode(-333);
-            return responseResult;
+                throw new UnSupportedDeleteTreeException("게시글을 삭제 할수 있는 권한이 없습니다.!");
         }
         treeService.delete(treeKey);
         log.info("트리 삭제 완료 제목");

@@ -15,8 +15,7 @@ import sejong.back.domain.sticker.BackSticker;
 import sejong.back.domain.sticker.Sticker;
 import sejong.back.domain.sticker.UpdateStickerForm;
 import sejong.back.domain.tree.Tree;
-import sejong.back.exception.OneStickerPerBoardException;
-import sejong.back.exception.PutMyStickerOnMyBoardException;
+import sejong.back.exception.*;
 import sejong.back.web.ResponseResult;
 import sejong.back.web.argumentresolver.Login;
 
@@ -93,14 +92,11 @@ public class StickerController {
             log.info("열람가능 message = {}", data.get("message"));
             return new ResponseResult<>("스티커 열람", data);
 
-        } else{
-            data.put("stickerAuth", 3); //남의 스티커 경우 모두 불가능
-            ResponseResult<Object> responseResult = new ResponseResult<>("열람할 수 없는 스티커입니다.",data);
-            responseResult.setErrorCode(-120);
-            log.info("열람 불가능 message");
-            return responseResult;
-
         }
+
+            throw new BackStickerAccessDeniedException("스티커 상세 페이지 접근 권한이 없습니다.");
+
+
     }
 
 
@@ -111,18 +107,18 @@ public class StickerController {
         log.info("스티커 수정 ");
 
         Sticker sticker = stickerService.findByStickerId(stickerKey);
-        if (sticker == null) {
-            throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
+
+        if(myKey!=sticker.getFromMemberKey()) {
+            throw new UnSupportedUpdateStickerException("스티커를 수정할 수 있는 권한이 없습니다.!");
         }
 
-
-        if (myKey == sticker.getFromMemberKey()) { //자신의 트리에 붙은 스티커
+        else {
             stickerService.update(stickerKey, form);
             log.info("나의 스티커 수정 = {}", sticker.getTitle());
             return new ResponseResult<>("스티커 수정 성공", sticker);
         }
 
-        return new ResponseResult<>("내 스티커가 아닙니다.");
+
     }
 
     @DeleteMapping("/{stickerKey}")//스티커 수정(스티커 붙인 당사자만 가능하도록 확인해야함.)
@@ -132,10 +128,6 @@ public class StickerController {
         Sticker sticker = stickerService.findByStickerId(stickerKey);
 
         Tree stickerOnTree = treeService.findByTreeId(sticker.getTreeKey());//스티커가 붙은 스티커.
-
-        if (sticker == null) {
-            throw new NullPointerException("stickerKey에 맞는 내 스티커가 없음");
-        }
 
         if (myKey == sticker.getFromMemberKey()) { //내가 스티커의 주인이면, 삭제 가능.
             stickerService.delete(stickerKey);
@@ -147,7 +139,7 @@ public class StickerController {
             return new ResponseResult<>("스티커 삭제 성공");
         }
 
-        return new ResponseResult<>("내 스티커가 아닙니다.");
+         throw new UnSupportedDeleteStickerException("스티커를 삭제할 수 있는 권한이 없습니다.!");
     }
 
 }

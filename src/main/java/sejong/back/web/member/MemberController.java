@@ -104,6 +104,7 @@ public class MemberController {
     public ResponseResult<?> edit(@Login Long myKey, @RequestBody UpdateMemberForm updateMemberForm){
 
         //Login에서 예외처리 하고,
+
         memberService.update(myKey, updateMemberForm);
 
         ResponseResult<Object> responseResult = new ResponseResult<>();

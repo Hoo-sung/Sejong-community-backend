@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@RestControllerAdvice
+@RestControllerAdvice()
 @Slf4j
 public class customizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -109,4 +109,51 @@ public class customizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
 
+
+    @ExceptionHandler(BackStickerAccessDeniedException.class)
+    public final ResponseEntity<ResponseResult<?>> handleBackStickerAccessDeniedException(Exception e){
+
+        ResponseResult<Object> responseResult = new ResponseResult<>(e.getMessage());
+        responseResult.setErrorCode(-143);
+        return new ResponseEntity<>(responseResult, HttpStatus.UNAUTHORIZED);
+
+    }
+
+    @ExceptionHandler(UnSupportedUpdateStickerException.class)
+    public final ResponseEntity<ResponseResult<?>> handleUnSupportedUpdateStickerException(Exception e){
+
+        ResponseResult<Object> responseResult = new ResponseResult<>(e.getMessage());
+        responseResult.setErrorCode(-144);
+        return new ResponseEntity<>(responseResult, HttpStatus.UNAUTHORIZED);
+
+    }
+
+
+    @ExceptionHandler(UnSupportedDeleteStickerException.class)
+    public final ResponseEntity<ResponseResult<?>> handleUnSupportedDeleteStickerException(Exception e){
+
+        ResponseResult<Object> responseResult = new ResponseResult<>(e.getMessage());
+        responseResult.setErrorCode(-145);
+        return new ResponseEntity<>(responseResult, HttpStatus.UNAUTHORIZED);
+
+    }
+
+
+    @ExceptionHandler(UnSupportedUpdateTreeException.class)
+    public final ResponseEntity<ResponseResult<?>> handleUnSupportedUpdateTreeException(Exception e){
+
+        ResponseResult<Object> responseResult = new ResponseResult<>(e.getMessage());
+        responseResult.setErrorCode(-161);
+        return new ResponseEntity<>(responseResult, HttpStatus.UNAUTHORIZED);
+
+    }
+
+    @ExceptionHandler(UnSupportedDeleteTreeException.class)
+    public final ResponseEntity<ResponseResult<?>> handleUnSupportedDeleteTreeException(Exception e){
+
+        ResponseResult<Object> responseResult = new ResponseResult<>(e.getMessage());
+        responseResult.setErrorCode(-162);
+        return new ResponseEntity<>(responseResult, HttpStatus.UNAUTHORIZED);
+
+    }
 }
