@@ -81,7 +81,10 @@ public class DbTreeRepositoryV1 implements TreeRepository {
     @Override
     public Tree findByTreeId(Long treeId) {//front에 보낼때 사용. DataRange 공개 범위.
 
-        String sql = "select * from tree where tree_id = ?";
+        String sql = "select * from tree " +
+                "JOIN tree_tag ON tree_tag.tree_id = tree.tree_id "+
+                "where tree.tree_id = ?"; //tag 새로 추가
+
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -101,6 +104,7 @@ public class DbTreeRepositoryV1 implements TreeRepository {
                 tree.setUpdated_at(rs.getTimestamp("updated_at"));
                 tree.setRequestId(rs.getBoolean("requestId"));
                 tree.setRequestDepartment(rs.getBoolean("requestDepartment"));
+                tree.setTags(new ArrayList<>(Arrays.asList(rs.getInt("tag_id")))); //tag 새로 추가
 
 
 
@@ -123,20 +127,54 @@ public class DbTreeRepositoryV1 implements TreeRepository {
     @Override
     public List<Tree> findAll(){
 
-        String sql="select * from tree";
+        ArrayList<Tree> trees = new ArrayList<>();
+        Map<String,String> dataRange =new HashMap<>();//다른사람이 이 객체에 대해 볼 수 있는 정보. 즉, 이 tree만든 맴버가 member 설정에서 공개한 정보.
+
+        String sql="SELECT tree.member_id,tree.tree_id, nickname, studentid, department, " +
+                "title, description, " + //보내줄때 사용할 값
+                "created_at, updated_at, requestId, requestDepartment,tree_tag.tag_id, " +
+                "OPENSTUDENTID, OPENDEPARTMENT\n" +
+                "FROM tree\n" +
+                "JOIN member ON tree.member_id = member.member_id\n" +
+                "JOIN tree_tag ON tree_tag.tree_id = tree.tree_id\n" +
+                "JOIN tag ON tag.tag_id = tree_tag.tag_id ";
 
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        ArrayList<Tree> trees = new ArrayList<>();
         try {
             con = getConnection();
             pstmt = con.prepareStatement(sql);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                trees.add(new Tree(rs.getLong("tree_id"),rs.getLong("member_id"), rs.getString("title"), rs.getString("description"),
-                        rs.getBoolean("requestId"), rs.getBoolean("requestDepartment"), rs.getTimestamp("created_at"), rs.getTimestamp("updated_at")));
-                //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
+                Tree tree = new Tree(rs.getLong("member_id"), rs.getString("title"), rs.getString("description"),
+                        rs.getBoolean("requestId"), rs.getBoolean("requestDepartment"), rs.getTimestamp("created_at"), rs.getTimestamp("updated_at"));
+
+
+
+                //treeId 처리
+                tree.setTreeKey( rs.getLong("tree_id"));
+
+                //tag 처리
+                tree.setTags(new ArrayList<>(Arrays.asList(rs.getInt("tag_id"))));
+
+                //공개범위 처리
+
+                //nickname
+                dataRange.put("nickname", rs.getString("nickname"));
+
+                //학번
+                if(rs.getInt("OPENSTUDENTID")==1)
+                    dataRange.put("studentId", String.valueOf(rs.getLong("studentId")));
+
+                //학과
+                if(rs.getInt("OPENDEPARTMENT")==1)
+                    dataRange.put("department", (rs.getString("department")));
+
+                tree.setDataRange(dataRange);
+                trees.add(tree);
+
+
             }
 
             return trees;
@@ -174,11 +212,6 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             cond_sql.add("tree_tag.tag_id = " + cond.getTag());
         }
 
-        //page 처리
-        if(cond.getPage()==null)
-            page=1;
-        else
-            page= Integer.valueOf(cond.getPage());
 
 
         String sql="SELECT tree.member_id,tree.tree_id, nickname, studentid, department, " +
@@ -195,23 +228,27 @@ public class DbTreeRepositoryV1 implements TreeRepository {
             sql = sql + " where " + condition; //sql에 where 조건부 추가
         }
 
-        sql= sql + " order by tree.tree_id desc" //이건 걍 혹시 몰라서 해둠
-                + " LIMIT ? OFFSET ?"; //페이지 부분 처리
+
+        sql= sql + " order by tree.tree_id "; //이건 걍 혹시 몰라서 해둠
         log.info("SQl is = {}",sql);
 
+        //page 처리
+        if(cond.getPage()==null)
+            sql += " LIMIT 20 OFFSET 0";
+        else if(Integer.valueOf(cond.getPage())>0){
+            page= Integer.valueOf(cond.getPage());
+            sql+=" LIMIT 20 OFFSET "+String.valueOf(20*(page-1));
+        }
+         //페이지 부분 처리
 
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-
-
         int last;
         try {
             con = getConnection();
             pstmt = con.prepareStatement(sql);
-            pstmt.setLong(1, 5);
-            pstmt.setLong(2, 5*(page-1));
             /**
              * 5를 20으로 바꾸기
              */

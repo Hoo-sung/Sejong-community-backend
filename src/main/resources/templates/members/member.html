@@ -49,8 +49,19 @@
 
     <div>
         <label for="status" th:text="#{label.member.nickName}">맴버 닉네임</label>
-        <input type="text" id="nickName" name="status" class="form-control" value="10" th:value="${member.nickName}" readonly>
+        <input type="text" id="nickName" name="status" class="form-control" value="10" th:value="${member.nickname}" readonly>
     </div>
+
+    <div>
+        <label for="openStudentId" th:text="#{label.member.dataRange.id}">맴버 닉네임</label>
+        <input type="checkbox" id="openStudentId" name="openStudentId" class="form-check-input" value="10" th:checked="${member.openStudentId}" disabled>
+    </div>
+
+    <div>
+        <label for="openDepartment" th:text="#{label.member.dataRange.department}">맴버 닉네임</label>
+        <input type="checkbox" id="openDepartment" name="openDepartment" class="form-check-input" value="10" th:checked="${member.openDepartment}" disabled>
+    </div>
+
 
 
     <hr class="my-4">
@@ -59,13 +70,20 @@
         <div class="col">
             <button class="w-100 btn btn-primary btn-lg"
                     onclick="location.href='editForm.html'"
-                    th:onclick="|location.href='@{/members/{memberKey}(memberKey=${member.key})}'|"
-                    type="button" th:text="#{button.send}">쪽지 보내기</button>
+                    th:onclick="|location.href='@{/admin/members/{memberKey}/edit(memberKey=${member.key})}'|"
+                    type="button" th:text="#{page.updateMember}">쪽지 보내기</button>
         </div>
+        <div class="col">
+            <button class="w-100 btn btn-primary btn-lg"
+                    onclick="location.href='editForm.html'"
+                    th:onclick="|location.href='@{/admin/members/{memberKey}/del(memberKey=${member.key})}'|"
+                    type="button" th:text="#{page.delMember}">멤버 삭제</button>
+        </div>
+
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg"
                     onclick="location.href='members.html'"
-                    th:onclick="|location.href='@{/forest}'|"
+                    th:onclick="|location.href='@{/admin/members}'|"
                     type="button" th:text="#{button.cancel}">목록으로</button>
 
         </div>

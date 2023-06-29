@@ -27,13 +27,13 @@
         </div>
 
         <div>
-            <label for="title" th:text="#{label.sticker.post}">스티커 붙인 게시물</label>
-            <input type="text" id="title" name="title" class="form-control" value="1" th:value="${tree.title}" readonly>
+            <label for="treeKey" th:text="#{label.sticker.post}">스티커 붙인 게시물</label>
+            <input type="text" id="treeKey" name="treeKey" class="form-control" value="1" th:value="${sticker.treeKey}" readonly>
         </div>
 
         <div>
-            <label for="description" th:text="#{label.sticker.postInfo}">게시글 내용</label>
-            <input type="text" id="description" name="description" class="form-control" value="1" th:value="${tree.description}" readonly>
+            <label for="description" th:text="#{label.sticker.from}">게시글 내용</label>
+            <input type="text" id="description" name="description" class="form-control" value="1" th:value="${sticker.fromMemberKey}" readonly>
         </div>
 
         <div>
@@ -43,9 +43,9 @@
 
         <div>
             <label for="subject">제목</label>
-            <input type="text" id="subject" th:field="*{subject}" class="form-control"
-                   th:errorclass="field-error">
-            <div class="field-error" th:errors="*{subject}" /></div>
+            <input type="text" id="subject" th:field="*{title}" class="form-control"
+                   th:errorclass="field-error" >
+            <div class="field-error" th:errors="*{title}" /></div>
         <div>
             <label for="message">내용</label>
             <input type="text" id="message" th:field="*{message}" class="form-control"
@@ -56,12 +56,14 @@
         <hr class="my-4">
         <div class="row">
             <div class="col">
-                <button class="w-100 btn btn-primary btn-lg" type="submit">전송</button> </div>
+                <button class="w-100 btn btn-primary btn-lg" type="submit" th:text="#{button.save}">전송</button> </div>
+
             <div class="col">
                 <button class="w-100 btn btn-secondary btn-lg"
                         onclick="location.href='items.html'"
-                        th:onclick="|location.href='@{/forest/{treeKey}(treeKey=${tree.treeKey})}'|"
-                        type="button">게시글 상세</button>
+                        th:onclick="|location.href='@{/admin/stickers/{stickerKey}(stickerKey=${sticker.stickerKey})}'|"
+                        th:text="#{button.cancel}"
+                        type="button">취소</button>
             </div>
         </div>
     </form>

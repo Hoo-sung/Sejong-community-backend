@@ -9,40 +9,81 @@
 
 <div class="container" style="max-width: 600px">
     <div class="py-5 text-center">
-        <h2 th:text="#{page.myStickers}">내가 보낸 스티커 목록</h2>
+        <h2 th:text="#{page.stickers}">내가 보낸 스티커 목록</h2>
     </div>
 
     <div class="row">
 
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg" type="button"
-                    th:onclick="|location.href='@{/forest/myPage}'|"
-                    th:text="#{page.myPages}">
+                    th:onclick="|location.href='@{/admin/forest}'|"
+                    th:text="#{label.tree}">
             </button>
         </div>
 
         <div class="col">
             <button class="w-100 btn btn-secondary btn-lg" type="button"
-                    th:onclick="|location.href='@{/}'|"
-                    th:text="#{page.main}">
+                    th:onclick="|location.href='@{/admin/stickers}'|"
+                    th:text="#{label.tree.stickers}">
             </button>
         </div>
 
         <div class="col">
-            <button class="btn btn-primary float-end"
-                    onclick="location.href='addForm.html'"
-                    th:onclick="|location.href='@{/forest/add}'|"
-                    type="button" th:text="#{page.addTree}">게시글 쓰기</button>
+            <button class="w-100 btn btn-secondary btn-lg" type="button"
+                    th:onclick="|location.href='@{/admin/members}'|"
+                    th:text="#{label.member}">
+            </button>
         </div>
+
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" type="button"
+                    th:onclick="|location.href='@{/admin}'|"
+                    th:text="#{page.main}">
+            </button>
+        </div>
+
+
+
+<!--        <div class="col">-->
+<!--            <button class="btn btn-primary float-end"-->
+<!--                    onclick="location.href='addForm.html'"-->
+<!--                    th:onclick="|location.href='@{/admin/stickers/add}'|"-->
+<!--                    type="button" th:text="#{button.sticker}">게시글 쓰기</button>-->
+<!--        </div>-->
     </div>
 
+    <div class="row">
+        <div class="container">
+            <form th:action="@{/admin/stickers}" method="get" class="mt-4">
+                <div class="form-row align-items-center">
+                    <div class="col-md-auto">
+                        <select name="category" class="form-control" th:value="${category}">
+                            <option value="title" th:selected="${category == 'title'}">제목</option>
+                            <option value="message" th:selected="${category == 'message'}">내용</option>
+                            <option value="fromMemberKey" th:selected="${category == 'fromMemberKey'}">주는이</option>
+                            <option value="treeKey" th:selected="${category == 'treeKey'}">게시글</option>
+                        </select>
+                    </div>
+                    <div class="col-md-auto">
+                        <input type="text" name="keyword" class="form-control" placeholder="검색어를 입력하세요" th:value="${keyword}">
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="submit" class="btn btn-primary">검색</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
     <hr class="my-4">
     <div>
         <table class="table">
             <thead>
             <tr>
+                <th th:text="#{label.sticker.key}">스티커 키</th>
+                <th th:text="#{label.tree.key}">트리 키</th>
                 <th th:text="#{label.sticker.subject}">스티커 제목</th>
                 <th th:text="#{label.sticker.message}">내용</th>
+                <th th:text="#{label.sticker.from}">주는 이</th>
                 <th th:text="#{label.sticker.to}">받는 이</th>
 <!--                <th th:text="#{label.sticker.post}">게시글 제목</th>-->
 <!--                <th th:text="#{label.sticker.postInfo}">게시글 내용</th>-->
@@ -51,9 +92,20 @@
             </thead>
             <tbody>
             <tr th:each="sticker : ${stickers}">
-                <td th:text="${sticker.subject}">스티커 제목</a></td>
-                <td><a href="sticker.html" th:href="@{|/sticker/${sticker.stickerKey}/edit|}" th:text="${sticker.message}">내용</a></td>
-                <td th:text="${sticker.toMemberKey}">학생 이름</td>
+                <td th:text="${sticker.stickerKey}"></td>
+                <td>
+                    <a href="sticker.html" th:href="@{|/admin/forest/${sticker.treeKey}|}" th:text="${sticker.treeKey}">트리 번호</a>
+                </td>
+                <td th:text="${sticker.title}">스티커 제목</a></td>
+                <td>
+                    <a href="sticker.html" th:href="@{|/admin/stickers/${sticker.stickerKey}|}" th:text="${sticker.message}">내용</a>
+                </td>
+                <td>
+                    <a href="sticker.html" th:href="@{|/admin/members/${sticker.fromMemberKey}|}" th:text="${sticker.fromMemberKey}">주는이</a>
+                </td>
+                <td>
+                    <a href="sticker.html" th:href="@{|/admin/members/${sticker.toMemberKey}|}" th:text="${sticker.toMemberKey}">받는이</a>
+                </td>
 <!--                <td th:text="${tree.title}">10000</td>-->
 <!--                <td th:text="${tree.description}">10</td>-->
             </tr>

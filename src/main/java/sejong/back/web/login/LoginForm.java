@@ -2,7 +2,9 @@ package sejong.back.web.login;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -11,9 +13,9 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class LoginForm {
 
-    @NotEmpty
+    @NotBlank
     private String studentId;//학번
 
-    @NotEmpty
+    @NotBlank
     private String password;//비밀번호
 }

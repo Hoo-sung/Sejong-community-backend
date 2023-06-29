@@ -29,6 +29,16 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     @Override
+    public Member findByName(String name) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public Member findByNickName(String nickname) throws SQLException {
+        return null;
+    }
+
+    @Override
     public Member findByKey(Long key) {
         return null;
     }

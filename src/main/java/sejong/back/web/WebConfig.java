@@ -5,8 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import sejong.back.domain.service.MemberService;
 import sejong.back.web.argumentresolver.LoginMemberArgumentResolver;
+import sejong.back.web.interceptor.AdminInterceptor;
 import sejong.back.web.interceptor.LoginCheckInterceptor;
 
 import java.util.List;
@@ -20,23 +20,28 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final LoginMemberArgumentResolver loginMemberArgumentResolver;
 
+
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(loginMemberArgumentResolver);
+
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-                /*
-                registry.addInterceptor(new LogInterceptor())
-                .order(1)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/*.ico", "/error");
-                */
 
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(1)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/", "/login", "/logout", "/css/**", "/*.ico", "/error");
+                .excludePathPatterns("/", "/members", "/login", "/logout",
+                        "/css/**", "/*.ico", "/error","/admin/**");
+
+        registry.addInterceptor(new AdminInterceptor())
+                .order(2)
+                .addPathPatterns("/admin/**")
+                .excludePathPatterns("/admin","/admin/members/add", "/admin/login");
+
+
     }
+
 }

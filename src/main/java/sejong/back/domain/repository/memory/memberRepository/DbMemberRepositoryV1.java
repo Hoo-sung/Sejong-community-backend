@@ -13,6 +13,7 @@ import sejong.back.domain.member.MemberGrade;
 import sejong.back.domain.member.UpdateMemberForm;
 import sejong.back.domain.repository.MemberRepository;
 import sejong.back.web.login.NonReadSticker;
+import sejong.back.domain.sticker.Sticker;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -104,8 +105,111 @@ public class DbMemberRepositoryV1 implements MemberRepository {
     }
 
     @Override
-    public List<Member> findAll() {
-        return null;
+    public List<Member> findAll() throws SQLException {
+        ArrayList<Member> members = new ArrayList<>();
+        String sql="select * from member";
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Member member = new Member(rs.getString("NAME"), rs.getString("Department"), rs.getLong("STUDENTID"),
+                        rs.getString("nickname"), rs.getString("CURRENTGRADE"), rs.getString("status"),
+                        rs.getLong("member_id"), (rs.getInt("openstudentid") != 0), (rs.getInt("opendepartment") != 0));
+
+
+                members.add(member);
+                //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
+
+
+            }
+            if(members.size()==0){
+                throw new NoSuchElementException("게시글이 아무것도 없다.");
+            }
+
+            return members;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
+    }
+
+    @Override
+    public Member findByName(String name) throws SQLException {
+        String sql="select * from member where name = ? ";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, name);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                Member member = new Member();
+                member.setKey(rs.getLong("member_id"));
+                member.setName(rs.getString("name"));
+                member.setDepartment(rs.getString("department"));
+                member.setStudentId(rs.getLong("studentid"));
+                member.setNickname(rs.getString("nickname"));
+                member.setCurrentGrade(rs.getString("currentgrade"));
+                member.setStatus(rs.getString("status"));
+                member.setOpenStudentId(rs.getBoolean("openStudentId"));
+                member.setOpenDepartment(rs.getBoolean("openDepartment"));
+                return member;
+            } else {
+                return null;
+                /*throw new NoSuchElementException("member not found studentid=" +
+                        loginId);*/
+            }
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
+
+    }
+
+    @Override
+    public Member findByNickName(String nickname) throws SQLException {
+        String sql="select * from member where nickname = ? ";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, nickname);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                Member member = new Member();
+                member.setKey(rs.getLong("member_id"));
+                member.setName(rs.getString("name"));
+                member.setDepartment(rs.getString("department"));
+                member.setStudentId(rs.getLong("studentid"));
+                member.setNickname(rs.getString("nickname"));
+                member.setCurrentGrade(rs.getString("currentgrade"));
+                member.setStatus(rs.getString("status"));
+                member.setOpenStudentId(rs.getBoolean("openStudentId"));
+                member.setOpenDepartment(rs.getBoolean("openDepartment"));
+                return member;
+            } else {
+                return null;
+                /*throw new NoSuchElementException("member not found studentid=" +
+                        loginId);*/
+            }
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
+
     }
 
     @Override

@@ -30,7 +30,10 @@ public interface StickerRepository { //트리 key로 해당 트리 키가 가진
 
 
 
-    public List<Sticker> findAll();//db에 스티커들 전부 출력.
+    public List<Sticker> findAll() throws SQLException;//db에 스티커들 전부 출력.
+
+    public List<Sticker> findAll(StickerSearchCond cond) throws SQLException;//db에 스티커들 전부 출력.
+
 
     public List<Sticker> search(Long treeKey, StickerSearchCond cond);//하나의 게시물이 가진 스티커가 매우 많을때 검색기능 지원.
 

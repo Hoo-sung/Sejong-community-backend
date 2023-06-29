@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import sejong.back.domain.member.Member;
 import sejong.back.domain.repository.MemberRepository;
 import sejong.back.domain.service.MemberService;
@@ -15,11 +16,12 @@ import java.sql.SQLException;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/admin")
 public class HomeController {
     private final MemberRepository repository;
     private final MemberService memberService;
 
-    @GetMapping("/")
+    @GetMapping
     public String LoginHome(HttpServletRequest request, Model model) {
 
         //session이 없으면 홈으로.

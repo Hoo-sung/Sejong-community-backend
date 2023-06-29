@@ -11,8 +11,6 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class AddMemberForm {
 
-    @NotEmpty
-    private String nickname;//닉네임(이름X)
 
     @NotEmpty
     private Long studentId;//학번
@@ -20,6 +18,8 @@ public class AddMemberForm {
     @NotEmpty
     private String password;//비밀번호
 
+    @NotEmpty
+    private String nickname;//닉네임(이름X)
 }
 
 

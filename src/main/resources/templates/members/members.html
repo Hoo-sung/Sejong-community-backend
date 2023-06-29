@@ -12,19 +12,69 @@
         <h2 th:text="#{page.members}">멤버 목록</h2>
     </div>
 
-    <div class="row">
-        <div class="col">
-            <button class="btn btn-primary float-end"
-                    onclick="location.href='addForm.html'"
-                    th:onclick="|location.href='@{/forest/{memberKey}(memberKey=${member.key})}'|"
-                    type="button" th:text="#{page.editMember}">내 정보 수정</button>
 
-            <button class="btn btn-primary float-end"
-                    onclick="location.href='addForm.html'"
-                    th:onclick="|location.href='@{/forest/mytree/add}'|"
-                    type="button" th:text="#{page.makeTree}">글 쓰기</button>
+    <div class="row">
+
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" type="button"
+                    th:onclick="|location.href='@{/admin/forest}'|"
+                    th:text="#{label.tree}">
+            </button>
+        </div>
+
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" type="button"
+                    th:onclick="|location.href='@{/admin/stickers}'|"
+                    th:text="#{label.tree.stickers}">
+            </button>
+        </div>
+
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" type="button"
+                    th:onclick="|location.href='@{/admin/members}'|"
+                    th:text="#{label.member}">
+            </button>
+        </div>
+
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" type="button"
+                    th:onclick="|location.href='@{/admin}'|"
+                    th:text="#{page.main}">
+            </button>
+        </div>
+
+
+    </div>
+
+    <div class="row">
+        <div class="container">
+            <form th:action="@{/admin/members}" method="get" class="mt-4">
+                <div class="form-row align-items-center">
+                    <div class="col-md-auto">
+                        <select name="category" class="form-control" th:value="${category}">
+                            <option value="name" th:selected="${category == 'name'}">이름</option>
+                            <option value="nickname" th:selected="${category == 'nickname'}">별명</option>
+                            <option value="studentId" th:selected="${category == 'studentId'}">학번</option>
+                        </select>
+                    </div>
+                    <div class="col-md-auto">
+                        <input type="text" name="keyword" class="form-control" placeholder="검색어를 입력하세요" th:value="${keyword}">
+                    </div>
+                    <div class="col-md-auto">
+                        <button type="submit" class="btn btn-primary">검색</button>
+                    </div>
+
+                    <div class="col">
+                        <button class="btn btn-primary float-end"
+                                onclick="location.href='addForm.html'"
+                                th:onclick="|location.href='@{/admin/forest/members/add}'|"
+                                type="button" th:text="#{page.signup}">회원 가입</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
+
 
     <hr class="my-4">
     <div>
@@ -42,12 +92,12 @@
             </thead>
             <tbody>
             <tr th:each="member : ${members}">
-                <td><a href="member.html" th:href="@{/forest/{memberKey}(memberKey=${member.key})}" th:text="${member.key}">멤버 key</a></td>
-                <td><a href="member.html" th:href="@{|/forest/${member.key}|}" th:text="${member.name}">학생 이름</a></td>
+                <td th:text="${member.key}">키값</td>
+                <td><a href="member.html" th:href="@{|/admin/members/${member.key}|}" th:text="${member.name}">학생 이름</a></td>
                 <td th:text="${member.department}">10000</td>
                 <td th:text="${member.studentId}">10</td>
                 <td th:text="${member.status}">10</td>
-                <td th:text="${member.nickName}">10</td>
+                <td th:text="${member.nickname}">10</td>
 <!--                <td th:text="${member.tags}">10</td>-->
 
             </tr>

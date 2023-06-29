@@ -14,7 +14,12 @@ public interface MemberRepository {
 
     public Member findByLoginId(Long loginId);
 
-    public List<Member> findAll();
+    public List<Member> findAll() throws SQLException;
+
+    Member findByName(String name) throws SQLException;
+
+    Member findByNickName(String nickname) throws SQLException;
+
 
     public Member findByKey(Long key);
 

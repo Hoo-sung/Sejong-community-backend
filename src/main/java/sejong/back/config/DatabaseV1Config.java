@@ -3,6 +3,10 @@ package sejong.back.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import sejong.back.domain.repository.MemberRepository;
+import sejong.back.domain.repository.StickerRepository;
+import sejong.back.domain.repository.TreeRepository;
+import sejong.back.domain.repository.memory.adminRepository.DbAdminRepositoryV1;
 import sejong.back.domain.repository.memory.memberRepository.DbMemberRepositoryV1;
 import sejong.back.domain.repository.memory.noticeRepository.DbNoticeRepository;
 import sejong.back.domain.repository.memory.stickerRepository.DbStickerRepositoryV1;
@@ -20,6 +24,7 @@ public class DatabaseV1Config {
 
 
     private final DataSource dataSource;
+
     @Bean
     public DbMemberRepositoryV1 memberRepository(){
         return new DbMemberRepositoryV1(dataSource);
@@ -45,6 +50,9 @@ public class DatabaseV1Config {
     public DbNoticeRepository noticeRepository() {
         return new DbNoticeRepository(dataSource);
     }
+    @Bean
+    public DbAdminRepositoryV1 adminRepository(){return new DbAdminRepositoryV1(dataSource);}
+
 
     @Bean
     public TreeService treeService(){

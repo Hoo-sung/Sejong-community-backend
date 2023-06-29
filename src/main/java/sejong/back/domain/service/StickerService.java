@@ -145,9 +145,14 @@ public class StickerService {
         return backSticker;// service에서는 공개 범위를 설정해서 반환.
     }
 
-    public List<Sticker> findAll() {
+    public List<Sticker> findAll() throws SQLException {
         return stickerRepository.findAll();
     }
+
+    public List<Sticker> findAll(StickerSearchCond cond) throws SQLException {
+        return stickerRepository.findAll(cond);
+    }
+
 
     public List<Sticker> search(Long treeKey, StickerSearchCond cond) {
         return stickerRepository.search(treeKey, cond);

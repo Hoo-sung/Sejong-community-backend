@@ -39,12 +39,11 @@
         </div>
 
         <div>
-            <div>태그들</div>
-            <div th:each="tag : ${tagGroups}" class="form-check form-check-inline">
-                <input type="checkbox" th:field="*{tags}" th:value="${tag}"
-                       class="form-check-input">
+            <div th:text="#{label.tree.tags}">태그</div>
+            <div th:each="entry : ${tags.entrySet()}" class="form-check form-check-inline">
+                <input type="radio" th:field="${tree.tags}" th:value="${entry.key}" class="form-check-input">
                 <label th:for="${#ids.prev('tags')}"
-                       th:text="${tag}" class="form-check-label">서울</label>
+                       th:text="${entry.value}" class="form-check-label">서울</label>
             </div>
         </div>
 
@@ -57,7 +56,7 @@
             <div class="col">
                 <button class="w-100 btn btn-secondary btn-lg"
                         onclick="location.href='item.html'"
-                        th:onclick="|location.href='@{/forest}'|"
+                        th:onclick="|location.href='@{/admin/forest/{treeKey}(treeKey=${tree.treeKey})}'|"
                         type="button" th:text="#{button.cancel}">취소</button>
             </div>
         </div>

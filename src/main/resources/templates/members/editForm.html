@@ -39,18 +39,24 @@
         </div>
 
         <div>
-            <label for="grade" th:text="#{label.member.grade}">학번</label>
-            <input type="text" id="grade" th:field="*{grade}"
-                   th:errorclass="field-error" class="form-control" readonly>
+            <label for="nickName">닉네임</label>
+            <input type="text" id="nickName" th:field="*{nickname}" class="form-control"
+                   th:errorclass="field-error">
+            <div class="field-error" th:errors="*{nickname}" />
         </div>
 
         <div>
-            <label for="nickName">닉네임</label>
-            <input type="text" id="nickName" th:field="*{nickName}" class="form-control"
-                   th:errorclass="field-error">
-            <div class="field-error" th:errors="*{nickName}" />
-        </div>
+            <label for="openStudentId" th:text="#{label.member.dataRange.id}">맴버 닉네임</label>
+            <input type="checkbox" id="openStudentId" name="openStudentId" class="form-check-input" th:checked="${member.openStudentId ? 'checked' : null}">
+            <input type="hidden" name="openStudentId" value="false">
+             </div>
 
+        <div>
+            <label for="openDepartment" th:text="#{label.member.dataRange.department}">맴버 닉네임</label>
+            <input type="checkbox" id="openDepartment" name="openDepartment" class="form-check-input" th:checked="${member.openDepartment ? 'checked' : null}">
+            <input type="hidden" name="openDepartment" value="false">
+
+        </div>
 
 
         <hr class="my-4">
@@ -63,7 +69,7 @@
                 <button class="w-100 btn btn-secondary btn-lg"
 
                         onclick="location.href='item.html'"
-                        th:onclick="|location.href='@{/forest}'|"
+                        th:onclick="|location.href='@{/admin/members}'|"
                         type="button" th:text="#{button.cancel}">취소</button>
 
             </div>

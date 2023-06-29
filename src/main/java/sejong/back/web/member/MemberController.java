@@ -19,11 +19,9 @@ import sejong.back.exception.DoubleSignUpException;
 import sejong.back.exception.WrongSessionIdException;
 import sejong.back.exception.WrongSignUpException;
 import sejong.back.web.ResponseResult;
-import sejong.back.web.SessionConst;
 import sejong.back.web.argumentresolver.Login;
 import sejong.back.web.login.NonReadSticker;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;

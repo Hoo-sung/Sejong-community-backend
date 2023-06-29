@@ -246,8 +246,98 @@ public class DbStickerRepositoryV1 implements StickerRepository {
 
 
     @Override
-    public List<Sticker> findAll() {
-        return null;
+    public List<Sticker> findAll() throws SQLException {
+        String sql="select * from sticker";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        ArrayList<Sticker> stickers = new ArrayList<>();
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Sticker sticker = new Sticker(rs.getLong("FROMMEMBER_ID"), rs.getLong("TOMEMBER_ID"), rs.getLong("TREE_ID"),
+                        rs.getString("title"), rs.getString("message"), rs.getInt("colortype"));
+                sticker.setStickerKey(rs.getLong("Sticker_ID"));
+                sticker.setCreated_at(rs.getTimestamp("CREATED_AT"));
+                sticker.setUpdated_at(rs.getTimestamp("UPDATED_AT"));
+
+                stickers.add(sticker);
+                //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
+
+
+            }
+            if(stickers.size()==0){
+                /**
+                 * exception 터뜨리는게 맞나
+                 */
+                throw new NoSuchElementException("게시글이 아무것도 없다.");
+            }
+
+            return stickers;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
+    }
+
+    @Override
+    public List<Sticker> findAll(StickerSearchCond cond) throws SQLException {
+        String sql="select * from sticker";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        ArrayList<Sticker> stickers = new ArrayList<>();
+        ArrayList<String> cond_sql = new ArrayList<>();
+
+        if(cond.getTitle()!=null)
+            cond_sql.add("REPLACE(title, ' ') like '%" + cond.getTitle()+"%'");
+
+        if(cond.getMessage()!=null)
+            cond_sql.add("REPLACE(message, ' ') like '%" + cond.getMessage()+"%'");
+
+        if (cond.getFromMemberKey() != null)
+            cond_sql.add("fromMember_ID like " + cond.getFromMemberKey());
+
+        if (cond.getTreeKey() != null)
+            cond_sql.add("tree_id like " + cond.getTreeKey());
+
+
+        if(cond_sql.size()>0){ //조건이 있는 경우에만
+            String condition = String.join(" and ", cond_sql); //검색하는 sql들을 and로 묶고
+            sql = sql + " where " + condition; //sql에 where 조건부 추가
+        }
+        System.out.println("cond_sql = " + sql);
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Sticker sticker = new Sticker(rs.getLong("FROMMEMBER_ID"), rs.getLong("TOMEMBER_ID"), rs.getLong("TREE_ID"),
+                        rs.getString("title"), rs.getString("message"), rs.getInt("colortype"));
+                sticker.setStickerKey(rs.getLong("Sticker_ID"));
+                sticker.setCreated_at(rs.getTimestamp("CREATED_AT"));
+                sticker.setUpdated_at(rs.getTimestamp("UPDATED_AT"));
+
+                stickers.add(sticker);
+                //여기서 tree_key는 프론트에서 사용을 못한다. null값이다.
+
+
+            }
+            if(stickers.size()==0){
+                return null;
+            }
+
+            return stickers;
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
+        }
     }
 
     @Override

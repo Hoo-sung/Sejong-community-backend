@@ -12,7 +12,7 @@ public class UpdateMemberForm {//이게 필요가 없어진다. 아니면 공개
     /**
      */
 
-
+    @NotBlank
     private String nickname; //닉네임
 
     private boolean openStudentId;

@@ -12,6 +12,8 @@ import sejong.back.domain.tree.UpdateTreeForm;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Repository
@@ -47,6 +49,27 @@ public class DbTagRepository {
         }
     }
 
+    public Map<Integer,String> findAll() {
+        String sql="select * from tag";
+
+        Map<Integer, String> tags = new LinkedHashMap<>();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            while(rs.next()) {
+                tags.put(rs.getInt("tag_id"), rs.getString("tag_description"));
+
+            } return tags;
+        } catch (SQLException e) {
+            throw new DataIntegrityViolationException("Failed to find All tags(Data integrity violation)",e);
+        } finally {
+            close(con, pstmt, rs);
+        }
+    }
 
     public Tag findByTagId(int tag_Id) {
         String sql="select * from tag where tag_id=? ";

@@ -63,6 +63,16 @@ public class MemoryMemberRepository implements MemberRepository {
     }
 
     @Override
+    public Member findByName(String name) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public Member findByNickName(String nickname) throws SQLException {
+        return null;
+    }
+
+    @Override
     public void update(Long key, UpdateMemberForm form) {//공개 설정 정보를 바꾸도록 해야한다.
 
         Member findMember = storeMember.get(key);
