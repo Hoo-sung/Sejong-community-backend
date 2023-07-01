@@ -26,6 +26,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin(origins = "http://sejongsticker.s3-website.ap-northeast-2.amazonaws.com/login", methods = {RequestMethod.GET,RequestMethod.DELETE,RequestMethod.POST,RequestMethod.PATCH})
 public class LoginController {
 
     private final MemberService memberService;
