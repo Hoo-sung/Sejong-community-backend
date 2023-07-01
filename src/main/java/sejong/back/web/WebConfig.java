@@ -32,6 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://sejongsticker.s3-website.ap-northeast-2.amazonaws.com") // 허용할 출처
                 .allowedMethods("GET", "POST","PATCH","DELETE","OPTIONS")
+                .allowedHeaders("Content-Type")
                 .allowCredentials(true) // 쿠키 인증 요청 허용
                 .maxAge(1500); // 원하는 시간만큼 pre-flight 리퀘스트를 캐싱
     }
