@@ -39,7 +39,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/members")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://sejongsticker.s3-website.ap-northeast-2.amazonaws.com/member", methods = {RequestMethod.GET,RequestMethod.DELETE,RequestMethod.POST,RequestMethod.PATCH})
 public class MemberController {
 
     private final MemberService memberService;
