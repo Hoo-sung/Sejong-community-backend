@@ -18,6 +18,9 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
 
         log.info("인증 체크 인터셉터 실행 {}", requestURI);
+        //POST /members 로 요청이 왔을 경우 인터셉터를 성공시킨다.
+        if (requestURI.equals("/members") && request.getMethod().equals("POST")) return true;
+
         HttpSession session = request.getSession(false);//세션을 있는 그대로 가져온다.
 
         /**

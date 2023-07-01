@@ -69,7 +69,7 @@ public class LoginController {
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.DB_KEY, loginMember.getKey());
 
-        return new ResponseResult<>("로그인 성공");
+        return new ResponseResult<>(0,"로그인 성공");
         /**
          * 이부분을을 리다이렉트할 주소가 있으면,
          */
