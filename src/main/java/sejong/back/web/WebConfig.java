@@ -3,6 +3,7 @@ package sejong.back.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import sejong.back.domain.service.MemberService;
@@ -25,6 +26,15 @@ public class WebConfig implements WebMvcConfigurer {
         resolvers.add(loginMemberArgumentResolver);
     }
 
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://sejongsticker.s3-website.ap-northeast-2.amazonaws.com") // 허용할 출처
+                .allowedMethods("GET", "POST","PATCH","DELETE") // 허용할 HTTP method
+                .allowCredentials(true) // 쿠키 인증 요청 허용
+                .maxAge(1500); // 원하는 시간만큼 pre-flight 리퀘스트를 캐싱
+    }
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
                 /*
