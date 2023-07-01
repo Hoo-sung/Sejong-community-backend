@@ -24,7 +24,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession(false);//세션을 있는 그대로 가져온다.
 
 
-        if(request.getMethod().equals("POST") &&request.getRequestURI().equals("http://ec2-3-24-166-96.ap-southeast-2.compute.amazonaws.com:8080/members")){
+        if(request.getMethod().equals("POST") &&request.getRequestURI().equals("/members")){
             log.info("/members POST는 필터를 통과시킨다.");
 
             return true;//controller로 쭉 진행.
