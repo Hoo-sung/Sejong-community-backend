@@ -33,7 +33,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
             //TODO 이렇게 리다이렉트 시키는 부분들은 나중에 클라이언트 쪽 url로 바꿔야 할 듯 (ex. https://www.sejongcommunity.com/login?redirectURL=)
 
 //            response.setHeader("Location", "http://localhost:8080/login?redirectURL=" + requestURI);
-            response.sendRedirect("http://localhost:3000/login?redirectURL=" + requestURI);
+//            response.sendRedirect("http://sejongsticker.s3-website.ap-northeast-2.amazonaws.com/login?redirectURL=" + requestURI);
 //            throw new WrongSessionIdException("로그인 화면으로 이동합니다.")
             return false;
         }
