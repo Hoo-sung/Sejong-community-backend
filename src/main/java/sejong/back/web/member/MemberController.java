@@ -70,6 +70,8 @@ public class MemberController {
         return "members/addMemberForm";
     }
 
+    //for test
+
     @PostMapping("/add")//여기서 회원가입절차에 따라 회원을 db에 save한다.
     /**
      * 학사시스템을 바탕으로 이름, 학번 등 가져올 수 있는 정보는 가져와서 validatemember에 저장되어있다.
